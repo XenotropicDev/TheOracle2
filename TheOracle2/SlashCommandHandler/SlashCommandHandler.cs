@@ -82,8 +82,18 @@ namespace TheOracle2
             var methodInfo = CommandList[context.Data.Name];
             var caller = Activator.CreateInstance(methodInfo.DeclaringType);
             (caller as ISlashCommand).Context = context;
+
+            List<object> args = new List<object>();
+
+            foreach (var arg in methodInfo.GetParameters())
+            {
+                var service = services.GetService(arg.ParameterType);
+                if (service != null) args.Add(service);
+            }
             
-            await (CommandList[context.Data.Name].Invoke(caller, null) as Task);
+            if (!args.Any()) args = null;
+
+            await (methodInfo.Invoke(caller, args?.ToArray()) as Task);
         }
 
         public async Task InstallCommandsAsync(bool DeleteExisting = true)
@@ -101,8 +111,16 @@ namespace TheOracle2
                 {
                     foreach (var builder in command.GetCommandBuilders())
                     {
-                        await _client.Rest.CreateGlobalCommand(builder.Build());
-                        _logger.LogDebug($"Slash command for {builder.Name} created");
+                        try
+                        {
+                            await _client.Rest.CreateGlobalCommand(builder.Build());
+                            _logger.LogDebug($"Slash command for {builder.Name} created");
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogWarning($"failed to register slash command {builder.Name}", ex);
+                        }
+                        
                     }
                 }
             }
