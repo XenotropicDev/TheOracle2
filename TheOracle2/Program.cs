@@ -13,6 +13,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using TheOracle2;
+using TheOracle2.UserContent;
 
 namespace TheOracle
 {
@@ -53,6 +54,24 @@ namespace TheOracle
 
                 client.InteractionCreated += Client_InteractionCreated;
                 client.InteractionCreated += commandHandler.Client_InteractionCreated;
+
+                var context = services.GetRequiredService<EFContext>();
+                //context.Database.EnsureDeleted();
+                context.Database.EnsureCreated();
+                
+                //var user = new User() { UserId = 1 };
+                //context.Users.Add(user);
+                //
+                //var gameItem = new GameItem() { GameItemId = 1, Name = "core" };
+                //context.GameData.Add(gameItem);
+                //
+                //await context.SaveChangesAsync();
+
+                var user = context.Users.FirstOrDefault();
+                var gi = context.GameData.First();
+                user.GameItems.Add(gi);
+                await context.SaveChangesAsync();
+                
 
                 await Task.Delay(Timeout.Infinite);
             }
@@ -144,6 +163,7 @@ namespace TheOracle
                 .AddSingleton(client)
                 .AddSingleton(config)
                 .AddSingleton(new SlashCommandHandler(client, null))
+                .AddDbContext<EFContext>()
                 .AddLogging(builder => builder.AddSimpleConsole(options =>
                 {
                     options.IncludeScopes = false;
