@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using OracleData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,12 +16,15 @@ namespace TheOracle2.UserContent
 
         }
 
-        public DbSet<User> Users { get; set; }
-        public DbSet<GameItem> GameData { get; set; }
+        public DbSet<OracleGuild> OracleGuilds { get; set; }
+        public DbSet<GameItem> GameItems { get; set; }
+        public DbSet<Asset> GameAssets { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
+            //modelBuilder.Entity<OracleGuild>().HasMany(o => o.GameItems).WithMany(gi => gi.SubscribedGuilds).UsingEntity(j => j.ToTable("GameItemOracleGuild"));
+
+            //modelBuilder.Entity<Asset>().Property(a => a.Fields).HasConversion(v => string.Join(',', v), v => v.Split(',', StringSplitOptions.RemoveEmptyEntries));
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

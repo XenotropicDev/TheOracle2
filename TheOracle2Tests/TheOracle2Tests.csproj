@@ -11,10 +11,23 @@
     <PackageReference Include="MSTest.TestAdapter" Version="2.2.3" />
     <PackageReference Include="MSTest.TestFramework" Version="2.2.3" />
     <PackageReference Include="coverlet.collector" Version="3.0.2" />
+    <PackageReference Include="NJsonSchema.CodeGeneration.CSharp" Version="10.5.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\TheOracle2\TheOracle2.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Data\assets.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\AssetsSchema.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\RulesSchema.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

@@ -18,7 +18,7 @@ namespace TheOracle2.UserContent.Tests
         {
             var services = TestServices.GetServices();
             var context = services.GetRequiredService<EFContext>();
-            var user = User.GetUser(1, context);
+            var user = OracleGuild.GetGuild(1, context);
 
             Assert.IsNotNull(user);
 

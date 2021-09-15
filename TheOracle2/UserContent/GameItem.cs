@@ -15,6 +15,6 @@ namespace TheOracle2.UserContent
 
         public int GameItemId { get; set; }
         public string Name { get; set; }
-        public ICollection<User> SubscribedUsers { get; set; } = new List<User>();
+        public ICollection<OracleGuild> OracleGuilds { get; set; } = new List<OracleGuild>();
     }
 }

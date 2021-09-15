@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using OracleData;
 using System;
 using System.IO;
 using System.Linq;
@@ -56,31 +57,51 @@ namespace TheOracle
                 client.InteractionCreated += commandHandler.Client_InteractionCreated;
 
                 var context = services.GetRequiredService<EFContext>();
-                //context.Database.EnsureDeleted();
-                context.Database.EnsureCreated();
-                
-                //var user = new User() { UserId = 1 };
-                //context.Users.Add(user);
-                //
-                //var gameItem = new GameItem() { GameItemId = 1, Name = "core" };
-                //context.GameData.Add(gameItem);
-                //
-                //await context.SaveChangesAsync();
 
-                var user = context.Users.FirstOrDefault();
-                var gi = context.GameData.First();
-                user.GameItems.Add(gi);
-                await context.SaveChangesAsync();
-                
+                await RecreateDB(context);
+                context.Database.EnsureCreated();
+
+                var gi = context.GameItems.First();
+                var user = OracleGuild.GetGuild(756890506830807071, context);
 
                 await Task.Delay(Timeout.Infinite);
             }
         }
 
+        private static async Task RecreateDB(EFContext context)
+        {
+            context.Database.EnsureDeleted();
+            context.Database.EnsureCreated();
+
+            var gameItem = new GameItem() { GameItemId = 1, Name = "core" };
+            context.GameItems.Add(gameItem);
+
+            OracleGuild contentReg = new OracleGuild() { OracleGuildId = 756890506830807071 };
+            contentReg.GameItems.Add(gameItem);
+            context.OracleGuilds.Add(contentReg);
+
+            var assetsJson = File.ReadAllText("GameData\\assets.json");
+            var assets = JsonConvert.DeserializeObject<AssetRoot>(assetsJson);
+            foreach (var asset in assets.Assets)
+            {
+                context.GameAssets.Add(asset);
+            }
+
+            await context.SaveChangesAsync();
+        }
+
         private async Task Client_Ready()
         {
-            var commandHandler = _services.GetRequiredService<SlashCommandHandler>();
-            await commandHandler.InstallCommandsAsync();
+            try
+            {
+                //var commandHandler = _services.GetRequiredService<SlashCommandHandler>();
+                //await commandHandler.InstallCommandsAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"{nameof(Client_Ready)} threw an error: {ex}");
+            }
+
         }
 
         private async Task Client_InteractionCreated(SocketInteraction interaction)
