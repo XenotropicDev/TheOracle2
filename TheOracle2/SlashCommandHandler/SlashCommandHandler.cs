@@ -79,6 +79,10 @@ namespace TheOracle2
 
         public async Task ExecuteAsync(SocketSlashCommand context, IServiceProvider services)
         {
+            if (!CommandList.ContainsKey(context.Data.Name))
+            {
+                await context.RespondAsync($"Unknown command {context.Data.Name}. Is it registered with the right name?", ephemeral:true);
+            }
             var methodInfo = CommandList[context.Data.Name];
             var caller = Activator.CreateInstance(methodInfo.DeclaringType);
             (caller as ISlashCommand).Context = context;
