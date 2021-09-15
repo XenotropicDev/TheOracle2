@@ -25,4 +25,13 @@
     <PackageReference Include="SQLitePCLRaw.core" Version="2.0.4" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Data\moves.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\oracles.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
