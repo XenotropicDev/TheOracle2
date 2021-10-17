@@ -26,7 +26,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="GameData\assets.json">
+    <None Update="Data\moves.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\oracles.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
