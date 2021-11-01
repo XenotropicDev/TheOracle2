@@ -29,7 +29,7 @@ namespace TheOracle2.Commands
             }
 
             var guild = OracleGuild.GetGuild(guildId, efContext);
-            var items = string.Join("\n", guild.GameItems.Select(gi => $"{gi.GameItemId} - {gi.Name}"));
+            var items = string.Join("\n", guild.Moves.Select(gi => $"{gi.Id} - {gi.Name}"));
 
             await Context.RespondAsync(items, ephemeral: true);
 

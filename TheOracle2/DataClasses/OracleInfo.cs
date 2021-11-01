@@ -1,11 +1,13 @@
 ﻿using Newtonsoft.Json;
-using System.Collections.Generic;
-using TheOracle2.DataClasses;
+using OracleData;
 
-namespace TheOracle2
+namespace TheOracle2.DataClasses
 {
     public class AddTemplate
     {
+        [Newtonsoft.Json.JsonIgnore]
+        public int Id { get; set; }
+
         public Attributes Attributes { get; set; }
 
         [JsonProperty(PropertyName = "Template type")]
@@ -14,19 +16,25 @@ namespace TheOracle2
 
     public partial class Attributes
     {
+        [Newtonsoft.Json.JsonIgnore]
+        public int Id { get; set; }
+
         [JsonProperty(PropertyName = "Derelict Type")]
         public string DerelictType { get; set; }
 
         [JsonConverter(typeof(SingleOrArrayConverter<string>))]
-        public List<string> Location { get; set; }
+        public IList<string> Location { get; set; }
     }
 
     public partial class ChanceTable
     {
+        [Newtonsoft.Json.JsonIgnore]
+        public int Id { get; set; }
+
         [JsonProperty(PropertyName = "Add template")]
         public AddTemplate Addtemplate { get; set; }
 
-        public string[] Assets { get; set; }
+        public IList<string> Assets { get; set; }
         public int Chance { get; set; }
         public string Description { get; set; }
         public string Details { get; set; }
@@ -45,6 +53,9 @@ namespace TheOracle2
 
     public partial class GameObject
     {
+        [Newtonsoft.Json.JsonIgnore]
+        public int Id { get; set; }
+
         public int Amount { get; set; }
         public Attributes Attributes { get; set; }
 
@@ -54,14 +65,20 @@ namespace TheOracle2
 
     public class Inherit
     {
+        [Newtonsoft.Json.JsonIgnore]
+        public int Id { get; set; }
+
         public string Category { get; set; }
-        public string[] Exclude { get; set; }
-        public string[] Name { get; set; }
+        public IList<string> Exclude { get; set; }
+        public IList<string> Name { get; set; }
         public Requires Requires { get; set; }
     }
 
     public class MultipleRolls
     {
+        [Newtonsoft.Json.JsonIgnore]
+        public int Id { get; set; }
+
         [JsonProperty(PropertyName = "Allow duplicates")]
         public bool Allowduplicates { get; set; }
 
@@ -70,7 +87,10 @@ namespace TheOracle2
 
     public partial class Oracle
     {
-        public string[] Aliases { get; set; }
+        [Newtonsoft.Json.JsonIgnore]
+        public int Id { get; set; }
+
+        public IList<string> Aliases { get; set; }
 
         [JsonProperty(PropertyName = "Allow duplicate rolls")]
         public bool Allowduplicaterolls { get; set; }
@@ -100,13 +120,20 @@ namespace TheOracle2
         [JsonProperty(PropertyName = "Select table by")]
         public string Selecttableby { get; set; }
 
-        public Semantics Semantics { get; set; }
         public string Subgroup { get; set; }
         public List<ChanceTable> Table { get; set; }
         public List<Tables> Tables { get; set; }
 
         [JsonProperty(PropertyName = "Use with")]
         public List<UseWith> Usewith { get; set; }
+
+        [JsonProperty(PropertyName = "Part of speech")]
+        public IList<string> PartOfSpeech { get; set; }
+
+        [JsonProperty(PropertyName = "Content tags")]
+        public IList<string> ContentTags { get; set; }
+
+        public string Group { get; set; }
     }
 
     public class OracleInfo
@@ -115,7 +142,10 @@ namespace TheOracle2
         {
         }
 
-        public string[] Aliases { get; set; }
+        [Newtonsoft.Json.JsonIgnore]
+        public int Id { get; set; }
+
+        public IList<string> Aliases { get; set; }
         public string Description { get; set; }
 
         [JsonProperty(PropertyName = "Display name")]
@@ -126,41 +156,52 @@ namespace TheOracle2
         public List<Oracle> Oracles { get; set; }
         public Source Source { get; set; }
         public List<Subcategory> Subcategories { get; set; }
-        public string[] Tags { get; set; }
+        public IList<string> Tags { get; set; }
     }
 
     public partial class Requires
     {
-        [JsonProperty(PropertyName = "Derelict Type")]
-        public string[] DerelictType { get; set; }
+        [Newtonsoft.Json.JsonIgnore]
+        public int Id { get; set; }
 
-        public string[] Environment { get; set; }
-        public string[] Life { get; set; }
-        public string[] Location { get; set; }
-        public string[] Region { get; set; }
-        public string[] Scale { get; set; }
+        [JsonProperty(PropertyName = "Derelict Type")]
+        public IList<string> DerelictType { get; set; }
+
+        public IList<string> Environment { get; set; }
+        public IList<string> Life { get; set; }
+        public IList<string> Location { get; set; }
+
+        [JsonProperty(PropertyName = "Planetary Class")]
+        public IList<string> PlanetaryClass { get; set; }
+
+        public IList<string> Region { get; set; }
+        public IList<string> Scale { get; set; }
 
         [JsonProperty(PropertyName = "Starship Type")]
-        public string[] StarshipType { get; set; }
+        public IList<string> StarshipType { get; set; }
+
+        [JsonProperty(PropertyName = "Theme Type")]
+        public IList<string> ThemeType { get; set; }
+
+        public IList<string> Type { get; set; }
+
+        public IList<string> Zone { get; set; }
     }
 
     public class Rootobject
     {
+        [Newtonsoft.Json.JsonIgnore]
+        public int Id { get; set; }
+
         public List<OracleInfo> OracleInfos { get; set; }
-    }
-
-    public class Semantics
-    {
-        public bool Capitalize { get; set; }
-        public object Content { get; set; }
-
-        [JsonProperty(PropertyName = "Part of speech")]
-        public string[] Partofspeech { get; set; }
     }
 
     public class Subcategory
     {
-        public string[] Aliases { get; set; }
+        [Newtonsoft.Json.JsonIgnore]
+        public int Id { get; set; }
+
+        public IList<string> Aliases { get; set; }
         public string Category { get; set; }
         public string Description { get; set; }
 
@@ -170,10 +211,10 @@ namespace TheOracle2
         public List<Inherit> Inherits { get; set; }
         public string Name { get; set; }
         public List<Oracle> Oracles { get; set; }
-        public object Requires { get; set; }
+        public Requires Requires { get; set; }
 
         [JsonProperty(PropertyName = "Sample Names")]
-        public string[] SampleNames { get; set; }
+        public IList<string> SampleNames { get; set; }
 
         public Source Source { get; set; }
         public string Thumbnail { get; set; }
@@ -181,6 +222,9 @@ namespace TheOracle2
 
     public class Suggest
     {
+        [Newtonsoft.Json.JsonIgnore]
+        public int Id { get; set; }
+
         [JsonProperty(PropertyName = "Game object")]
         public GameObject Gameobject { get; set; }
 
@@ -189,7 +233,10 @@ namespace TheOracle2
 
     public class Tables
     {
-        public string[] Aliases { get; set; }
+        [Newtonsoft.Json.JsonIgnore]
+        public int Id { get; set; }
+
+        public IList<string> Aliases { get; set; }
 
         [JsonProperty(PropertyName = "Display name")]
         public string Displayname { get; set; }
@@ -201,7 +248,11 @@ namespace TheOracle2
 
     public class UseWith
     {
+        [Newtonsoft.Json.JsonIgnore]
+        public int Id { get; set; }
+
         public string Category { get; set; }
         public string Name { get; set; }
+        public string Group { get; set; }
     }
 }

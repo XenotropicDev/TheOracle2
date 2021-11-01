@@ -1,12 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TheOracle2.UserContent;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TheOracle2Tests;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace TheOracle2.UserContent.Tests
 {
@@ -14,15 +8,13 @@ namespace TheOracle2.UserContent.Tests
     public class GameItemTests
     {
         [TestMethod()]
-        public void GameItemTest()
+        public void EFContextTest()
         {
             var services = TestServices.GetServices();
             var context = services.GetRequiredService<EFContext>();
             var user = OracleGuild.GetGuild(1, context);
 
             Assert.IsNotNull(user);
-
-
         }
     }
 }

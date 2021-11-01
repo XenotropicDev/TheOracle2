@@ -26,17 +26,9 @@ namespace TheOracle2
             _logger = logger;
         }
 
-        public async Task Client_InteractionCreated(SocketInteraction interaction)
+        public async Task SlashCommandEvent(SocketSlashCommand commandInteraction)
         {
-            switch (interaction)
-            {
-                case SocketSlashCommand commandInteraction:
-                    await ExecuteAsync(commandInteraction, _service);
-                    break;
-
-                default:
-                    break;
-            }
+            await ExecuteAsync(commandInteraction, _service);
         }
 
         public void LoadFromAssembly(Assembly assembly, IServiceProvider service = null)
@@ -109,6 +101,7 @@ namespace TheOracle2
             }
 
 
+            var guild = _client.GetGuild(756890506830807071);
             foreach (var type in CommandList.Select(kvp => kvp.Value.DeclaringType).Distinct())
             {
                 if (Activator.CreateInstance(type) is ISlashCommand command)
@@ -117,7 +110,8 @@ namespace TheOracle2
                     {
                         try
                         {
-                            await _client.Rest.CreateGlobalCommand(builder.Build());
+                            //Todo: remove the guild ID (used for rapid command deployment/updating)
+                            await guild.CreateApplicationCommandAsync(builder.Build());
                             _logger.LogDebug($"Slash command for {builder.Name} created");
                         }
                         catch (Exception ex)

@@ -1,16 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TheOracle2.UserContent;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TheOracle2Tests;
-using Microsoft.Extensions.DependencyInjection;
-using NJsonSchema.CodeGeneration.CSharp;
-using System.IO;
 using Newtonsoft.Json;
+using NJsonSchema.CodeGeneration.CSharp;
 using OracleData;
+using TheOracle2.DataClasses;
 
 namespace TheOracle2.UserContent.Tests
 {
@@ -18,34 +10,32 @@ namespace TheOracle2.UserContent.Tests
     public class DataLoading
     {
         [TestMethod()]
-        public async Task GameItemTest()
+        [DataRow(typeof(AssetRoot), "asset*.json")]
+        [DataRow(typeof(EncountersRoot), "encounter*.json")]
+        [DataRow(typeof(List<GlossaryRoot>), "glossary*.json")]
+        [DataRow(typeof(MovesInfo), "move*.json")]
+        [DataRow(typeof(List<OracleInfo>), "oracle*.json")]
+        [DataRow(typeof(TruthRoot), "*truth*.json")]
+        public void LoadAndGenerateTest(Type T, string searchOption)
         {
-            //Assert.Inconclusive();
-
             var baseDir = new DirectoryInfo(Directory.GetCurrentDirectory() + "\\Data");
-            foreach (var file in baseDir.GetFiles("*Schema.json"))
+            var files = baseDir.GetFiles(searchOption);
+
+            Assert.IsTrue(files.Length >= 1);
+
+            foreach (var file in files)
             {
                 string text = file.OpenText().ReadToEnd();
-                var schema = await NJsonSchema.JsonSchema.FromJsonAsync(text);
-                var gen = new CSharpGenerator(schema);
-                var csfile = gen.GenerateFile();
 
-                File.WriteAllText(file.Directory + file.Name + ".cs", csfile);
+                var jsonSettings = new JsonSerializerSettings { MissingMemberHandling = MissingMemberHandling.Error };
+
+                var root = JsonConvert.DeserializeObject(text, T, jsonSettings);
+
+                Assert.IsNotNull(root);
             }
-        }
 
-        [TestMethod()]
-        public void LoadAssetsTest()
-        {
-            var baseDir = new DirectoryInfo(Directory.GetCurrentDirectory() + "\\Data");
-            var file = baseDir.GetFiles("asset*.json").FirstOrDefault();
-            string text = file.OpenText().ReadToEnd();
-
-            var jsonSeetings = new JsonSerializerSettings { MissingMemberHandling = MissingMemberHandling.Error };
-
-            var assetRoot = JsonConvert.DeserializeObject<AssetRoot>(text, jsonSeetings);
-
-            Console.WriteLine(assetRoot.Assets.Count); 
+            var schema = NJsonSchema.JsonSchema.FromType(T);
+            File.WriteAllText(nameof(T) + ".schema.json", schema.ToJson());
         }
     }
 }
