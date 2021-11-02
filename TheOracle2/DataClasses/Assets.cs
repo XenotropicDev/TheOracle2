@@ -4,6 +4,7 @@
 // </auto-generated>
 //----------------------
 
+using Discord;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;

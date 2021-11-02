@@ -32,6 +32,21 @@ namespace TheOracle2.UserContent.Tests
                 var root = JsonConvert.DeserializeObject(text, T, jsonSettings);
 
                 Assert.IsNotNull(root);
+
+                switch (root)
+                {
+                    case AssetRoot a:
+                        Console.WriteLine($"there are {a.Assets.Count} assets in {file.Name}");
+                        break;
+                    case MovesInfo m:
+                        Console.WriteLine($"there are {m.Moves.Count} moves in {file.Name}");
+                        break;
+                    case List<OracleInfo> o:
+                        Console.WriteLine($"there are {o.Sum(i => i.Oracles.Count)} in {file.Name}");
+                        break;
+                    default:
+                        break;
+                }
             }
 
             var schema = NJsonSchema.JsonSchema.FromType(T);

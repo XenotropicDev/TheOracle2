@@ -6,12 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using OracleData;
-using System;
-using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
 using TheOracle2;
 using TheOracle2.UserContent;
 
@@ -31,6 +26,12 @@ namespace TheOracle
             using (ServiceProvider services = ConfigureServices())
             {
                 _services = services;
+
+                var context = services.GetRequiredService<EFContext>();
+
+                await RecreateDB(context);
+                context.Database.EnsureCreated();
+
                 Console.WriteLine($"Starting TheOracle v{Assembly.GetEntryAssembly().GetName().Version}");
                 client = services.GetRequiredService<DiscordSocketClient>();
 
@@ -54,11 +55,6 @@ namespace TheOracle
 
                 client.SlashCommandExecuted += commandHandler.SlashCommandEvent;
 
-                var context = services.GetRequiredService<EFContext>();
-
-                await RecreateDB(context);
-                context.Database.EnsureCreated();
-
                 var user = OracleGuild.GetGuild(756890506830807071, context);
 
                 await Task.Delay(Timeout.Infinite);
@@ -70,7 +66,16 @@ namespace TheOracle
             await client.BulkOverwriteGlobalApplicationCommandsAsync(Array.Empty<ApplicationCommandProperties>());
 
             var handler = _services.GetRequiredService<SlashCommandHandler>();
-            await handler.InstallCommandsAsync();
+
+            try
+            {
+                //await handler.InstallCommandsAsync(_services, false);
+
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.Message, ex);
+            }
         }
 
         private static async Task RecreateDB(EFContext context)
@@ -79,6 +84,18 @@ namespace TheOracle
             context.Database.EnsureCreated();
 
             OracleGuild contentReg = new OracleGuild() { OracleGuildId = 756890506830807071 };
+
+            var baseDir = new DirectoryInfo(Directory.GetCurrentDirectory() + "\\Data");
+            var file = baseDir.GetFiles("assets.json").FirstOrDefault();
+            
+            string text = file.OpenText().ReadToEnd();
+            var root = JsonConvert.DeserializeObject<AssetRoot>(text);
+
+            foreach (var asset in root.Assets)
+            {
+                asset.OracleGuilds.Add(contentReg);
+                context.Assets.Add(asset);
+            }
 
             await context.SaveChangesAsync();
         }

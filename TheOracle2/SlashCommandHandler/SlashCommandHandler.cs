@@ -10,6 +10,9 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
+using Discord;
+using Discord.Net;
+using Newtonsoft.Json;
 
 namespace TheOracle2
 {
@@ -76,7 +79,7 @@ namespace TheOracle2
                 await context.RespondAsync($"Unknown command {context.Data.Name}. Is it registered with the right name?", ephemeral:true);
             }
             var methodInfo = CommandList[context.Data.Name];
-            var caller = Activator.CreateInstance(methodInfo.DeclaringType);
+            var caller = ActivatorUtilities.CreateInstance(services, methodInfo.DeclaringType);
             (caller as ISlashCommand).Context = context;
 
             List<object> args = new List<object>();
@@ -92,7 +95,7 @@ namespace TheOracle2
             await (methodInfo.Invoke(caller, args?.ToArray()) as Task);
         }
 
-        public async Task InstallCommandsAsync(bool DeleteExisting = true)
+        public async Task InstallCommandsAsync(IServiceProvider services, bool DeleteExisting = true)
         {
             if (DeleteExisting)
             {
@@ -100,19 +103,22 @@ namespace TheOracle2
                 _logger.LogInformation("Existing commands deleted");
             }
 
-
             var guild = _client.GetGuild(756890506830807071);
-            foreach (var type in CommandList.Select(kvp => kvp.Value.DeclaringType).Distinct())
+
+            var applicationCommands = new List<SlashCommandProperties>();
+
+            foreach (var commandItem in CommandList)
             {
-                if (Activator.CreateInstance(type) is ISlashCommand command)
+                var instance = ActivatorUtilities.CreateInstance(services, commandItem.Value.DeclaringType);
+                if (instance is ISlashCommand command)
                 {
                     foreach (var builder in command.GetCommandBuilders())
                     {
                         try
                         {
                             //Todo: remove the guild ID (used for rapid command deployment/updating)
-                            await guild.CreateApplicationCommandAsync(builder.Build());
-                            _logger.LogDebug($"Slash command for {builder.Name} created");
+                            applicationCommands.Add(builder.Build());
+                            _logger.LogInformation($"Slash command for {builder.Name} created");
                         }
                         catch (Exception ex)
                         {
@@ -122,8 +128,21 @@ namespace TheOracle2
                     }
                 }
             }
+            try
+            {
+                await _client.Rest.BulkOverwriteGuildCommands(applicationCommands.ToArray(), guild.Id);
+                _logger.LogInformation("Commands have been recreated");
+            }
+            catch (ApplicationCommandException exception)
+            {
+                var json = JsonConvert.SerializeObject(exception.Error, Formatting.Indented);
+                Console.WriteLine(json);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+            }
 
-            _logger.LogInformation("Commands have been recreated");
         }
 
     }

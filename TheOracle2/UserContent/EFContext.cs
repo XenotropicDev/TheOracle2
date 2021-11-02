@@ -18,6 +18,7 @@ namespace TheOracle2.UserContent
         public DbSet<Asset> Assets { get; set; }
         public DbSet<Move> Moves { get; set; }
         public DbSet<OracleInfo> Oracles { get; set; }
+        public DbSet<Ability> AssetAbilities { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
