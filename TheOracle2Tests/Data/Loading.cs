@@ -2,6 +2,10 @@
 using Newtonsoft.Json;
 using NJsonSchema.CodeGeneration.CSharp;
 using OracleData;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using TheOracle2.DataClasses;
 
 namespace TheOracle2.UserContent.Tests

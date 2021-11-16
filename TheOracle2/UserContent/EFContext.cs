@@ -17,7 +17,9 @@ namespace TheOracle2.UserContent
         public DbSet<OracleGuild> OracleGuilds { get; set; }
         public DbSet<Asset> Assets { get; set; }
         public DbSet<Move> Moves { get; set; }
-        public DbSet<OracleInfo> Oracles { get; set; }
+        public DbSet<OracleInfo> OracleInfo { get; set; }
+        public DbSet<Oracle> Oracles { get; set; }
+        public DbSet<Tables> ChanceTables { get; set; }
         public DbSet<Ability> AssetAbilities { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

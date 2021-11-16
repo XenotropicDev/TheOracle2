@@ -1,4 +1,9 @@
-﻿using Discord;
+﻿global using System;
+global using System.Threading.Tasks;
+global using System.Linq;
+global using System.Collections.Generic;
+global using Discord;
+
 using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
@@ -6,7 +11,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using OracleData;
+using System.IO;
 using System.Reflection;
+using System.Threading;
 using TheOracle2;
 using TheOracle2.UserContent;
 

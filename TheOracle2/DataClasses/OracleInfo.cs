@@ -93,13 +93,13 @@ namespace TheOracle2.DataClasses
         public IList<string> Aliases { get; set; }
 
         [JsonProperty(PropertyName = "Allow duplicate rolls")]
-        public bool Allowduplicaterolls { get; set; }
+        public bool AllowDuplicateRolls { get; set; }
 
         public string Category { get; set; }
         public string Description { get; set; }
 
         [JsonProperty(PropertyName = "Display name")]
-        public string Displayname { get; set; }
+        public string DisplayName { get; set; }
 
         public bool Initial { get; set; }
 
@@ -112,20 +112,20 @@ namespace TheOracle2.DataClasses
         public string Name { get; set; }
 
         [JsonProperty(PropertyName = "Oracle type")]
-        public string Oracletype { get; set; }
+        public string OracleType { get; set; }
 
         public bool Repeatable { get; set; }
         public Requires Requires { get; set; }
 
         [JsonProperty(PropertyName = "Select table by")]
-        public string Selecttableby { get; set; }
+        public string SelectTableBy { get; set; }
 
         public string Subgroup { get; set; }
         public List<ChanceTable> Table { get; set; }
         public List<Tables> Tables { get; set; }
 
         [JsonProperty(PropertyName = "Use with")]
-        public List<UseWith> Usewith { get; set; }
+        public List<UseWith> UseWith { get; set; }
 
         [JsonProperty(PropertyName = "Part of speech")]
         public IList<string> PartOfSpeech { get; set; }
@@ -149,7 +149,7 @@ namespace TheOracle2.DataClasses
         public string Description { get; set; }
 
         [JsonProperty(PropertyName = "Display name")]
-        public string Displayname { get; set; }
+        public string DisplayName { get; set; }
 
         public List<Inherit> Inherits { get; set; }
         public string Name { get; set; }
