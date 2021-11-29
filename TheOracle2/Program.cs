@@ -58,9 +58,13 @@ namespace TheOracle
                 var commandHandler = services.GetRequiredService<SlashCommandHandler>();
                 commandHandler.LoadFromAssembly(Assembly.GetEntryAssembly(), services);
 
+                var buttonHandler = new ButtonHandler(null, services);
+                buttonHandler.LoadFromAssembly(Assembly.GetEntryAssembly(), services);
+
                 await client.SetGameAsync($"!Help | v{Assembly.GetEntryAssembly().GetName().Version}", "", ActivityType.Playing).ConfigureAwait(false);
 
                 client.SlashCommandExecuted += commandHandler.SlashCommandEvent;
+                client.ButtonExecuted += buttonHandler.Handler;
 
                 var user = OracleGuild.GetGuild(756890506830807071, context);
 

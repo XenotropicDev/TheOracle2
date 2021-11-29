@@ -21,7 +21,7 @@ namespace TheOracle2
             return new List<SlashCommandBuilder>() { pingCommand };
         }
 
-        [SlashCommand("ping")]
+        [OracleSlashCommand("ping")]
         public async Task Ping()
         {
             await Context.RespondAsync($"Pong!", ephemeral: true).ConfigureAwait(false);

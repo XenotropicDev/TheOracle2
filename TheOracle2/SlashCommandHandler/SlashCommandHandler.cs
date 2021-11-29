@@ -40,7 +40,7 @@ namespace TheOracle2
             _logger = _service.GetRequiredService<ILoggerFactory>().CreateLogger<SlashCommandHandler>();
             foreach (var type in assembly.GetTypes())
             {
-                foreach (var method in type.GetMethods().Where(m => m.GetCustomAttribute<SlashCommandAttribute>() != null))
+                foreach (var method in type.GetMethods().Where(m => m.GetCustomAttribute<OracleSlashCommandAttribute>() != null))
                 {
                     if (type.IsNotPublic) 
                     {
@@ -64,7 +64,7 @@ namespace TheOracle2
                         continue; 
                     }
 
-                    var commandInfo = method.GetCustomAttribute<SlashCommandAttribute>();
+                    var commandInfo = method.GetCustomAttribute<OracleSlashCommandAttribute>();
                     CommandList.Add(commandInfo.Name, method);
                 }
             }
@@ -77,6 +77,7 @@ namespace TheOracle2
             if (!CommandList.ContainsKey(context.Data.Name))
             {
                 await context.RespondAsync($"Unknown command {context.Data.Name}. Is it registered with the right name?", ephemeral:true);
+                return;
             }
             var methodInfo = CommandList[context.Data.Name];
             var caller = ActivatorUtilities.CreateInstance(services, methodInfo.DeclaringType);
@@ -90,7 +91,7 @@ namespace TheOracle2
                 if (service != null) args.Add(service);
             }
             
-            if (!args.Any()) args = null;
+            if (args?.Count == 0) args = null;
 
             await (methodInfo.Invoke(caller, args?.ToArray()) as Task);
         }

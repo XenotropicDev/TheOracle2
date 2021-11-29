@@ -9,9 +9,9 @@ using TheOracle2.UserContent;
 
 namespace TheOracle2
 {
-    public class AssetCommand : ISlashCommand
+    public class ReferenceCommand : ISlashCommand
     {
-        public AssetCommand(UserContent.EFContext dbContext)
+        public ReferenceCommand(UserContent.EFContext dbContext)
         {
             DbContext = dbContext;
         }
@@ -19,70 +19,63 @@ namespace TheOracle2
         public SocketSlashCommand Context { get; set; }
         public EFContext DbContext { get; }
 
-        [OracleSlashCommand("asset")]
-        public async Task BuildAsset()
+        [OracleSlashCommand("reference")]
+        public async Task GetReferenceMessage()
         {
-            //await Context.DeferAsync().ConfigureAwait(false);
             int Id = Convert.ToInt32(Context.Data.Options.FirstOrDefault().Options.FirstOrDefault().Value);
 
-            var asset = DbContext.Assets.Find(Id);
-            
-            var compBuilder = new ComponentBuilder()
-                .WithButton("Asset Button", "custom-id");
+            var move = DbContext.Moves.Find(Id);
 
             EmbedBuilder builder = new EmbedBuilder();
-            builder.WithAuthor($"Asset: {asset.Category}");
-            builder.WithTitle(asset.Name);
+            builder.WithAuthor(move.Category);
+            builder.WithTitle(move.Name);
+            builder.Description = move.Text;
 
-            int abilityNumber = 0;
-            foreach (var abl in asset.Abilities ?? new List<Ability>())
-            {
-                abilityNumber++;
-                string abilityText = abl.Text;
-                string label = $"{abilityNumber}. {(abl.Enabled ? "X" : "O")}";
+            await Context.RespondAsync(embed: builder.Build()).ConfigureAwait(false);
 
-                builder.AddField(label, abilityText);
-            }
+            await Task.Delay(TimeSpan.FromMinutes(15));
 
-            await Context.RespondAsync(embed: builder.Build(), component: compBuilder.Build());
+            var msg = await Context.GetOriginalResponseAsync();
+            await msg.DeleteAsync().ConfigureAwait(false);
         }
 
+        //Todo: Add emphermal option
         public IList<SlashCommandBuilder> GetCommandBuilders()
         {
             var command = new SlashCommandBuilder()
-                .WithName("asset")
-                .WithDescription("Generates an asset");
+                .WithName("reference")
+                .WithDescription("Posts the game text for a move");
 
-            foreach (var category in DbContext.Assets.Select(a => a.Category).Distinct())
+            foreach (var category in DbContext.Moves.Select(a => a.Category).Distinct())
             {
-                var chunkedList = DbContext.Assets.ToList()
+                var chunkedList = DbContext.Moves.ToList()
                     .Where(a => a.Category == category && a.Id != 0)
                     .OrderBy(a => a.Name)
                     .Chunk(SlashCommandOptionBuilder.MaxChoiceCount);
 
-                foreach (var assetGroup in chunkedList)
+                foreach (var moveGroup in chunkedList)
                 {
                     string name = category.Replace(" ", "-");
                     if (chunkedList.Count() > 1)
                     {
-                        name += $"-{assetGroup.First().Name.Substring(0, 1)}-{assetGroup.Last().Name.Substring(0, 1)}";
+                        name += $"-{moveGroup.First().Name.Substring(0, 1)}-{moveGroup.Last().Name.Substring(0, 1)}";
                     }
 
                     var option = new SlashCommandOptionBuilder()
                         .WithName(name.ToLower())
-                        .WithDescription($"{category} assets")
+                        .WithDescription($"{category} moves")
                         .WithType(ApplicationCommandOptionType.SubCommand)
                         ;
 
                     var subChoicesOption = new SlashCommandOptionBuilder()
-                        .WithName("asset-name")
-                        .WithDescription("The name of the asset to be generated")
+                        .WithName("move-name")
+                        .WithDescription("The name of the move to be posted")
                         .WithRequired(true)
                         .WithType(ApplicationCommandOptionType.Integer);
 
-                    foreach (var asset in assetGroup)
+                    foreach (var move in moveGroup)
                     {
-                        subChoicesOption.AddChoice(asset.Name, asset.Id);
+                        subChoicesOption.AddChoice(move.Name, move.Id);
                     }
                     option.AddOption(subChoicesOption);
 

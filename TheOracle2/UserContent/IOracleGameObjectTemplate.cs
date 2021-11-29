@@ -1,16 +1,11 @@
-﻿using Discord.WebSocket;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Discord;
+using Discord.WebSocket;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace TheOracle2.UserContent
 {
     public interface IOracleGameObjectTemplate
     {
-
     }
 
     /* Things to solve/support:
@@ -20,17 +15,22 @@ namespace TheOracle2.UserContent
      * drop down lists?
      * Fields with oracle names
      */
-    public class NPCTemplate : IOracleGameObjectTemplate
+
+    public class OracleGameObjectTemplate
     {
         public string Title { get; set; }
         public string Author { get; set; }
         public List<FieldInfo> Fields { get; set; } = new();
-        public Dictionary<string, string> Buttons { get; set; } = new Dictionary<string,string>();
+        public List<IGameButton> Buttons { get; set; }
 
         public async Task CreateMessage(SocketSlashCommand context)
         {
-            var compBuilder = new ComponentBuilder()
-                .WithButton("Asset Button", "custom-id");
+            var compBuilder = new ComponentBuilder();
+
+            foreach (var button in Buttons)
+            {
+                compBuilder.WithButton(button.AsButtonBuilder());
+            }
 
             EmbedBuilder builder = new EmbedBuilder();
             if (Author != null) builder.WithAuthor(Author);
@@ -55,14 +55,53 @@ namespace TheOracle2.UserContent
         private string ParseText(string input)
         {
             var ids = embededIdRegex.Matches(input)
-                .Select(m => { 
-                    int.TryParse(m.Groups[1].Value, out int temp); 
-                    return temp; 
+                .Select(m =>
+                {
+                    int.TryParse(m.Groups[1].Value, out int temp);
+                    return temp;
                 })
                 .Where(i => i != 0);
 
             return "Todo";
         }
+    }
+
+    public interface IGameButton
+    {
+        public ButtonBuilder AsButtonBuilder();
+    }
+
+    public class OracleButton : ButtonBuilder, IGameButton
+    {
+        public new IEmote Emote { get; set; }
+
+        public new ButtonStyle Style { get; set; }
+
+        public new string CustomId { get; set; }
+
+        public new string Label { get; set; }
+
+        public new string Url { get; set; }
+
+        public new bool IsDisabled { get; set; }
+
+        public ButtonBuilder AsButtonBuilder() => this;
+    }
+
+    public class TrackButton : ButtonBuilder, IGameButton
+    {
+        public new IEmote Emote { get; set; }
+
+        public new ButtonStyle Style { get; set; }
+
+        public new string CustomId { get; set; }
+
+        public new string Label { get; set; }
+
+        public new string Url { get; set; }
+
+        public new bool IsDisabled { get; set; }
+        public ButtonBuilder AsButtonBuilder() => this;
 
     }
 }

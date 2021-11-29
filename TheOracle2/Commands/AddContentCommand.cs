@@ -13,7 +13,7 @@ namespace TheOracle2.Commands
     {
         public SocketSlashCommand Context { get; set; }
 
-        [SlashCommand("add-content")]
+        [OracleSlashCommand("add-content")]
         public async Task Register(EFContext efContext)
         {
             int id = Convert.ToInt32(Context.Data.Options.FirstOrDefault().Value);

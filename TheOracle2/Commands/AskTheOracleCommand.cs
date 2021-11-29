@@ -12,7 +12,7 @@ namespace TheOracle2
     {
         public SocketSlashCommand Context { get; set; }
 
-        [SlashCommand("ask")]
+        [OracleSlashCommand("ask")]
         public async Task Ask(UserContent.EFContext test)
         {
             int chance = Convert.ToInt32(Context.Data.Options.FirstOrDefault().Options.FirstOrDefault().Value);
