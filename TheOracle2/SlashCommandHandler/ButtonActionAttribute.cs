@@ -1,13 +1,11 @@
-﻿
-namespace TheOracle2
-{
-    internal class ButtonActionAttribute : Attribute
-    {
-        public string ButtonId { get; set; }
+﻿namespace TheOracle2;
 
-        public ButtonActionAttribute(string buttonId)
-        {
-            this.ButtonId = buttonId;
-        }
+internal class ButtonActionAttribute : Attribute
+{
+    public string ButtonId { get; set; }
+
+    public ButtonActionAttribute(string buttonId)
+    {
+        this.ButtonId = buttonId;
     }
 }

@@ -1,17 +1,10 @@
-﻿using Discord;
-using Discord.WebSocket;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Discord.WebSocket;
 
-namespace TheOracle2
+namespace TheOracle2;
+
+interface ISlashCommand
 {
-    interface ISlashCommand
-    {
-        public SocketSlashCommand Context { get; set; }
+    public SocketSlashCommand Context { get; set; }
 
-        IList<SlashCommandBuilder> GetCommandBuilders();
-    }
+    IList<SlashCommandBuilder> GetCommandBuilders();
 }

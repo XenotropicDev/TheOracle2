@@ -1,10 +1,10 @@
 ﻿using Discord.WebSocket;
 
-namespace TheOracle2
+namespace TheOracle2;
+
+internal interface IButtonAction
 {
-    internal interface IButtonAction
-    {
-        bool CanHandleButton(string buttonId);
-        Task HandleButton(SocketMessageComponent component);
-    }
+    bool CanHandleButton(string buttonId);
+
+    Task HandleButton(SocketMessageComponent component);
 }

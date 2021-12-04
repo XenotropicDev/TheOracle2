@@ -1,16 +1,13 @@
-﻿using System;
+﻿namespace TheOracle2;
 
-namespace TheOracle2
+public class OracleSlashCommandAttribute : Attribute
 {
-    public class OracleSlashCommandAttribute : Attribute
+    private string name;
+
+    public string Name { get => name; private set => name = value.ToLower(); }
+
+    public OracleSlashCommandAttribute(string name)
     {
-        private string name;
-
-        public string Name { get => name; private set => name = value.ToLower(); }
-
-        public OracleSlashCommandAttribute(string name)
-        {
-            Name = name;
-        }
+        Name = name;
     }
 }

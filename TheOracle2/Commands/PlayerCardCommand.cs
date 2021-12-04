@@ -1,162 +1,235 @@
 ﻿using Discord.Interactions;
+using Discord.Net;
 using Discord.WebSocket;
-using System.ComponentModel;
+using Newtonsoft.Json;
+using TheOracle2.DiscordHelpers;
 using TheOracle2.UserContent;
 
-namespace TheOracle2
+namespace TheOracle2;
+
+public class PlayerCardCommand : InteractionModuleBase
 {
-    public class PlayerCardCommand : InteractionModuleBase
+    public PlayerCardCommand(UserContent.EFContext dbContext)
     {
-        public PlayerCardCommand(UserContent.EFContext dbContext)
-        {
-            DbContext = dbContext;
-        }
+        DbContext = dbContext;
+    }
 
-        //public enum StatValue
-        //{
-        //    [Description("1")]
-        //    One = 1,
-        //    [Description("2")]
-        //    Two = 2,
-        //    [Description("3")]
-        //    Three = 3,
-        //    [Description("4")]
-        //    Four = 4,
-        //    [Description("5")]
-        //    Five = 5,
-        //}
+    public EFContext DbContext { get; }
 
-        public EFContext DbContext { get; }
-
-        [SlashCommand("player", "Generates a post to keep track of a player character's stats")]
-        public async Task BuildAsset(string name, [MaxValue(4)][MinValue(1)] int edge, [MaxValue(4)][MinValue(1)] int heart, [MaxValue(4)][MinValue(1)] int iron, [MaxValue(4)][MinValue(1)] int shadow, [MaxValue(4)][MinValue(1)] int wits)
+    [SlashCommand("player", "Generates a post to keep track of a player character's stats")]
+    public async Task BuildAsset(string name, [MaxValue(4)][MinValue(1)] int edge, [MaxValue(4)][MinValue(1)] int heart, [MaxValue(4)][MinValue(1)] int iron, [MaxValue(4)][MinValue(1)] int shadow, [MaxValue(4)][MinValue(1)] int wits)
+    {
+        try
         {
             var compBuilder = new ComponentBuilder()
-                .WithButton("+ Momentum", "add-momenutum", row: 0, style: ButtonStyle.Success)
-                .WithButton("- Momentum", "lose-momenutum", row: 0, style: ButtonStyle.Secondary)
-                .WithButton("+ Supply", "add-supply", row: 0, style: ButtonStyle.Success)
-                .WithButton("- Supply", "lose-supply", row: 0, style: ButtonStyle.Secondary)
-                .WithButton("Burn", "burn-momentum", row: 0, style: ButtonStyle.Danger)
-                .WithButton("+ Health", "add-health", row: 1, style: ButtonStyle.Success)
-                .WithButton("- Health", "lose-health", row: 1, style: ButtonStyle.Secondary)
-                .WithButton("+ Spirit", "add-spirit", row: 1, style: ButtonStyle.Success)
-                .WithButton("- Spirit", "lose-spirit", row: 1, style: ButtonStyle.Secondary)
-                ;
+            //.WithButton("+ Momentum", "add-momentum", row: 0, style: ButtonStyle.Success)
+            //.WithButton("- Momentum", "lose-momentum", row: 0, style: ButtonStyle.Secondary)
+            //.WithButton("+ Supply", "add-supply", row: 0, style: ButtonStyle.Success)
+            //.WithButton("- Supply", "lose-supply", row: 0, style: ButtonStyle.Secondary)
+            //.WithButton("Burn", "burn-momentum", row: 0, style: ButtonStyle.Danger)
+            //.WithButton("+ Health", "add-health", row: 1, style: ButtonStyle.Success)
+            //.WithButton("- Health", "lose-health", row: 1, style: ButtonStyle.Secondary)
+            //.WithButton("+ Spirit", "add-spirit", row: 1, style: ButtonStyle.Success)
+            //.WithButton("- Spirit", "lose-spirit", row: 1, style: ButtonStyle.Secondary)
+            .WithButton("+H", "add-health", row: 0, style: ButtonStyle.Success)
+            .WithButton("-H", "lose-health", row: 1, style: ButtonStyle.Secondary)
+            .WithButton("+Sp", "add-spirit", row: 0, style: ButtonStyle.Success)
+            .WithButton("-Sp", "lose-spirit", row: 1, style: ButtonStyle.Secondary)
+            .WithButton("+Su", "add-supply", row: 0, style: ButtonStyle.Success)
+            .WithButton("-Su", "lose-supply", row: 1, style: ButtonStyle.Secondary)
+            .WithButton("+M", "add-momentum", row: 0, style: ButtonStyle.Success)
+            .WithButton("-M", "lose-momentum", row: 1, style: ButtonStyle.Secondary)
+            .WithButton("Burn", "burn-momentum", row: 0, style: ButtonStyle.Danger)
+            .WithButton("...", "player-more", row: 0, style: ButtonStyle.Primary)
+            ;
 
             EmbedBuilder builder = new EmbedBuilder();
             builder.WithAuthor($"Player Card");
             builder.WithTitle(name);
             builder.AddField("Stats", $"Edge: {edge}, Heart: {heart}, Iron: {iron}, Shadow: {shadow}, Wits: {wits}");
-            builder.AddField("Health", 5);
-            builder.AddField("Spirit", 5);
-            builder.AddField("Supply", 5);
-            builder.AddField("Momentum", 2);
+            builder.AddField("Health", 5, true);
+            builder.AddField("Spirit", 5, true);
+            builder.AddField("Supply", 5, true);
+            builder.AddField("Momentum", 2, true);
             builder.AddField("XP", 0);
 
             await RespondAsync(embed: builder.Build(), component: compBuilder.Build());
         }
-
-        public IList<SlashCommandBuilder> GetCommandBuilders()
+        catch (Exception ex)
         {
-            var command = new SlashCommandBuilder()
-                .WithName("player")
-                .WithDescription("Generates a post to keep track of a player character's stats")
-
-            .AddOption(new SlashCommandOptionBuilder()
-                        .WithName("name")
-                        .WithDescription("Sets the player's name")
-                        .WithRequired(true)
-                        .WithType(ApplicationCommandOptionType.String))
-            .AddOption(new SlashCommandOptionBuilder()
-                        .WithName("edge")
-                        .WithDescription("Sets the player's Edge")
-                        .WithRequired(true)
-                        .WithType(ApplicationCommandOptionType.Integer))
-            .AddOption(new SlashCommandOptionBuilder()
-                        .WithName("heart")
-                        .WithDescription("Sets the player's Heart")
-                        .WithRequired(true)
-                        .WithType(ApplicationCommandOptionType.Integer))
-            .AddOption(new SlashCommandOptionBuilder()
-                        .WithName("iron")
-                        .WithDescription("Sets the player's Iron")
-                        .WithRequired(true)
-                        .WithType(ApplicationCommandOptionType.Integer))
-            .AddOption(new SlashCommandOptionBuilder()
-                        .WithName("shadow")
-                        .WithDescription("Sets the player's Shadow")
-                        .WithRequired(true)
-                        .WithType(ApplicationCommandOptionType.Integer))
-            .AddOption(new SlashCommandOptionBuilder()
-                        .WithName("wits")
-                        .WithDescription("Sets the player's Wits")
-                        .WithRequired(true)
-                        .WithType(ApplicationCommandOptionType.Integer))
-            ;
-            return new List<SlashCommandBuilder>() { command };
+            throw;
         }
+    }
 
-        [ButtonAction("add-momentum")]
-        public async Task AddMomentum(SocketMessageComponent component)
-        {
-            await component.ModifyOriginalResponseAsync(msg => {
-                var embed = msg.Embeds.Value.FirstOrDefault();
-                var momentum = embed.Fields.FirstOrDefault(f => f.Name == "Momentum");
-                if (int.TryParse(momentum.Value, out var value))
-                {
-                    value++;
-                    if (value > 10) value = 10;
-                    momentum = new EmbedFieldBuilder().WithName(momentum.Name).WithValue(value).WithIsInline(momentum.Inline).Build();
-                }
-            });
-        }
+    [ComponentInteraction("add-momentum")]
+    public async Task AddMomentum()
+    {
+        var interaction = Context.Interaction as SocketMessageComponent;
 
-        [ButtonAction("lose-momentum")]
-        public async Task LoseMomentum(SocketMessageComponent component)
+        await interaction.UpdateAsync(msg =>
         {
-            await component.ModifyOriginalResponseAsync(msg => {
-                var embed = msg.Embeds.Value.FirstOrDefault();
-                var momentum = embed.Fields.FirstOrDefault(f => f.Name == "Momentum");
-                if (int.TryParse(momentum.Value, out var value))
-                {
-                    value--;
-                    if (value < -6) value = -6;
-                    momentum = new EmbedFieldBuilder().WithName(momentum.Name).WithValue(value).WithIsInline(momentum.Inline).Build();
-                }
-            });
-        }
+            msg.Embeds = UpdateField(interaction, "Momentum", 1, -6, 12);
+        }).ConfigureAwait(false);
+    }
 
-        public async Task HandleButton(SocketMessageComponent component)
+    [ComponentInteraction("lose-momentum")]
+    public async Task LoseMomentum()
+    {
+        var interaction = Context.Interaction as SocketMessageComponent;
+
+        await interaction.UpdateAsync(msg =>
         {
-            // We can now check for our custom id
-            switch (component.Data.CustomId)
+            msg.Embeds = UpdateField(interaction, "Momentum", -1, -6, 12);
+        }).ConfigureAwait(false);
+    }
+
+    [ComponentInteraction("lose-supply")]
+    public async Task loseSupply()
+    {
+        var interaction = Context.Interaction as SocketMessageComponent;
+
+        await interaction.UpdateAsync(msg =>
+        {
+            msg.Embeds = UpdateField(interaction, "Supply", -1);
+        }).ConfigureAwait(false);
+    }
+
+    [ComponentInteraction("add-supply")]
+    public async Task addSupply()
+    {
+        var interaction = Context.Interaction as SocketMessageComponent;
+
+        await interaction.UpdateAsync(msg =>
+        {
+            msg.Embeds = UpdateField(interaction, "Supply", 1);
+        }).ConfigureAwait(false);
+    }
+
+    [ComponentInteraction("lose-health")]
+    public async Task loseHealth()
+    {
+        var interaction = Context.Interaction as SocketMessageComponent;
+
+        await interaction.UpdateAsync(msg =>
+        {
+            msg.Embeds = UpdateField(interaction, "Health", -1);
+        }).ConfigureAwait(false);
+    }
+
+    [ComponentInteraction("add-health")]
+    public async Task addHealth()
+    {
+        var interaction = Context.Interaction as SocketMessageComponent;
+
+        await interaction.UpdateAsync(msg =>
+        {
+            msg.Embeds = UpdateField(interaction, "Health", 1);
+        }).ConfigureAwait(false);
+    }
+
+    [ComponentInteraction("lose-spirit")]
+    public async Task loseSpirit()
+    {
+        var interaction = Context.Interaction as SocketMessageComponent;
+
+        await interaction.UpdateAsync(msg =>
+        {
+            msg.Embeds = UpdateField(interaction, "Spirit", -1);
+        }).ConfigureAwait(false);
+    }
+
+    [ComponentInteraction("add-spirit")]
+    public async Task addSpirit()
+    {
+        var interaction = Context.Interaction as SocketMessageComponent;
+
+        await interaction.UpdateAsync(msg =>
+        {
+            msg.Embeds = UpdateField(interaction, "Spirit", 1);
+        }).ConfigureAwait(false);
+    }
+
+    [ComponentInteraction("burn-momentum")]
+    public async Task burn()
+    {
+        var interaction = Context.Interaction as SocketMessageComponent;
+
+        await interaction.UpdateAsync(msg =>
+        {
+            var embed = interaction.Message.Embeds.FirstOrDefault().ToEmbedBuilder();
+            var field = embed.Fields.FindIndex(f => f.Name == "Momentum");
+
+                //Todo: add support for debilities `Momentum = 2 - player.Debilities`
+                embed.Fields[field].Value = 2;
+            msg.Embeds = new Embed[] { embed.Build() };
+        }).ConfigureAwait(false);
+    }
+
+    [ComponentInteraction("player-more")]
+    public async Task toggleMore()
+    {
+        var interaction = Context.Interaction as SocketMessageComponent;
+
+        try
+        {
+            await interaction.UpdateAsync(msg =>
             {
-                // Since we set our buttons custom id as 'custom-id', we can check for it like this:
-                case "custom-id":
-                    // Lets respond by sending a message saying they clicked the button
-                    await component.RespondAsync($"{component.User.Mention} has clicked the button!");
-                    break;
-            }
-        }
+                ComponentBuilder components = ComponentBuilder.FromMessage(interaction.Message);
 
-        public bool CanHandleButton(string buttonId)
+                components.TryAdd(ButtonBuilder.CreateSuccessButton("+Xp", "add-xp").Build(), 2);
+                components.TryAdd(ButtonBuilder.CreateSecondaryButton("-Xp", "lose-xp").Build(), 2);
+
+                components.ReplaceComponentById("player-more", ButtonBuilder.CreatePrimaryButton("less", "player-less").Build());
+
+                msg.Components = components.Build();
+            }).ConfigureAwait(false);
+        }
+        catch (HttpException hex)
         {
-            switch (buttonId)
-            {
-                case "add-momenutum":
-                case "lose-momenutum":
-                case "add-supply":
-                case "lose-supply":
-                case "burn-momentum":
-                case "add-health":
-                case "lose-health":
-                case "add-spirit":
-                case "lose-spirit":
-                    return true;
-
-                default:
-                    return false;
-            }
+            var json = JsonConvert.SerializeObject(hex.Errors, Formatting.Indented);
+            Console.WriteLine(json);
+            throw;
         }
+    }
+
+    [ComponentInteraction("player-less")]
+    public async Task toggleLess()
+    {
+        var interaction = Context.Interaction as SocketMessageComponent;
+
+        try
+        {
+            await interaction.UpdateAsync(msg =>
+            {
+                ComponentBuilder components = ComponentBuilder.FromMessage(interaction.Message)
+                .RemoveComponentById("add-xp")
+                .RemoveComponentById("lose-xp");
+
+                components.ReplaceComponentById("player-less", ButtonBuilder.CreatePrimaryButton("...", "player-more").Build());
+
+                msg.Components = components.Build();
+            }).ConfigureAwait(false);
+        }
+        catch (HttpException hex)
+        {
+            var json = JsonConvert.SerializeObject(hex.Errors, Formatting.Indented);
+            Console.WriteLine(json);
+            throw;
+        }
+    }
+
+    private static Embed[] UpdateField(SocketMessageComponent interaction, string fieldName, int change, int min = 0, int max = 5)
+    {
+        var embed = interaction.Message.Embeds.FirstOrDefault().ToEmbedBuilder();
+        int index = embed.Fields.FindIndex(f => f.Name == fieldName);
+        if (int.TryParse(embed.Fields[index].Value.ToString(), out var value))
+        {
+            value += change;
+            if (value < min) value = min;
+            if (value > max) value = max;
+            embed.Fields[index].Value = value;
+            return new Embed[] { embed.Build() };
+        }
+        return null;
     }
 }
