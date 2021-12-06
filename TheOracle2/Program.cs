@@ -32,7 +32,7 @@ internal class Program
 
             var context = services.GetRequiredService<EFContext>();
 
-            await RecreateDB(context).ConfigureAwait(true);
+            //await RecreateDB(context).ConfigureAwait(true);
             context.Database.EnsureCreated();
 
             Console.WriteLine($"Starting TheOracle v{Assembly.GetEntryAssembly().GetName().Version}");
@@ -66,24 +66,20 @@ internal class Program
     {
         try
         {
-            var handler = _services.GetRequiredService<SlashCommandHandler>();
+            //var handler = _services.GetRequiredService<SlashCommandHandler>();
 
             interactionService = new InteractionService(client);
+            interactionService.AddTypeConverter<Move>(new MoveReferenceConverter(_services));
 
             await interactionService.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
-            Console.WriteLine("Do you want to recreate the slash commands? Y/N");
-            var key = Console.ReadKey(true);
 
-            if (key.Key == ConsoleKey.Y)
-            {
-                await client.BulkOverwriteGlobalApplicationCommandsAsync(Array.Empty<ApplicationCommandProperties>());
-                await handler.InstallCommandsAsync(_services, false);
+            //await client.BulkOverwriteGlobalApplicationCommandsAsync(Array.Empty<ApplicationCommandProperties>());
+            //await handler.InstallCommandsAsync(_services, false);
 #if DEBUG
-                    await interactionService.RegisterCommandsToGuildAsync(756890506830807071, false);
+            await interactionService.RegisterCommandsToGuildAsync(756890506830807071, false);
 #else
-                await interactionService.RegisterCommandsGloballyAsync();
+            await interactionService.RegisterCommandsGloballyAsync();
 #endif
-            }
 
             client.InteractionCreated += async (arg) =>
             {
@@ -115,8 +111,8 @@ internal class Program
 
                     // If a Slash Command execution fails it is most likely that the original interaction acknowledgement will persist. It is a good idea to delete the original
                     // response, or at least let the user know that something went wrong during the command execution.
-                    if (arg.Type == InteractionType.ApplicationCommand)
-                        await arg.GetOriginalResponseAsync().ContinueWith(async (msg) => await msg.Result.DeleteAsync());
+                    //if (arg.Type == InteractionType.ApplicationCommand)
+                    //    await arg.GetOriginalResponseAsync().ContinueWith(async (msg) => await msg.Result.DeleteAsync());
                 }
             };
 
@@ -125,6 +121,12 @@ internal class Program
             //    var ctx = new SocketInteractionContext<SocketMessageComponent>(client, interaction);
             //    await interactionService.ExecuteCommandAsync(ctx, _services);
             //};
+        }
+        catch (Discord.Net.HttpException ex)
+        {
+            string json = JsonConvert.SerializeObject(ex.Errors);
+            logger.LogError(ex.Message, ex);
+            logger.LogError(json);
         }
         catch (Exception ex)
         {
@@ -204,7 +206,7 @@ internal class Program
 
     private ServiceProvider ConfigureServices(DiscordSocketClient client = null, CommandService command = null)
     {
-        var clientConfig = new DiscordSocketConfig { MessageCacheSize = 100, LogLevel = LogSeverity.Info };
+        var clientConfig = new DiscordSocketConfig { MessageCacheSize = 100, LogLevel = LogSeverity.Debug };
         client ??= new DiscordSocketClient(clientConfig);
 
         var config = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
