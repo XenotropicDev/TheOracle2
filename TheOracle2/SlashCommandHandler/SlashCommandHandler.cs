@@ -134,7 +134,7 @@ public class SlashCommandHandler
         try
         {
 #if DEBUG
-                await _client.Rest.BulkOverwriteGuildCommands(applicationCommands.ToArray(), guild.Id);
+            foreach (var cmd in applicationCommands) await _client.Rest.CreateGuildCommand(cmd, guild.Id);
 #else
             await _client.Rest.BulkOverwriteGlobalCommands(applicationCommands.ToArray());
 #endif

@@ -1,12 +1,10 @@
-﻿using Discord.Interactions;
-using Discord.Interactions.Builders;
-using Discord.WebSocket;
+﻿using Discord.WebSocket;
 using TheOracle2.DataClasses;
 using TheOracle2.UserContent;
 
 namespace TheOracle2;
 
-public class MoveReferenceCommand : InteractionModuleBase
+public class MoveReferenceCommand : ISlashCommand
 {
     public MoveReferenceCommand(UserContent.EFContext dbContext)
     {
@@ -14,47 +12,38 @@ public class MoveReferenceCommand : InteractionModuleBase
     }
 
     public EFContext DbContext { get; }
+    public SocketSlashCommand Context { get; set; }
 
-    [SlashCommand("reference", "Posts a reference message for the provided move")]
-    public async Task GetReferenceMessage(Move move)
+    [OracleSlashCommand("reference")]
+    public async Task GetReferenceMessage()
     {
+        int Id = Convert.ToInt32(Context.Data.Options.FirstOrDefault().Options.FirstOrDefault().Value);
+
+        var ephemeral = (Context.Data.Options.FirstOrDefault().Options.FirstOrDefault(o => o.Name == "ephemeral")?.Value as bool?) == true;
+        var keepMsg = (Context.Data.Options.FirstOrDefault().Options.FirstOrDefault(o => o.Name == "keep-message")?.Value as bool?) == true;
+        var move = DbContext.Moves.Find(Id);
+
         var builder = new EmbedBuilder()
         .WithAuthor(move.Category)
         .WithTitle(move.Name)
         .WithDescription(move.Text);
 
         //todo add ephemeral option
-        await RespondAsync(embed: builder.Build()).ConfigureAwait(false);
+        await Context.RespondAsync(embed: builder.Build(), ephemeral: ephemeral).ConfigureAwait(false);
 
-        await Task.Delay(TimeSpan.FromMinutes(1)); //todo: change this to something like 15?
-        await DeleteOriginalResponseAsync().ConfigureAwait(false);
-    }
-}
-
-internal sealed class MoveReferenceConverter : TypeConverter<Move>
-{
-    public MoveReferenceConverter(IServiceProvider services)
-    {
-        Services = services;
+        if (!keepMsg && !ephemeral)
+        {
+            await Task.Delay(TimeSpan.FromMinutes(1)); //todo: change this to something like 15?
+            await Context.DeleteOriginalResponseAsync().ConfigureAwait(false);
+        }
     }
 
-    public IServiceProvider Services { get; }
-
-    public override ApplicationCommandOptionType GetDiscordType() => ApplicationCommandOptionType.SubCommandGroup;
-
-    public override Task<TypeConverterResult> ReadAsync(IInteractionContext context, IApplicationCommandInteractionDataOption option, IServiceProvider services)
+    //Todo: Add ephemeral option
+    public IList<SlashCommandBuilder> GetCommandBuilders()
     {
-        return Task.FromResult(TypeConverterResult.FromSuccess(new Move {Text = "Some longer description", Name = "Test", Category = "Category" }));
-    }
-
-    public override void Write(ApplicationCommandOptionProperties properties, IParameterInfo parameterInfo)
-    {
-        //var cmdBuilder = new Discord.SlashCommandBuilder();
-        
-        //var parmBuilder = new SlashCommandParameterBuilder();
-
-        var DbContext = Services.GetRequiredService<EFContext>();
-        properties.Options = new List<ApplicationCommandOptionProperties>();
+        var command = new SlashCommandBuilder()
+            .WithName("reference")
+            .WithDescription("Posts the game text for a move");
 
         foreach (var category in DbContext.Moves.Select(a => a.Category).Distinct())
         {
@@ -65,45 +54,36 @@ internal sealed class MoveReferenceConverter : TypeConverter<Move>
 
             foreach (var moveGroup in chunkedList)
             {
-                string catName = category.Replace(" ", "-");
+                string name = category.Replace(" ", "-");
                 if (chunkedList.Count() > 1)
                 {
-                    catName += $"-{moveGroup.First().Name[..1]}-{moveGroup.Last().Name[..1]}";
+                    name += $"-{moveGroup.First().Name.Substring(0, 1)}-{moveGroup.Last().Name.Substring(0, 1)}";
                 }
 
-                var subCommand = new ApplicationCommandOptionProperties
-                {
-                    Name = catName.ToLower(),
-                    Description = category,
-                    IsRequired = false,
-                    Type = ApplicationCommandOptionType.SubCommand,
-                    Options = new List<ApplicationCommandOptionProperties>(),
-                    //Choices = new List<ApplicationCommandOptionChoiceProperties>()
-                };
+                var subCommand = new SlashCommandOptionBuilder()
+                    .WithName(name.ToLower())
+                    .WithDescription($"{category} moves")
+                    .WithType(ApplicationCommandOptionType.SubCommand)
+                    ;
 
-                var catChoices = new ApplicationCommandOptionProperties
-                {
-                    Name = "move-name",
-                    Description = "The name of the move to be posted",
-                    IsRequired = true,
-                    Type = ApplicationCommandOptionType.Integer,
-                    Choices = new List<ApplicationCommandOptionChoiceProperties>()
-                };
+                var subChoicesOption = new SlashCommandOptionBuilder()
+                    .WithName("move-name")
+                    .WithDescription("The name of the move to be posted")
+                    .WithRequired(true)
+                    .WithType(ApplicationCommandOptionType.Integer);
 
                 foreach (var move in moveGroup)
                 {
-                    //subCommand.Choices.Add(new ApplicationCommandOptionChoiceProperties { Name = move.Name, Value = move.Id });
-                    catChoices.Choices.Add(new ApplicationCommandOptionChoiceProperties { Name = move.Name, Value = move.Id });
+                    subChoicesOption.AddChoice(move.Name, move.Id);
                 }
-                //subCommand.Options.Add(catChoices);
+                subCommand.AddOption(subChoicesOption);
+                subCommand.AddOption("ephemeral", ApplicationCommandOptionType.Boolean, "Display the message only to you");
+                subCommand.AddOption("keep-message", ApplicationCommandOptionType.Boolean, "Prevents the bot from automatically clean up the message");
 
-                properties.Options.Add(subCommand);
+                command.AddOption(subCommand);
             }
         }
 
-        properties.IsRequired = false;
-        properties.Description = "Reference Moves";
-
-        Console.WriteLine("Command passing back to module");
+        return new List<SlashCommandBuilder>() { command };
     }
 }

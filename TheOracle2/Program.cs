@@ -66,20 +66,20 @@ internal class Program
     {
         try
         {
-            //var handler = _services.GetRequiredService<SlashCommandHandler>();
+            var handler = _services.GetRequiredService<SlashCommandHandler>();
 
             interactionService = new InteractionService(client);
-            interactionService.AddTypeConverter<Move>(new MoveReferenceConverter(_services));
+            //interactionService.AddTypeConverter<Move>(new MoveReferenceConverter(_services));
 
             await interactionService.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
 
             //await client.BulkOverwriteGlobalApplicationCommandsAsync(Array.Empty<ApplicationCommandProperties>());
-            //await handler.InstallCommandsAsync(_services, false);
 #if DEBUG
             await interactionService.RegisterCommandsToGuildAsync(756890506830807071, false);
 #else
             await interactionService.RegisterCommandsGloballyAsync();
 #endif
+            await handler.InstallCommandsAsync(_services, false);
 
             client.InteractionCreated += async (arg) =>
             {

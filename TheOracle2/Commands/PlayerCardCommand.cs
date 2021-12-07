@@ -2,7 +2,6 @@
 using Discord.Net;
 using Discord.WebSocket;
 using Newtonsoft.Json;
-using TheOracle2.DiscordHelpers;
 using TheOracle2.UserContent;
 
 namespace TheOracle2;
@@ -22,15 +21,6 @@ public class PlayerCardCommand : InteractionModuleBase
         try
         {
             var compBuilder = new ComponentBuilder()
-            //.WithButton("+ Momentum", "add-momentum", row: 0, style: ButtonStyle.Success)
-            //.WithButton("- Momentum", "lose-momentum", row: 0, style: ButtonStyle.Secondary)
-            //.WithButton("+ Supply", "add-supply", row: 0, style: ButtonStyle.Success)
-            //.WithButton("- Supply", "lose-supply", row: 0, style: ButtonStyle.Secondary)
-            //.WithButton("Burn", "burn-momentum", row: 0, style: ButtonStyle.Danger)
-            //.WithButton("+ Health", "add-health", row: 1, style: ButtonStyle.Success)
-            //.WithButton("- Health", "lose-health", row: 1, style: ButtonStyle.Secondary)
-            //.WithButton("+ Spirit", "add-spirit", row: 1, style: ButtonStyle.Success)
-            //.WithButton("- Spirit", "lose-spirit", row: 1, style: ButtonStyle.Secondary)
             .WithButton("+H", "add-health", row: 0, style: ButtonStyle.Success)
             .WithButton("-H", "lose-health", row: 1, style: ButtonStyle.Secondary)
             .WithButton("+Sp", "add-spirit", row: 0, style: ButtonStyle.Success)

@@ -1,4 +1,15 @@
-﻿namespace TheOracle2.DiscordHelpers;
+﻿using Discord.WebSocket;
+
+namespace TheOracle2;
+
+public static class ContextExtensions
+{
+    public static async Task DeleteOriginalResponseAsync(this SocketSlashCommand ctx)
+    {
+        var msg = await ctx.GetOriginalResponseAsync().ConfigureAwait(false);
+        await msg.DeleteAsync().ConfigureAwait(false);
+    }
+}
 
 public static class ComponentExtenstions
 {
