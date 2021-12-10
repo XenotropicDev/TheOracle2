@@ -12,15 +12,15 @@ public class MoveReferenceCommand : ISlashCommand
     }
 
     public EFContext DbContext { get; }
-    public SocketSlashCommand Context { get; set; }
+    public SocketSlashCommand SlashCommandContext { get; set; }
 
     [OracleSlashCommand("reference")]
     public async Task GetReferenceMessage()
     {
-        int Id = Convert.ToInt32(Context.Data.Options.FirstOrDefault().Options.FirstOrDefault().Value);
+        int Id = Convert.ToInt32(SlashCommandContext.Data.Options.FirstOrDefault().Options.FirstOrDefault().Value);
 
-        var ephemeral = (Context.Data.Options.FirstOrDefault().Options.FirstOrDefault(o => o.Name == "ephemeral")?.Value as bool?) == true;
-        var keepMsg = (Context.Data.Options.FirstOrDefault().Options.FirstOrDefault(o => o.Name == "keep-message")?.Value as bool?) == true;
+        var ephemeral = (SlashCommandContext.Data.Options.FirstOrDefault().Options.FirstOrDefault(o => o.Name == "ephemeral")?.Value as bool?) == true;
+        var keepMsg = (SlashCommandContext.Data.Options.FirstOrDefault().Options.FirstOrDefault(o => o.Name == "keep-message")?.Value as bool?) == true;
         var move = DbContext.Moves.Find(Id);
 
         var builder = new EmbedBuilder()
@@ -29,12 +29,12 @@ public class MoveReferenceCommand : ISlashCommand
         .WithDescription(move.Text);
 
         //todo add ephemeral option
-        await Context.RespondAsync(embed: builder.Build(), ephemeral: ephemeral).ConfigureAwait(false);
+        await SlashCommandContext.RespondAsync(embed: builder.Build(), ephemeral: ephemeral).ConfigureAwait(false);
 
         if (!keepMsg && !ephemeral)
         {
-            await Task.Delay(TimeSpan.FromMinutes(1)); //todo: change this to something like 15?
-            await Context.DeleteOriginalResponseAsync().ConfigureAwait(false);
+            await Task.Delay(TimeSpan.FromMinutes(15));
+            await SlashCommandContext.DeleteOriginalResponseAsync().ConfigureAwait(false);
         }
     }
 

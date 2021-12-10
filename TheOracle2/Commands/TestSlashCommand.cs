@@ -4,7 +4,7 @@ namespace TheOracle2;
 
 public class TestSlashCommand : ISlashCommand
 {
-    public SocketSlashCommand Context { get; set; }
+    public SocketSlashCommand SlashCommandContext { get; set; }
 
     public IList<SlashCommandBuilder> GetCommandBuilders()
     {
@@ -18,6 +18,6 @@ public class TestSlashCommand : ISlashCommand
     [OracleSlashCommand("ping")]
     public async Task Ping()
     {
-        await Context.RespondAsync($"Pong!", ephemeral: true).ConfigureAwait(false);
+        await SlashCommandContext.RespondAsync($"Pong!", ephemeral: true).ConfigureAwait(false);
     }
 }

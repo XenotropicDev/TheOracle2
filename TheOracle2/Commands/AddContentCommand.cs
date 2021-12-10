@@ -5,27 +5,27 @@ namespace TheOracle2.Commands;
 
 public class AddContentCommand : ISlashCommand
 {
-    public SocketSlashCommand Context { get; set; }
+    public SocketSlashCommand SlashCommandContext { get; set; }
 
     [OracleSlashCommand("add-content")]
     public async Task Register(EFContext efContext)
     {
-        int id = Convert.ToInt32(Context.Data.Options.FirstOrDefault().Value);
+        int id = Convert.ToInt32(SlashCommandContext.Data.Options.FirstOrDefault().Value);
 
         ulong guildId;
-        if (Context.Channel is IGuildChannel guildChannel)
+        if (SlashCommandContext.Channel is IGuildChannel guildChannel)
         {
             guildId = guildChannel.GuildId;
         }
         else
         {
-            guildId = Context.Channel.Id;
+            guildId = SlashCommandContext.Channel.Id;
         }
 
         var guild = OracleGuild.GetGuild(guildId, efContext);
         var items = string.Join("\n", guild.Moves.Select(gi => $"{gi.Id} - {gi.Name}"));
 
-        await Context.RespondAsync(items, ephemeral: true);
+        await SlashCommandContext.RespondAsync(items, ephemeral: true);
 
         //guild.GameItems.Add(new GameItem() { GameItemId = id });
         //await efContext.SaveChangesAsync().ConfigureAwait(false);

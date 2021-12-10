@@ -4,19 +4,19 @@ namespace TheOracle2;
 
 public class AskTheOracleCommand : ISlashCommand
 {
-    public SocketSlashCommand Context { get; set; }
+    public SocketSlashCommand SlashCommandContext { get; set; }
 
     [OracleSlashCommand("ask")]
     public async Task Ask(UserContent.EFContext test)
     {
-        int chance = Convert.ToInt32(Context.Data.Options.FirstOrDefault().Options.FirstOrDefault().Value);
+        int chance = Convert.ToInt32(SlashCommandContext.Data.Options.FirstOrDefault().Options.FirstOrDefault().Value);
 
         if (chance > 0)
         {
             Random rnd = new Random();
             var roll = rnd.Next(101);
             string result = (roll >= 100 - chance) ? "Yes" : "No";
-            await Context.RespondAsync($"You rolled {roll} VS. {chance}% chance\n**{result}**.").ConfigureAwait(false);
+            await SlashCommandContext.RespondAsync($"You rolled {roll} VS. {chance}% chance\n**{result}**.").ConfigureAwait(false);
         }
     }
 

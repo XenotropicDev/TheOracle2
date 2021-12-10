@@ -4,7 +4,7 @@ namespace TheOracle2;
 
 interface ISlashCommand
 {
-    public SocketSlashCommand Context { get; set; }
+    public SocketSlashCommand SlashCommandContext { get; set; }
 
     IList<SlashCommandBuilder> GetCommandBuilders();
 }

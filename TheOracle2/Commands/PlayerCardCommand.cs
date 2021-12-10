@@ -18,37 +18,30 @@ public class PlayerCardCommand : InteractionModuleBase
     [SlashCommand("player", "Generates a post to keep track of a player character's stats")]
     public async Task BuildPlayerCard(string name, [MaxValue(4)][MinValue(1)] int edge, [MaxValue(4)][MinValue(1)] int heart, [MaxValue(4)][MinValue(1)] int iron, [MaxValue(4)][MinValue(1)] int shadow, [MaxValue(4)][MinValue(1)] int wits)
     {
-        try
-        {
-            var compBuilder = new ComponentBuilder()
-            .WithButton("+H", "add-health", row: 0, style: ButtonStyle.Success)
-            .WithButton("-H", "lose-health", row: 1, style: ButtonStyle.Secondary)
-            .WithButton("+Sp", "add-spirit", row: 0, style: ButtonStyle.Success)
-            .WithButton("-Sp", "lose-spirit", row: 1, style: ButtonStyle.Secondary)
-            .WithButton("+Su", "add-supply", row: 0, style: ButtonStyle.Success)
-            .WithButton("-Su", "lose-supply", row: 1, style: ButtonStyle.Secondary)
-            .WithButton("+M", "add-momentum", row: 0, style: ButtonStyle.Success)
-            .WithButton("-M", "lose-momentum", row: 1, style: ButtonStyle.Secondary)
-            .WithButton("Burn", "burn-momentum", row: 0, style: ButtonStyle.Danger)
-            .WithButton("...", "player-more", row: 0, style: ButtonStyle.Primary)
-            ;
+        var compBuilder = new ComponentBuilder()
+        .WithButton("+H", "add-health", row: 0, style: ButtonStyle.Success)
+        .WithButton("-H", "lose-health", row: 1, style: ButtonStyle.Secondary)
+        .WithButton("+Sp", "add-spirit", row: 0, style: ButtonStyle.Success)
+        .WithButton("-Sp", "lose-spirit", row: 1, style: ButtonStyle.Secondary)
+        .WithButton("+Su", "add-supply", row: 0, style: ButtonStyle.Success)
+        .WithButton("-Su", "lose-supply", row: 1, style: ButtonStyle.Secondary)
+        .WithButton("+M", "add-momentum", row: 0, style: ButtonStyle.Success)
+        .WithButton("-M", "lose-momentum", row: 1, style: ButtonStyle.Secondary)
+        .WithButton("Burn", "burn-momentum", row: 0, style: ButtonStyle.Danger)
+        .WithButton("...", "player-more", row: 0, style: ButtonStyle.Primary)
+        ;
 
-            EmbedBuilder builder = new EmbedBuilder();
-            builder.WithAuthor($"Player Card");
-            builder.WithTitle(name);
-            builder.AddField("Stats", $"Edge: {edge}, Heart: {heart}, Iron: {iron}, Shadow: {shadow}, Wits: {wits}");
-            builder.AddField("Health", 5, true);
-            builder.AddField("Spirit", 5, true);
-            builder.AddField("Supply", 5, true);
-            builder.AddField("Momentum", 2, true);
-            builder.AddField("XP", 0);
+        EmbedBuilder builder = new EmbedBuilder();
+        builder.WithAuthor($"Player Card");
+        builder.WithTitle(name);
+        builder.AddField("Stats", $"Edge: {edge}, Heart: {heart}, Iron: {iron}, Shadow: {shadow}, Wits: {wits}");
+        builder.AddField("Health", 5, true);
+        builder.AddField("Spirit", 5, true);
+        builder.AddField("Supply", 5, true);
+        builder.AddField("Momentum", 2, true);
+        builder.AddField("XP", 0);
 
-            await RespondAsync(embed: builder.Build(), component: compBuilder.Build());
-        }
-        catch (Exception ex)
-        {
-            throw;
-        }
+        await RespondAsync(embed: builder.Build(), component: compBuilder.Build());
     }
 
     [ComponentInteraction("add-momentum")]
@@ -149,8 +142,8 @@ public class PlayerCardCommand : InteractionModuleBase
             var embed = interaction.Message.Embeds.FirstOrDefault().ToEmbedBuilder();
             var field = embed.Fields.FindIndex(f => f.Name == "Momentum");
 
-                //Todo: add support for debilities `Momentum = 2 - player.Debilities`
-                embed.Fields[field].Value = 2;
+            //Todo: add support for debilities `Momentum = 2 - player.Debilities`
+            embed.Fields[field].Value = 2;
             msg.Embeds = new Embed[] { embed.Build() };
         }).ConfigureAwait(false);
     }

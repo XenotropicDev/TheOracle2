@@ -74,7 +74,7 @@ public class SlashCommandHandler
             }
             var methodInfo = CommandList[context.Data.Name];
             var caller = ActivatorUtilities.CreateInstance(services, methodInfo.DeclaringType);
-            (caller as ISlashCommand).Context = context;
+            (caller as ISlashCommand).SlashCommandContext = context;
 
             List<object> args = new List<object>();
 
@@ -107,8 +107,6 @@ public class SlashCommandHandler
             _logger.LogInformation("Existing commands deleted");
         }
 
-        var guild = _client.GetGuild(756890506830807071);
-
         var applicationCommands = new List<SlashCommandProperties>();
 
         foreach (var commandItem in CommandList)
@@ -134,9 +132,10 @@ public class SlashCommandHandler
         try
         {
 #if DEBUG
-            foreach (var cmd in applicationCommands) await _client.Rest.CreateGuildCommand(cmd, guild.Id);
+            foreach (var cmd in applicationCommands) await _client.Rest.CreateGuildCommand(cmd, 756890506830807071);
+            foreach (var cmd in applicationCommands) await _client.Rest.CreateGuildCommand(cmd, 916381023766470747);
 #else
-            await _client.Rest.BulkOverwriteGlobalCommands(applicationCommands.ToArray());
+            //await _client.Rest.BulkOverwriteGlobalCommands(applicationCommands.ToArray());
 #endif
             _logger.LogInformation("Commands have been recreated");
         }

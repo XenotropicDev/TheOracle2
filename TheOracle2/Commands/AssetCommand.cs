@@ -1,4 +1,5 @@
-﻿using Discord.WebSocket;
+﻿using Discord.Interactions;
+using Discord.WebSocket;
 using OracleData;
 using TheOracle2.UserContent;
 
@@ -11,14 +12,14 @@ public class AssetCommand : ISlashCommand
         DbContext = dbContext;
     }
 
-    public SocketSlashCommand Context { get; set; }
+    public SocketSlashCommand SlashCommandContext { get; set; }
     public EFContext DbContext { get; }
 
     [OracleSlashCommand("asset")]
     public async Task BuildAsset()
     {
         //await Context.DeferAsync().ConfigureAwait(false);
-        int Id = Convert.ToInt32(Context.Data.Options.FirstOrDefault().Options.FirstOrDefault().Value);
+        int Id = Convert.ToInt32(SlashCommandContext.Data.Options.FirstOrDefault().Options.FirstOrDefault().Value);
 
         var asset = DbContext.Assets.Find(Id);
 
@@ -39,7 +40,7 @@ public class AssetCommand : ISlashCommand
             builder.AddField(label, abilityText);
         }
 
-        await Context.RespondAsync(embed: builder.Build(), component: compBuilder.Build());
+        await SlashCommandContext.RespondAsync(embed: builder.Build(), component: compBuilder.Build());
     }
 
     public IList<SlashCommandBuilder> GetCommandBuilders()
