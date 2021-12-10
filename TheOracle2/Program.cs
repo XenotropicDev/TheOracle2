@@ -54,7 +54,7 @@ internal class Program
             var commandHandler = services.GetRequiredService<SlashCommandHandler>();
             commandHandler.LoadFromAssembly(Assembly.GetEntryAssembly(), services);
 
-            await client.SetGameAsync($"!Help | v{Assembly.GetEntryAssembly().GetName().Version}", "", ActivityType.Playing).ConfigureAwait(false);
+            await client.SetGameAsync("TheOracle v2 - Alpha", "", ActivityType.Playing).ConfigureAwait(false);
 
             client.SlashCommandExecuted += commandHandler.SlashCommandEvent;
 
@@ -68,6 +68,9 @@ internal class Program
         {
             var handler = _services.GetRequiredService<SlashCommandHandler>();
 
+            var refCommands = _services.GetRequiredService<ReferencedMessageCommandHandler>();
+            refCommands.AddCommandHandler(client);
+
             interactionService = new InteractionService(client);
             //interactionService.AddTypeConverter<Move>(new MoveReferenceConverter(_services));
 
@@ -76,8 +79,10 @@ internal class Program
             //await client.BulkOverwriteGlobalApplicationCommandsAsync(Array.Empty<ApplicationCommandProperties>());
 #if DEBUG
             await interactionService.RegisterCommandsToGuildAsync(756890506830807071, false);
+            await interactionService.RegisterCommandsToGuildAsync(916381023766470747, false);
+            //await interactionService
 #else
-            await interactionService.RegisterCommandsGloballyAsync();
+            //await interactionService.RegisterCommandsGloballyAsync();
 #endif
             await handler.InstallCommandsAsync(_services, false);
 
@@ -217,6 +222,7 @@ internal class Program
             .AddSingleton(client)
             .AddSingleton(config)
             .AddSingleton(new SlashCommandHandler(client, null))
+            .AddSingleton<ReferencedMessageCommandHandler>()
             .AddDbContext<EFContext>()
             .AddLogging(builder => builder.AddSimpleConsole(options =>
             {
