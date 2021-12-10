@@ -12,7 +12,7 @@ public class ProgressTrackerCommand : InteractionModuleBase
     public const int totalTicks = 40;
     public const int troublesomeTicks = 12;
 
-    [SlashCommand("progress-tracker", "Creates a generic progress tracker")]
+    [SlashCommand("track", "Creates a generic tracker for things like vows, expeditions, and combat")]
     public async Task PostTracker(string Description, ChallengeRank Rank)
     {
         var embed = new EmbedBuilder()
@@ -40,13 +40,13 @@ public class ProgressTrackerCommand : InteractionModuleBase
             .Build();
 
         var compBuilder = new ComponentBuilder()
-            .WithButton("-", "add-progress", row: 0, style: ButtonStyle.Secondary)
-            .WithButton("+", "lose-progress", row: 0, style: ButtonStyle.Success)
-            .WithButton("#", "add-full-progress", row: 0, style: ButtonStyle.Success)
-            .WithButton(":game_die:", "roll-progress", row: 0, style: ButtonStyle.Secondary)
+            .WithButton("-", "lose-progress", row: 0, style: ButtonStyle.Danger)
+            .WithButton("+", "add-progress", row: 0, style: ButtonStyle.Success)
+            .WithButton("#", "add-full-progress", row: 0, style: ButtonStyle.Secondary)
+            .WithButton(customId: "roll-progress", row: 0, style: ButtonStyle.Secondary, emote: new Emoji("🎲"))
             ;
 
-        await ReplyAsync(embed: embed, component: compBuilder.Build());
+        await ReplyAsync(embed: embed, component: compBuilder.Build()).ConfigureAwait(false);
     }
 
     public virtual string GetProgressGraphic(int Ticks)
@@ -114,8 +114,13 @@ public class ProgressTrackerCommand : InteractionModuleBase
     public async Task RollProgress()
     {
         var interaction = Context.Interaction as SocketMessageComponent;
+        if (!int.TryParse(interaction.Message.Embeds.FirstOrDefault().Footer?.Text?.Replace("Ticks: ", ""), out int ticks))
+        {
+            await RespondAsync("Unknown progress type");
+        }
+        var roll = new ActionRoll(0, ticks / 4, interaction.Message.Embeds.FirstOrDefault().Description);
 
-        await interaction.RespondAsync("lol, there's no dice roller yet, sorry.");
+        await interaction.RespondAsync(embed: roll.ToEmbed().WithAuthor($"Progress Roll").Build()).ConfigureAwait(false);
     }
 
     private Embed[] ChangeProgress(EmbedBuilder embed, int delta = 1, int? exactAmount = null)
@@ -158,13 +163,4 @@ public class ProgressTrackerCommand : InteractionModuleBase
                 return 0;
         }
     }
-}
-
-public enum ChallengeRank
-{
-    Troublesome,
-    Dangerous,
-    Formidable,
-    Extreme,
-    Epic
 }
