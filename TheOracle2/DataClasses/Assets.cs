@@ -7,165 +7,165 @@ namespace OracleData;
 [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.5.2.0 (Newtonsoft.Json v12.0.0.0)")]
 public record Ability
 {
-    [Newtonsoft.Json.JsonIgnore]
+    [JsonIgnore]
     public int Id { get; set; }
 
-    [Newtonsoft.Json.JsonProperty("Alter Moves", Required = Newtonsoft.Json.Required.Default)]
+    [JsonPropertyName("Alter Moves")]
     public IList<AlterMove> AlterMoves { get; set; }
 
-    [Newtonsoft.Json.JsonProperty("Alter Properties", Required = Newtonsoft.Json.Required.Default)]
+    [JsonPropertyName("Alter Properties")]
     public AlterProperties AlterProperties { get; set; }
 
-    [Newtonsoft.Json.JsonProperty("Counter")]
+    [JsonPropertyName("Counter")]
     public Counter Counter { get; set; }
 
-    [Newtonsoft.Json.JsonProperty("Enabled")]
+    [JsonPropertyName("Enabled")]
     public bool Enabled { get; set; }
 
-    [Newtonsoft.Json.JsonProperty("Input")]
+    [JsonPropertyName("Input")]
     //[NotMapped]
     public System.Collections.Generic.IList<string> Input { get; set; }
 
     public Move Move { get; set; }
 
-    [Newtonsoft.Json.JsonProperty("Text")]
+    [JsonPropertyName("Text")]
     public string Text { get; set; }
 }
 
 [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.5.2.0 (Newtonsoft.Json v12.0.0.0)")]
 public record AlterProperties
 {
-    [Newtonsoft.Json.JsonIgnore]
+    [JsonIgnore]
     public int Id { get; set; }
-    [Newtonsoft.Json.JsonProperty("Condition Meter")]
+    [JsonPropertyName("Condition Meter")]
     public ConditionMeter ConditionMeter { get; set; }
 
-    [Newtonsoft.Json.JsonProperty("Track")]
+    [JsonPropertyName("Track")]
     public Track Track { get; set; }
 }
 
 [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.5.2.0 (Newtonsoft.Json v12.0.0.0)")]
 public record Asset
 {
-    [Newtonsoft.Json.JsonIgnore]
+    [JsonIgnore]
     public int Id { get; set; }
 
-    [Newtonsoft.Json.JsonIgnore]
-    [System.Text.Json.Serialization.JsonIgnore]
+    [JsonIgnore]
     public IList<OracleGuild> OracleGuilds { get; set; } = new List<OracleGuild>();
 
-    [Newtonsoft.Json.JsonProperty("Abilities")]
+    [JsonPropertyName("Abilities")]
     public System.Collections.Generic.IList<Ability> Abilities { get; set; }
 
-    [Newtonsoft.Json.JsonProperty("Aliases")]
+    [JsonPropertyName("Aliases")]
     public System.Collections.Generic.IList<string> Aliases { get; set; }
 
-    [Newtonsoft.Json.JsonProperty("Category")]
+    [JsonPropertyName("Category")]
     public string Category { get; set; }
 
-    [Newtonsoft.Json.JsonProperty("Condition Meter")]
+    [JsonPropertyName("Condition Meter")]
     public ConditionMeter ConditionMeter { get; set; }
 
-    [Newtonsoft.Json.JsonProperty("Counter")]
+    [JsonPropertyName("Counter")]
     public Counter Counter { get; set; }
 
-    [Newtonsoft.Json.JsonProperty("Description")]
+    [JsonPropertyName("Description")]
     public string Description { get; set; }
 
-    [Newtonsoft.Json.JsonProperty("Input")]
+    [JsonPropertyName("Input")]
     [NotMapped]
     public System.Collections.Generic.IList<string> Input { get; set; }
 
-    [Newtonsoft.Json.JsonProperty("Name")]
+    [JsonPropertyName("Name")]
     public string Name { get; set; }
 
-    [Newtonsoft.Json.JsonProperty("Select")]
+    [JsonPropertyName("Select")]
     public Select Select { get; set; }
 
-    [Newtonsoft.Json.JsonProperty("Track")]
+    [JsonPropertyName("Track")]
     public Track Track { get; set; }
 }
 
 public record ConditionMeter
 {
-    [Newtonsoft.Json.JsonIgnore]
+    [JsonIgnore]
     public int Id { get; set; }
     public string Name { get; set; }
     public int Max { get; set; }
 
-    [Newtonsoft.Json.JsonProperty("Starts At")]
+    [JsonPropertyName("Starts At")]
     public int StartsAt { get; set; }
 }
 
 [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.5.2.0 (Newtonsoft.Json v12.0.0.0)")]
 public record Counter
 {
-    [Newtonsoft.Json.JsonIgnore]
+    [JsonIgnore]
     public int Id { get; set; }
-    [Newtonsoft.Json.JsonProperty("Name")]
+    [JsonPropertyName("Name")]
     public string Name { get; set; }
 
-    [Newtonsoft.Json.JsonProperty("Starts At")]
+    [JsonPropertyName("Starts At")]
     public int StartsAt { get; set; }
 
-    [Newtonsoft.Json.JsonProperty("Max")]
+    [JsonPropertyName("Max")]
     public int Max { get; set; }
 }
 
 [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.5.2.0 (Newtonsoft.Json v12.0.0.0)")]
 public record Source
 {
-    [Newtonsoft.Json.JsonIgnore]
+    [JsonIgnore]
     public int Id { get; set; }
-    [Newtonsoft.Json.JsonProperty("Name")]
+    [JsonPropertyName("Name")]
     public string Name { get; set; }
 
-    [Newtonsoft.Json.JsonProperty("Page")]
+    [JsonPropertyName("Page")]
     public string Page { get; set; }
 
-    [Newtonsoft.Json.JsonProperty("Date", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+    [JsonPropertyName("Date")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public string Date { get; set; }
 }
 
 [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.5.2.0 (Newtonsoft.Json v12.0.0.0)")]
 public record Track
 {
-    [Newtonsoft.Json.JsonIgnore]
+    [JsonIgnore]
     public int Id { get; set; }
-    [Newtonsoft.Json.JsonProperty("Name")]
+    [JsonPropertyName("Name")]
     public string Name { get; set; }
 
-    [Newtonsoft.Json.JsonProperty("Starts At", Required = Newtonsoft.Json.Required.Always)]
+    [JsonPropertyName("Starts At")]
     public int StartsAt { get; set; }
 
-    [Newtonsoft.Json.JsonProperty("Value", Required = Newtonsoft.Json.Required.Always)]
+    [JsonPropertyName("Value")]
     public int Value { get; set; }
 }
 
 [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.5.2.0 (Newtonsoft.Json v12.0.0.0)")]
 public record AssetRoot
 {
-    [Newtonsoft.Json.JsonIgnore]
+    [JsonIgnore]
     public int Id { get; set; }
-    [Newtonsoft.Json.JsonProperty("Assets")]
+    [JsonPropertyName("Assets")]
     public System.Collections.Generic.IList<Asset> Assets { get; set; }
 
-    [Newtonsoft.Json.JsonProperty("Name")]
+    [JsonPropertyName("Name")]
     public string Name { get; set; }
 
-    [Newtonsoft.Json.JsonProperty("Source")]
+    [JsonPropertyName("Source")]
     public Source Source { get; set; }
 
     //Todo Get rsek to convert these to tags with IDs?
-    [Newtonsoft.Json.JsonProperty("Tags")]
+    [JsonPropertyName("Tags")]
     public System.Collections.Generic.IList<string> Tags { get; set; }
 }
 
 public record AlterMove
 {
-    [Newtonsoft.Json.JsonIgnore]
+    [JsonIgnore]
     public int Id { get; set; }
-    [Newtonsoft.Json.JsonProperty("Any Move")]
+    [JsonPropertyName("Any Move")]
     public bool AnyMove { get; set; }
     public string Name { get; set; }
     public IList<Trigger> Triggers { get; set; }
@@ -173,7 +173,7 @@ public record AlterMove
 
 public record Select
 {
-    [Newtonsoft.Json.JsonIgnore]
+    [JsonIgnore]
     public int Id { get; set; }
     public string Name { get; set; }
     public string Type { get; set; }

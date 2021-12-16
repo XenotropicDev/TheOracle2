@@ -5,10 +5,10 @@ namespace TheOracle2.DataClasses;
 
 public class Move
 {
-    [Newtonsoft.Json.JsonIgnore]
+    [JsonIgnore]
     public int Id { get; set; }
 
-    [Newtonsoft.Json.JsonIgnore]
+    [JsonIgnore]
     public IList<OracleGuild> OracleGuilds { get; set; } = new List<OracleGuild>();
 
     public string Asset { get; set; }
@@ -16,7 +16,7 @@ public class Move
     public string Name { get; set; }
     public bool Oracle { get; set; }
 
-    [Newtonsoft.Json.JsonProperty("Progress Move")]
+    [JsonPropertyName("Progress Move")]
     public bool IsProgressMove { get; set; }
 
     public string Text { get; set; }
@@ -25,7 +25,7 @@ public class Move
 
 public class MovesInfo
 {
-    [Newtonsoft.Json.JsonIgnore]
+    [JsonIgnore]
     public int Id { get; set; }
 
     public List<Move> Moves { get; set; }
@@ -35,7 +35,7 @@ public class MovesInfo
 
 public class StatOptions
 {
-    [Newtonsoft.Json.JsonIgnore]
+    [JsonIgnore]
     public int Id { get; set; }
 
     public string Method { get; set; }
@@ -44,12 +44,12 @@ public class StatOptions
 
 public class Trigger
 {
-    [Newtonsoft.Json.JsonIgnore]
+    [JsonIgnore]
     public int Id { get; set; }
 
     public string Details { get; set; }
 
-    [Newtonsoft.Json.JsonProperty("Stat Options")]
+    [JsonPropertyName("Stat Options")]
     public StatOptions StatOptions { get; set; }
 
     public string Text { get; set; }

@@ -1,32 +1,36 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+﻿using System.Text.Json;
 
 namespace TheOracle2.DataClasses;
 
-class SingleOrArrayConverter<T> : JsonConverter
+internal class SingleOrArrayConverter<T> : JsonConverter<List<T>>
 {
-    public override bool CanConvert(Type objectType)
+    public override List<T> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        return (objectType == typeof(List<T>));
-    }
-
-    public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-    {
-        JToken token = JToken.Load(reader);
-        if (token.Type == JTokenType.Array)
+        switch (reader.TokenType)
         {
-            return token.ToObject<List<T>>();
+            case JsonTokenType.Null:
+                return null;
+
+            case JsonTokenType.StartArray:
+                var list = new List<T>();
+                while (reader.Read())
+                {
+                    if (reader.TokenType == JsonTokenType.EndArray)
+                        break;
+                    list.Add(JsonSerializer.Deserialize<T>(ref reader, options));
+                }
+                return list;
+
+            default:
+                return new List<T>() { JsonSerializer.Deserialize<T>(ref reader, options) };
         }
-        return new List<T> { token.ToObject<T>() };
     }
 
-    public override bool CanWrite
+    public override void Write(Utf8JsonWriter writer, List<T> value, JsonSerializerOptions options)
     {
-        get { return false; }
-    }
-
-    public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-    {
-        throw new NotImplementedException();
+        writer.WriteStartArray();
+        foreach (var item in value)
+            JsonSerializer.Serialize(writer, item, options);
+        writer.WriteEndArray();
     }
 }

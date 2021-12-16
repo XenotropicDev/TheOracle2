@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using OracleData;
+﻿using OracleData;
 
 namespace TheOracle2.DataClasses;
 
@@ -7,21 +6,21 @@ namespace TheOracle2.DataClasses;
 
 public class AddTemplate
 {
-    [Newtonsoft.Json.JsonIgnore]
+    [JsonIgnore]
     public int Id { get; set; }
 
     public Attributes Attributes { get; set; }
 
-    [JsonProperty(PropertyName = "Template type")]
+    [JsonPropertyName("Template type")]
     public string Templatetype { get; set; }
 }
 
 public partial class Attributes
 {
-    [Newtonsoft.Json.JsonIgnore]
+    [JsonIgnore]
     public int Id { get; set; }
 
-    [JsonProperty(PropertyName = "Derelict Type")]
+    [JsonPropertyName("Derelict Type")]
     public string DerelictType { get; set; }
 
     [JsonConverter(typeof(SingleOrArrayConverter<string>))]
@@ -30,10 +29,10 @@ public partial class Attributes
 
 public partial class ChanceTable
 {
-    [Newtonsoft.Json.JsonIgnore]
+    [JsonIgnore]
     public int Id { get; set; }
 
-    [JsonProperty(PropertyName = "Add template")]
+    [JsonPropertyName("Add template")]
     public AddTemplate Addtemplate { get; set; }
 
     public IList<string> Assets { get; set; }
@@ -41,10 +40,10 @@ public partial class ChanceTable
     public string Description { get; set; }
     public string Details { get; set; }
 
-    [JsonProperty(PropertyName = "Game object")]
+    [JsonPropertyName("Game object")]
     public GameObject Gameobject { get; set; }
 
-    [JsonProperty(PropertyName = "Multiple rolls")]
+    [JsonPropertyName("Multiple rolls")]
     public MultipleRolls Multiplerolls { get; set; }
 
     public List<Oracle> Oracles { get; set; }
@@ -55,19 +54,19 @@ public partial class ChanceTable
 
 public partial class GameObject
 {
-    [Newtonsoft.Json.JsonIgnore]
+    [JsonIgnore]
     public int Id { get; set; }
 
     public int Amount { get; set; }
     public Attributes Attributes { get; set; }
 
-    [JsonProperty(PropertyName = "Object type")]
+    [JsonPropertyName("Object type")]
     public string Objecttype { get; set; }
 }
 
 public class Inherit
 {
-    [Newtonsoft.Json.JsonIgnore]
+    [JsonIgnore]
     public int Id { get; set; }
 
     public string Category { get; set; }
@@ -78,10 +77,10 @@ public class Inherit
 
 public class MultipleRolls
 {
-    [Newtonsoft.Json.JsonIgnore]
+    [JsonIgnore]
     public int Id { get; set; }
 
-    [JsonProperty(PropertyName = "Allow duplicates")]
+    [JsonPropertyName("Allow duplicates")]
     public bool Allowduplicates { get; set; }
 
     public int Amount { get; set; }
@@ -89,50 +88,50 @@ public class MultipleRolls
 
 public partial class Oracle
 {
-    [Newtonsoft.Json.JsonIgnore]
+    [JsonIgnore]
     public int Id { get; set; }
 
     public IList<string> Aliases { get; set; }
 
-    [JsonProperty(PropertyName = "Allow duplicate rolls")]
+    [JsonPropertyName("Allow duplicate rolls")]
     public bool AllowDuplicateRolls { get; set; }
 
     public string Category { get; set; }
     public string Description { get; set; }
 
-    [JsonProperty(PropertyName = "Display name")]
+    [JsonPropertyName("Display name")]
     public string DisplayName { get; set; }
 
     public bool Initial { get; set; }
 
-    [JsonProperty(PropertyName = "Max rolls")]
+    [JsonPropertyName("Max rolls")]
     public int Maxrolls { get; set; }
 
-    [JsonProperty(PropertyName = "Min rolls")]
+    [JsonPropertyName("Min rolls")]
     public int Minrolls { get; set; }
 
     public string Name { get; set; }
 
-    [JsonProperty(PropertyName = "Oracle type")]
+    [JsonPropertyName("Oracle type")]
     public string OracleType { get; set; }
 
     public bool Repeatable { get; set; }
     public Requires Requires { get; set; }
 
-    [JsonProperty(PropertyName = "Select table by")]
+    [JsonPropertyName("Select table by")]
     public string SelectTableBy { get; set; }
 
     public string Subgroup { get; set; }
     public List<ChanceTable> Table { get; set; }
     public List<Tables> Tables { get; set; }
 
-    [JsonProperty(PropertyName = "Use with")]
+    [JsonPropertyName("Use with")]
     public List<UseWith> UseWith { get; set; }
 
-    [JsonProperty(PropertyName = "Part of speech")]
+    [JsonPropertyName("Part of speech")]
     public IList<string> PartOfSpeech { get; set; }
 
-    [JsonProperty(PropertyName = "Content tags")]
+    [JsonPropertyName("Content tags")]
     public IList<string> ContentTags { get; set; }
 
     public string Group { get; set; }
@@ -144,13 +143,13 @@ public class OracleInfo
     {
     }
 
-    [Newtonsoft.Json.JsonIgnore]
+    [JsonIgnore]
     public int Id { get; set; }
 
     public IList<string> Aliases { get; set; }
     public string Description { get; set; }
 
-    [JsonProperty(PropertyName = "Display name")]
+    [JsonPropertyName("Display name")]
     public string DisplayName { get; set; }
 
     public List<Inherit> Inherits { get; set; }
@@ -163,26 +162,26 @@ public class OracleInfo
 
 public partial class Requires
 {
-    [Newtonsoft.Json.JsonIgnore]
+    [JsonIgnore]
     public int Id { get; set; }
 
-    [JsonProperty(PropertyName = "Derelict Type")]
+    [JsonPropertyName("Derelict Type")]
     public IList<string> DerelictType { get; set; }
 
     public IList<string> Environment { get; set; }
     public IList<string> Life { get; set; }
     public IList<string> Location { get; set; }
 
-    [JsonProperty(PropertyName = "Planetary Class")]
+    [JsonPropertyName("Planetary Class")]
     public IList<string> PlanetaryClass { get; set; }
 
     public IList<string> Region { get; set; }
     public IList<string> Scale { get; set; }
 
-    [JsonProperty(PropertyName = "Starship Type")]
+    [JsonPropertyName("Starship Type")]
     public IList<string> StarshipType { get; set; }
 
-    [JsonProperty(PropertyName = "Theme Type")]
+    [JsonPropertyName("Theme Type")]
     public IList<string> ThemeType { get; set; }
 
     public IList<string> Type { get; set; }
@@ -192,7 +191,7 @@ public partial class Requires
 
 public class Rootobject
 {
-    [Newtonsoft.Json.JsonIgnore]
+    [JsonIgnore]
     public int Id { get; set; }
 
     public List<OracleInfo> OracleInfos { get; set; }
@@ -200,14 +199,14 @@ public class Rootobject
 
 public class Subcategory
 {
-    [Newtonsoft.Json.JsonIgnore]
+    [JsonIgnore]
     public int Id { get; set; }
 
     public IList<string> Aliases { get; set; }
     public string Category { get; set; }
     public string Description { get; set; }
 
-    [JsonProperty(PropertyName = "Display name")]
+    [JsonPropertyName("Display name")]
     public string Displayname { get; set; }
 
     public List<Inherit> Inherits { get; set; }
@@ -215,7 +214,7 @@ public class Subcategory
     public List<Oracle> Oracles { get; set; }
     public Requires Requires { get; set; }
 
-    [JsonProperty(PropertyName = "Sample Names")]
+    [JsonPropertyName("Sample Names")]
     public IList<string> SampleNames { get; set; }
 
     public Source Source { get; set; }
@@ -224,10 +223,10 @@ public class Subcategory
 
 public class Suggest
 {
-    [Newtonsoft.Json.JsonIgnore]
+    [JsonIgnore]
     public int Id { get; set; }
 
-    [JsonProperty(PropertyName = "Game object")]
+    [JsonPropertyName("Game object")]
     public GameObject Gameobject { get; set; }
 
     public List<Oracle> Oracles { get; set; }
@@ -235,12 +234,12 @@ public class Suggest
 
 public class Tables
 {
-    [Newtonsoft.Json.JsonIgnore]
+    [JsonIgnore]
     public int Id { get; set; }
 
     public IList<string> Aliases { get; set; }
 
-    [JsonProperty(PropertyName = "Display name")]
+    [JsonPropertyName("Display name")]
     public string Displayname { get; set; }
 
     public string Name { get; set; }
@@ -250,7 +249,7 @@ public class Tables
 
 public class UseWith
 {
-    [Newtonsoft.Json.JsonIgnore]
+    [JsonIgnore]
     public int Id { get; set; }
 
     public string Category { get; set; }

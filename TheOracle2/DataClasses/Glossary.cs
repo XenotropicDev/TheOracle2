@@ -1,79 +1,87 @@
-using Newtonsoft.Json;
 using OracleData;
 
 namespace TheOracle2.DataClasses;
 
 public partial class GlossaryRoot
 {
-    [JsonProperty("Name")]
+    [JsonPropertyName("Name")]
     public string Name { get; set; }
 
-    [JsonProperty("Category")]
+    [JsonPropertyName("Category")]
     public string Category { get; set; }
 
-    [JsonProperty("Source")]
+    [JsonPropertyName("Source")]
     public Source Source { get; set; }
 
-    [JsonProperty("Terms")]
+    [JsonPropertyName("Terms")]
     public IList<Term> Terms { get; set; }
 
-    [JsonProperty("Description", NullValueHandling = NullValueHandling.Ignore)]
+    [JsonPropertyName("Description")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public string Description { get; set; }
 }
 
 public partial class Term
 {
-    [JsonProperty("Name")]
+    [JsonPropertyName("Name")]
     public string Name { get; set; }
 
-    [JsonProperty("Color", NullValueHandling = NullValueHandling.Ignore)]
+    [JsonPropertyName("Color")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public string Color { get; set; }
 
-    [JsonProperty("Description")]
+    [JsonPropertyName("Description")]
     public string Description { get; set; }
 
-    [JsonProperty("Category")]
+    [JsonPropertyName("Category")]
     public string Category { get; set; }
 
-    [JsonProperty("Applied by", NullValueHandling = NullValueHandling.Ignore)]
+    [JsonPropertyName("Applied by")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public AppliedBy AppliedBy { get; set; }
 
-    [JsonProperty("Removed by", NullValueHandling = NullValueHandling.Ignore)]
+    [JsonPropertyName("Removed by")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public RemovedBy RemovedBy { get; set; }
 
-    [JsonProperty("Effects", NullValueHandling = NullValueHandling.Ignore)]
+    [JsonPropertyName("Effects")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public Effect Effects { get; set; }
 
-    [JsonProperty("Applies to", NullValueHandling = NullValueHandling.Ignore)]
+    [JsonPropertyName("Applies to")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public IList<string> AppliesTo { get; set; }
 
-    [JsonProperty("Effect", NullValueHandling = NullValueHandling.Ignore)]
+    [JsonPropertyName("Effect")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public Effect Effect { get; set; }
 }
 
 public partial class AppliedBy
 {
-    [JsonProperty("Moves")]
+    [JsonPropertyName("Moves")]
     public IList<string> Moves { get; set; }
 }
 
 public partial class Effect
 {
-    [JsonProperty("Forbid Increase")]
+    [JsonPropertyName("Forbid Increase")]
     public IList<string> ForbidIncrease { get; set; }
 }
 
 public partial class RemovedBy
 {
-    [JsonProperty("Moves", NullValueHandling = NullValueHandling.Ignore)]
+    [JsonPropertyName("Moves")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public IList<string> Moves { get; set; }
 
-    [JsonProperty("Quest", NullValueHandling = NullValueHandling.Ignore)]
+    [JsonPropertyName("Quest")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public Quest Quest { get; set; }
 }
 
 public partial class Quest
 {
-    [JsonProperty("Rank")]
+    [JsonPropertyName("Rank")]
     public IList<string> Rank { get; set; }
 }
