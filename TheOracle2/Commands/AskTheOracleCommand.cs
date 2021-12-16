@@ -1,58 +1,41 @@
-﻿using Discord.WebSocket;
+﻿using Discord.Interactions;
 
 namespace TheOracle2;
 
-public class AskTheOracleCommand : ISlashCommand
+[Group("ask", "Ask the oracle")]
+public class OracleAskPaths : InteractionModuleBase
 {
-    public SocketSlashCommand SlashCommandContext { get; set; }
-
-    [OracleSlashCommand("ask")]
-    public async Task Ask(UserContent.EFContext test)
+    [SlashCommand("with-likelihood", "Ask the oracle based on the predefined likelihoods")]
+    public async Task Named([Summary(description: "Ask the oracle based on the predefined likelihoods")] AskOption keyword, string fluff = "")
     {
-        int chance = Convert.ToInt32(SlashCommandContext.Data.Options.FirstOrDefault().Options.FirstOrDefault().Value);
+        var rnd = BotRandom.Instance;
+        var roll = rnd.Next(101);
+        string result = (roll >= 100 - (int)keyword) ? "Yes" : "No";
 
-        if (chance > 0)
-        {
-            Random rnd = new Random();
-            var roll = rnd.Next(101);
-            string result = (roll >= 100 - chance) ? "Yes" : "No";
-            await SlashCommandContext.RespondAsync($"You rolled {roll} VS. {chance}% chance\n**{result}**.").ConfigureAwait(false);
-        }
+        if (fluff?.Length > 0) fluff += "\n";
+        await RespondAsync($"{fluff}You rolled {roll} VS. {keyword} ({(int)keyword}%)\n**{result}**.").ConfigureAwait(false);
     }
 
-    public IList<SlashCommandBuilder> GetCommandBuilders()
+    [SlashCommand("with-chance", "Ask the oracle based on a percentage")]
+    public async Task Numeric([Summary(description: "Ask the oracle based on a given percent chance of something happening")]
+                                [MaxValue(99)]
+                                [MinValue(1)] int number, 
+        string fluff = null)
     {
-        var command = new SlashCommandBuilder()
-            .WithName("ask")
-            .WithDescription("Ask the oracle")
-            .AddOption(new SlashCommandOptionBuilder()
-                .WithName("with-likelihood")
-                .WithDescription("Ask the oracle based on the predefined likelihoods")
-                .WithType(ApplicationCommandOptionType.SubCommand)
-                .AddOption(new SlashCommandOptionBuilder()
-                    .WithName("keyword")
-                    .WithDescription("Ask the oracle based on the predefined likelihoods")
-                    .WithRequired(true)
-                    .AddChoice("Almost Certain", 10)
-                    .AddChoice("Likely", 25)
-                    .AddChoice("50/50", 50)
-                    .AddChoice("Unlikely", 75)
-                    .AddChoice("Small Chance", 90)
-                    .WithType(ApplicationCommandOptionType.Integer)
-                )
-            )
-            .AddOption(new SlashCommandOptionBuilder()
-                .WithName("with-chance")
-                .WithDescription("Ask the oracle based on a percentage")
-                .WithType(ApplicationCommandOptionType.SubCommand)
-                .AddOption(new SlashCommandOptionBuilder()
-                    .WithName("by-percent")
-                    .WithDescription("Ask the oracle based on a given percent change of something happening")
-                    .WithRequired(true)
-                    .WithType(ApplicationCommandOptionType.Integer)
-                )
-            );
+        var rnd = BotRandom.Instance;
+        var roll = rnd.Next(101);
+        string result = (roll >= 100 - number) ? "Yes" : "No";
 
-        return new List<SlashCommandBuilder>() { command };
+        if (fluff?.Length > 0) fluff += "\n";
+        await RespondAsync($"{fluff}You rolled {roll} VS. {number}%\n**{result}**.").ConfigureAwait(false);
     }
+}
+
+public enum AskOption
+{
+    AlmostCertain = 10,
+    Likely = 25,
+    FiftyFifty = 50,
+    Unlikely = 75,
+    SmallChance = 90
 }

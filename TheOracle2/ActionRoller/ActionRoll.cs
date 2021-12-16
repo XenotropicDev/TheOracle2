@@ -101,7 +101,13 @@ public class ActionRoll
 
     public EmbedBuilder ToEmbed()
     {
-        return new EmbedBuilder().WithColor(ResultColor()).WithThumbnailUrl(ResultIcon()).WithTitle(ResultText()).WithDescription(ToString()).WithFooter(OverMaxMessage()).WithAuthor("Roll");
+        return new EmbedBuilder()
+            .WithColor(ResultColor())
+            .WithThumbnailUrl(ResultIcon())
+            .WithTitle(ResultText())
+            .WithDescription(ToString())
+            .WithFooter(OverMaxMessage())
+            .WithAuthor("Roll");
     }
 
     public string OverMaxMessage()
