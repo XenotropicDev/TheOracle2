@@ -1,5 +1,6 @@
 ﻿global using Discord;
 global using Microsoft.Extensions.DependencyInjection;
+global using System.Text.Json.Serialization;
 
 using Discord.Commands;
 using Discord.Interactions;
@@ -71,7 +72,7 @@ internal class Program
             var refCommands = _services.GetRequiredService<ReferencedMessageCommandHandler>();
             refCommands.AddCommandHandler(client);
 
-            interactionService = new InteractionService(client);
+            interactionService = new InteractionService(client, new InteractionServiceConfig() {DefaultRunMode = Discord.Interactions.RunMode.Async });
             //interactionService.AddTypeConverter<Move>(new MoveReferenceConverter(_services));
 
             await interactionService.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
