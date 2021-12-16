@@ -92,7 +92,7 @@ internal class Program
                 switch (arg)
                 {
                     case SocketSlashCommand slash:
-                        if (!interactionService.SlashCommands.Any(cmd => cmd.Name == slash.CommandName))
+                        if (!interactionService.SlashCommands.Any(cmd => cmd.Name == slash.CommandName || cmd.Module.SlashGroupName == slash.CommandName))
                             return;
                         break;
 

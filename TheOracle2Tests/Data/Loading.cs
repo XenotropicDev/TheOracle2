@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
-using NJsonSchema.CodeGeneration.CSharp;
+//using NJsonSchema.CodeGeneration.CSharp;
 using OracleData;
 using System;
 using System.Collections.Generic;
@@ -53,8 +53,8 @@ namespace TheOracle2.UserContent.Tests
                 }
             }
 
-            var schema = NJsonSchema.JsonSchema.FromType(T);
-            File.WriteAllText(nameof(T) + ".schema.json", schema.ToJson());
+            //var schema = NJsonSchema.JsonSchema.FromType(T);
+            //File.WriteAllText(nameof(T) + ".schema.json", schema.ToJson());
         }
     }
 }
