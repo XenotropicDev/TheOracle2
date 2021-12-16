@@ -46,7 +46,7 @@ public class ProgressTrackerCommand : InteractionModuleBase
             .WithButton(customId: "roll-progress", row: 0, style: ButtonStyle.Secondary, emote: new Emoji("🎲"))
             ;
 
-        await ReplyAsync(embed: embed, component: compBuilder.Build()).ConfigureAwait(false);
+        await RespondAsync(embed: embed, component: compBuilder.Build()).ConfigureAwait(false);
     }
 
     public virtual string GetProgressGraphic(int Ticks)

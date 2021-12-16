@@ -10,7 +10,7 @@ public class ActionCommand : InteractionModuleBase
         [Summary(description: "Any role playing text you'd like to include in the post")] string fluff = "")
     {
         var roll = new ActionRoll(modifiers, message: fluff);
-        await ReplyAsync(embed: roll.ToEmbed().Build());
+        await RespondAsync(embed: roll.ToEmbed().Build());
     }
 
     [SlashCommand("progress-roll", "Perform a progress (or similar) roll")]
@@ -19,6 +19,6 @@ public class ActionCommand : InteractionModuleBase
     [Summary(description: "Any role playing text you'd like to include in the post")] string fluff = "")
     {
         var roll = new ActionRoll(0, score, fluff);
-        await ReplyAsync(embed: roll.ToEmbed().WithAuthor("Progress Roll").Build());
+        await RespondAsync(embed: roll.ToEmbed().WithAuthor("Progress Roll").Build());
     }
 }
