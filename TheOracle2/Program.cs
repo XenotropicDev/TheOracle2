@@ -1,13 +1,14 @@
 ﻿global using Discord;
 global using Microsoft.Extensions.DependencyInjection;
 global using System.Text.Json.Serialization;
+global using System.Text.Json;
+global using System.Linq;
 
 using Discord.Commands;
 using Discord.Interactions;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using OracleData;
 using System.Reflection;
 using TheOracle2.DataClasses;
@@ -52,12 +53,10 @@ internal class Program
             await client.StartAsync();
             client.Ready += ClientReady;
 
-            var commandHandler = services.GetRequiredService<SlashCommandHandler>();
-            commandHandler.LoadFromAssembly(Assembly.GetEntryAssembly(), services);
+
 
             await client.SetGameAsync("TheOracle v2 - Alpha", "", ActivityType.Playing).ConfigureAwait(false);
 
-            client.SlashCommandExecuted += commandHandler.SlashCommandEvent;
 
             await Task.Delay(Timeout.Infinite);
         }
@@ -69,11 +68,13 @@ internal class Program
         {
             var handler = _services.GetRequiredService<SlashCommandHandler>();
 
+            var commandHandler = _services.GetRequiredService<SlashCommandHandler>();
+            commandHandler.LoadFromAssembly(Assembly.GetEntryAssembly(), _services);
+
             var refCommands = _services.GetRequiredService<ReferencedMessageCommandHandler>();
             refCommands.AddCommandHandler(client);
 
             interactionService = new InteractionService(client, new InteractionServiceConfig() {DefaultRunMode = Discord.Interactions.RunMode.Async });
-            //interactionService.AddTypeConverter<Move>(new MoveReferenceConverter(_services));
 
             await interactionService.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
 
@@ -81,25 +82,39 @@ internal class Program
 #if DEBUG
             await interactionService.RegisterCommandsToGuildAsync(756890506830807071, false);
             await interactionService.RegisterCommandsToGuildAsync(916381023766470747, false);
-            //await interactionService
 #else
             //await interactionService.RegisterCommandsGloballyAsync();
 #endif
             await handler.InstallCommandsAsync(_services, false);
 
+            //todo: does this help the missed heartbeat, and if so why?
+            //client.Disconnected += _ => client.StartAsync();
+
+            //client.InteractionCreated += async (arg) =>
+            //{
+            //if (arg is SocketSlashCommand slashCommand && slashCommand.CommandName == "delay")
+            //{
+            //var cmd = new DelayCommand(slashCommand);
+            //await cmd.DelayTest().ConfigureAwait(false);
+            //}
+            //};
+
             client.InteractionCreated += async (arg) =>
             {
-                //make sure we are responsible for handling the command.
+                bool useInteractionService = true;
                 switch (arg)
                 {
                     case SocketSlashCommand slash:
+                        logger.LogInformation($"{slash.User.Username} triggered slash command: {slash.CommandName}");
                         if (!interactionService.SlashCommands.Any(cmd => cmd.Name == slash.CommandName || cmd.Module.SlashGroupName == slash.CommandName))
-                            return;
+                            useInteractionService = false;
+                        if (!useInteractionService) await commandHandler.ExecuteAsync(slash, _services).ConfigureAwait(false);
                         break;
 
                     case SocketMessageComponent component:
+                        logger.LogInformation($"{component.User.Username} triggered  message component: {component.Data.CustomId}");
                         if (!interactionService.ComponentCommands.Any(cmd => cmd.Name == component.Data.CustomId))
-                            return;
+                            useInteractionService = false;
                         break;
 
                     default:
@@ -108,29 +123,21 @@ internal class Program
 
                 try
                 {
-                    var ctx = new SocketInteractionContext(client, arg);
-                    await interactionService.ExecuteCommandAsync(ctx, _services);
+                    if (useInteractionService)
+                    {
+                        var ctx = new SocketInteractionContext(client, arg);
+                        await interactionService.ExecuteCommandAsync(ctx, _services).ConfigureAwait(false);
+                    }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex);
-
-                    // If a Slash Command execution fails it is most likely that the original interaction acknowledgement will persist. It is a good idea to delete the original
-                    // response, or at least let the user know that something went wrong during the command execution.
-                    //if (arg.Type == InteractionType.ApplicationCommand)
-                    //    await arg.GetOriginalResponseAsync().ContinueWith(async (msg) => await msg.Result.DeleteAsync());
+                    logger.LogError(ex.Message, ex);
                 }
             };
-
-            //client.ButtonExecuted += async (interaction) =>
-            //{
-            //    var ctx = new SocketInteractionContext<SocketMessageComponent>(client, interaction);
-            //    await interactionService.ExecuteCommandAsync(ctx, _services);
-            //};
         }
         catch (Discord.Net.HttpException ex)
         {
-            string json = JsonConvert.SerializeObject(ex.Errors);
+            string json = JsonSerializer.Serialize(ex.Errors);
             logger.LogError(ex.Message, ex);
             logger.LogError(json);
         }
@@ -151,7 +158,7 @@ internal class Program
         var file = baseDir.GetFiles("assets.json").FirstOrDefault();
 
         string text = file.OpenText().ReadToEnd();
-        var root = JsonConvert.DeserializeObject<AssetRoot>(text);
+        var root = JsonSerializer.Deserialize<AssetRoot>(text);
 
         foreach (var asset in root.Assets)
         {
@@ -162,7 +169,7 @@ internal class Program
         file = baseDir.GetFiles("moves.json").FirstOrDefault();
 
         text = file.OpenText().ReadToEnd();
-        var moveRoot = JsonConvert.DeserializeObject<MovesInfo>(text);
+        var moveRoot = JsonSerializer.Deserialize<MovesInfo>(text);
 
         foreach (var move in moveRoot.Moves)
         {
@@ -212,7 +219,7 @@ internal class Program
 
     private ServiceProvider ConfigureServices(DiscordSocketClient client = null, CommandService command = null)
     {
-        var clientConfig = new DiscordSocketConfig { MessageCacheSize = 100, LogLevel = LogSeverity.Debug };
+        var clientConfig = new DiscordSocketConfig { MessageCacheSize = 100, LogLevel = LogSeverity.Info,  };
         client ??= new DiscordSocketClient(clientConfig);
 
         var config = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())

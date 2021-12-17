@@ -1,7 +1,6 @@
 ﻿using Discord.Interactions;
 using Discord.Net;
 using Discord.WebSocket;
-using Newtonsoft.Json;
 using TheOracle2.UserContent;
 
 namespace TheOracle2;
@@ -169,7 +168,8 @@ public class PlayerCardCommand : InteractionModuleBase
         }
         catch (HttpException hex)
         {
-            var json = JsonConvert.SerializeObject(hex.Errors, Formatting.Indented);
+            string json = JsonSerializer.Serialize(hex.Errors, new JsonSerializerOptions() { WriteIndented = true });
+
             Console.WriteLine(json);
             throw;
         }
@@ -195,7 +195,7 @@ public class PlayerCardCommand : InteractionModuleBase
         }
         catch (HttpException hex)
         {
-            var json = JsonConvert.SerializeObject(hex.Errors, Formatting.Indented);
+            string json = JsonSerializer.Serialize(hex.Errors, new JsonSerializerOptions() { WriteIndented = true });
             Console.WriteLine(json);
             throw;
         }

@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using TheOracle2.ActionRoller;
+using TheOracle2.GameObjects;
 
 namespace TheOracle2;
 
@@ -10,20 +11,20 @@ public class ActionRoll
     public int ActionDie { get; set; }
     public string Message { get; }
     public int[] Modifiers { get; set; }
-    public int ChallengeDie1 { get; set; }
-    public int ChallengeDie2 { get; set; }
+    public DieResult ChallengeDie1 { get; set; } = new DieResult(new Die(10));
+    public DieResult ChallengeDie2 { get; set; } = new DieResult(new Die(10));
     public int ActionScore { get => ActionDie + Modifiers.Sum() <= 10 ? ActionDie + Modifiers.Sum() : 10; }
 
     public ActionRollResult RollResult
     {
         get
         {
-            if (ActionScore > ChallengeDie1 && ActionScore > ChallengeDie2)
+            if (ActionScore > ChallengeDie1.RollValue && ActionScore > ChallengeDie2.RollValue)
             {
                 if (ChallengeDie1 == ChallengeDie2) return ActionRollResult.MatchHit;
                 return ActionRollResult.StrongHit;
             }
-            if (ActionScore <= ChallengeDie1 && ActionScore <= ChallengeDie2)
+            if (ActionScore <= ChallengeDie1.RollValue && ActionScore <= ChallengeDie2.RollValue)
             {
                 if (ChallengeDie1 == ChallengeDie2) return ActionRollResult.MatchMiss;
                 return ActionRollResult.Miss;
@@ -39,8 +40,6 @@ public class ActionRoll
     /// <param name="actionDie">Sets the value of the ActionDie, useful for things like progress rolls</param>
     public ActionRoll(int playerModifier = 0, int? actionDie = null, string message = "")
     {
-        ChallengeDie1 = BotRandom.Instance.Next(1, 11);
-        ChallengeDie2 = BotRandom.Instance.Next(1, 11);
         ActionDie = actionDie ?? BotRandom.Instance.Next(1, 7);
         Message = message;
         Modifiers = new int[] { playerModifier };
@@ -53,8 +52,6 @@ public class ActionRoll
     /// <param name="actionDie">Sets the value of the ActionDie, useful for things like progress rolls</param>
     public ActionRoll(int[] modifiers, int? actionDie = null, string message = "")
     {
-        ChallengeDie1 = BotRandom.Instance.Next(1, 11);
-        ChallengeDie2 = BotRandom.Instance.Next(1, 11);
         ActionDie = actionDie ?? BotRandom.Instance.Next(1, 7);
         Message = message;
         Modifiers = modifiers;

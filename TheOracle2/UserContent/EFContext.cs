@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Newtonsoft.Json;
 using OracleData;
 using TheOracle2.DataClasses;
 
@@ -25,8 +24,8 @@ public class EFContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         var stringArrayToCSVConverter = new ValueConverter<IList<string>, string>(
-            v => JsonConvert.SerializeObject(v),
-            v => JsonConvert.DeserializeObject<IList<string>>(v)
+            v => JsonSerializer.Serialize(v, new JsonSerializerOptions()),
+            v => JsonSerializer.Deserialize<IList<string>>(v, new JsonSerializerOptions())
             );
 
         var valueComparer = new ValueComparer<IList<string>>(

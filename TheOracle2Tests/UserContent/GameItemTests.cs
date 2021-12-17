@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Text.RegularExpressions;
 using TheOracle2Tests;
 
 namespace TheOracle2.UserContent.Tests
@@ -15,6 +16,23 @@ namespace TheOracle2.UserContent.Tests
             var user = OracleGuild.GetGuild(1, context);
 
             Assert.IsNotNull(user);
+        }
+    }
+
+    [TestClass()]
+    public class RegexTest
+    {
+        [TestMethod()]
+        public void regex()
+        {
+            string expected = "replace these 'But  not these' and replace these";
+
+            string source = "replace      these    'But  not these' and    replace  these";
+            var regex = new Regex(@"\s+");
+
+            var result = regex.Replace(source, " ");
+
+            Assert.AreEqual(expected, result);
         }
     }
 }

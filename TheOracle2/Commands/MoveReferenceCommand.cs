@@ -1,5 +1,4 @@
 ﻿using Discord.WebSocket;
-using TheOracle2.DataClasses;
 using TheOracle2.UserContent;
 
 namespace TheOracle2;
@@ -33,7 +32,7 @@ public class MoveReferenceCommand : ISlashCommand
 
         if (!keepMsg && !ephemeral)
         {
-            await Task.Delay(TimeSpan.FromMinutes(15));
+            await Task.Delay(TimeSpan.FromMinutes(15)).ConfigureAwait(false);
             await SlashCommandContext.DeleteOriginalResponseAsync().ConfigureAwait(false);
         }
     }
@@ -85,5 +84,22 @@ public class MoveReferenceCommand : ISlashCommand
         }
 
         return new List<SlashCommandBuilder>() { command };
+    }
+}
+
+public class DelayCommand
+{
+    private SocketSlashCommand SlashCommand;
+
+    public DelayCommand(SocketSlashCommand slashCommand)
+    {
+        this.SlashCommand = slashCommand;
+    }
+
+    public async Task DelayTest()
+    {
+        var msg = await SlashCommand.RespondAsync("Message to be deleted").ConfigureAwait(false);
+        await Task.Delay(5000).ConfigureAwait(false);
+        await msg.DeleteAsync().ConfigureAwait(false);
     }
 }

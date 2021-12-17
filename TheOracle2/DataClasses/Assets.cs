@@ -4,7 +4,6 @@ using TheOracle2.UserContent;
 
 namespace OracleData;
 
-[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.5.2.0 (Newtonsoft.Json v12.0.0.0)")]
 public record Ability
 {
     [JsonIgnore]
@@ -32,7 +31,6 @@ public record Ability
     public string Text { get; set; }
 }
 
-[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.5.2.0 (Newtonsoft.Json v12.0.0.0)")]
 public record AlterProperties
 {
     [JsonIgnore]
@@ -44,7 +42,6 @@ public record AlterProperties
     public Track Track { get; set; }
 }
 
-[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.5.2.0 (Newtonsoft.Json v12.0.0.0)")]
 public record Asset
 {
     [JsonIgnore]
@@ -96,7 +93,6 @@ public record ConditionMeter
     public int StartsAt { get; set; }
 }
 
-[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.5.2.0 (Newtonsoft.Json v12.0.0.0)")]
 public record Counter
 {
     [JsonIgnore]
@@ -111,7 +107,6 @@ public record Counter
     public int Max { get; set; }
 }
 
-[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.5.2.0 (Newtonsoft.Json v12.0.0.0)")]
 public record Source
 {
     [JsonIgnore]
@@ -127,7 +122,6 @@ public record Source
     public string Date { get; set; }
 }
 
-[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.5.2.0 (Newtonsoft.Json v12.0.0.0)")]
 public record Track
 {
     [JsonIgnore]
@@ -142,7 +136,6 @@ public record Track
     public int Value { get; set; }
 }
 
-[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.5.2.0 (Newtonsoft.Json v12.0.0.0)")]
 public record AssetRoot
 {
     [JsonIgnore]

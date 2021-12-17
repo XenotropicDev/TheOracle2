@@ -1,7 +1,6 @@
 ﻿using Discord.Net;
 using Discord.WebSocket;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
@@ -22,7 +21,7 @@ public class SlashCommandHandler
 
     public async Task SlashCommandEvent(SocketSlashCommand commandInteraction)
     {
-        await ExecuteAsync(commandInteraction, _service);
+        await ExecuteAsync(commandInteraction, _service).ConfigureAwait(false);
     }
 
     public void LoadFromAssembly(Assembly assembly, IServiceProvider service = null)
@@ -65,38 +64,41 @@ public class SlashCommandHandler
 
     public async Task ExecuteAsync(SocketSlashCommand context, IServiceProvider services)
     {
-        try
+        if (!CommandList.ContainsKey(context.Data.Name))
         {
-            if (!CommandList.ContainsKey(context.Data.Name))
+            return;
+        }
+
+        await Task.Run(async () =>
+        {
+            try
             {
-                //await context.RespondAsync($"Unknown command {context.Data.Name}. Is it registered with the right name?", ephemeral:true);
-                return;
+                var methodInfo = CommandList[context.Data.Name];
+                var caller = ActivatorUtilities.CreateInstance(services, methodInfo.DeclaringType);
+                (caller as ISlashCommand).SlashCommandContext = context;
+
+                List<object> args = new List<object>();
+
+                foreach (var arg in methodInfo.GetParameters())
+                {
+                    var service = services.GetService(arg.ParameterType);
+                    if (service != null) args.Add(service);
+                }
+
+                if (args?.Count == 0) args = null;
+
+                await ((Task)methodInfo.Invoke(caller, args?.ToArray())).ConfigureAwait(false);
             }
-            var methodInfo = CommandList[context.Data.Name];
-            var caller = ActivatorUtilities.CreateInstance(services, methodInfo.DeclaringType);
-            (caller as ISlashCommand).SlashCommandContext = context;
-
-            List<object> args = new List<object>();
-
-            foreach (var arg in methodInfo.GetParameters())
+            catch (HttpException ex)
             {
-                var service = services.GetService(arg.ParameterType);
-                if (service != null) args.Add(service);
+                string json = JsonSerializer.Serialize(ex.Errors, new JsonSerializerOptions() { WriteIndented = true });
+                _logger.LogError(json);
             }
-
-            if (args?.Count == 0) args = null;
-
-            await (methodInfo.Invoke(caller, args?.ToArray()) as Task);
-        }
-        catch (HttpException ex)
-        {
-            string json = JsonConvert.SerializeObject(ex.Errors, Formatting.Indented);
-            _logger.LogError(json);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex.ToString());
-        }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+            }
+        }).ConfigureAwait(false);
     }
 
     public async Task InstallCommandsAsync(IServiceProvider services, bool DeleteExisting = true)
@@ -141,7 +143,7 @@ public class SlashCommandHandler
         }
         catch (HttpException exception)
         {
-            var json = JsonConvert.SerializeObject(exception.Errors, Formatting.Indented);
+            string json = JsonSerializer.Serialize(exception.Errors, new JsonSerializerOptions() { WriteIndented = true });
             Console.WriteLine(json);
         }
         catch (Exception ex)

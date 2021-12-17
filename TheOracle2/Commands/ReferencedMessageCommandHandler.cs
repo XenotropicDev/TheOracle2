@@ -42,7 +42,7 @@ public class ReferencedMessageCommandHandler
 
         if (message.ReferencedMessage != null && message.ReferencedMessage.Author.Id == _client.CurrentUser.Id)
         {
-            if (await Process(message)) return;
+            if (await Process(message).ConfigureAwait(false)) return;
         }
         return;
     }
