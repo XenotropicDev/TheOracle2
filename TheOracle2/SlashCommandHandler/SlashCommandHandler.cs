@@ -62,31 +62,35 @@ public class SlashCommandHandler
 
     public Dictionary<string, MethodInfo> CommandList { get; set; } = new Dictionary<string, MethodInfo>();
 
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
+
     public async Task ExecuteAsync(SocketSlashCommand context, IServiceProvider services)
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
     {
         if (!CommandList.ContainsKey(context.Data.Name))
         {
             return;
         }
 
-        await Task.Run(async () =>
+        var methodInfo = CommandList[context.Data.Name];
+        var caller = ActivatorUtilities.CreateInstance(services, methodInfo.DeclaringType) as ISlashCommand;
+        caller.SetCommandContext(context);
+
+        List<object> args = new List<object>();
+
+        foreach (var arg in methodInfo.GetParameters())
+        {
+            var service = services.GetService(arg.ParameterType);
+            if (service != null) args.Add(service);
+        }
+
+        if (args?.Count == 0) args = null;
+
+        //Run the command on an unawaited thread so that we don't block the gateway. All exceptions must be handled within the Task.Run
+        _ = Task.Run(async () =>
         {
             try
             {
-                var methodInfo = CommandList[context.Data.Name];
-                var caller = ActivatorUtilities.CreateInstance(services, methodInfo.DeclaringType);
-                (caller as ISlashCommand).SlashCommandContext = context;
-
-                List<object> args = new List<object>();
-
-                foreach (var arg in methodInfo.GetParameters())
-                {
-                    var service = services.GetService(arg.ParameterType);
-                    if (service != null) args.Add(service);
-                }
-
-                if (args?.Count == 0) args = null;
-
                 await ((Task)methodInfo.Invoke(caller, args?.ToArray())).ConfigureAwait(false);
             }
             catch (HttpException ex)
@@ -98,7 +102,7 @@ public class SlashCommandHandler
             {
                 _logger.LogError(ex.ToString());
             }
-        }).ConfigureAwait(false);
+        });
     }
 
     public async Task InstallCommandsAsync(IServiceProvider services, bool DeleteExisting = true)

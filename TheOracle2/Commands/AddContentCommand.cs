@@ -5,7 +5,9 @@ namespace TheOracle2.Commands;
 
 public class AddContentCommand : ISlashCommand
 {
-    public SocketSlashCommand SlashCommandContext { get; set; }
+    public void SetCommandContext(SocketSlashCommand slashCommandContext) => this.SlashCommandContext = slashCommandContext;
+
+    private SocketSlashCommand SlashCommandContext;
 
     [OracleSlashCommand("add-content")]
     public async Task Register(EFContext efContext)

@@ -20,6 +20,10 @@ public class EFContext : DbContext
     public DbSet<Oracle> Oracles { get; set; }
     public DbSet<Tables> ChanceTables { get; set; }
     public DbSet<Ability> AssetAbilities { get; set; }
+    public DbSet<ConditionMeter> ConditionMeters { get; set; }
+    public DbSet<Counter> AssetCounters { get; set; }
+    public DbSet<Select> Selects { get; set; }
+    public DbSet<Track> AssetTracks { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

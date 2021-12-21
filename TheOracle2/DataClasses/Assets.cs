@@ -22,8 +22,7 @@ public record Ability
     public bool Enabled { get; set; }
 
     [JsonPropertyName("Input")]
-    //[NotMapped]
-    public System.Collections.Generic.IList<string> Input { get; set; }
+    public IList<string> Input { get; set; }
 
     public Move Move { get; set; }
 
@@ -51,10 +50,10 @@ public record Asset
     public IList<OracleGuild> OracleGuilds { get; set; } = new List<OracleGuild>();
 
     [JsonPropertyName("Abilities")]
-    public System.Collections.Generic.IList<Ability> Abilities { get; set; }
+    public IList<Ability> Abilities { get; set; }
 
     [JsonPropertyName("Aliases")]
-    public System.Collections.Generic.IList<string> Aliases { get; set; }
+    public IList<string> Aliases { get; set; }
 
     [JsonPropertyName("Category")]
     public string Category { get; set; }
@@ -70,7 +69,7 @@ public record Asset
 
     [JsonPropertyName("Input")]
     [NotMapped]
-    public System.Collections.Generic.IList<string> Input { get; set; }
+    public IList<string> Input { get; set; }
 
     [JsonPropertyName("Name")]
     public string Name { get; set; }
@@ -141,7 +140,7 @@ public record AssetRoot
     [JsonIgnore]
     public int Id { get; set; }
     [JsonPropertyName("Assets")]
-    public System.Collections.Generic.IList<Asset> Assets { get; set; }
+    public IList<Asset> Assets { get; set; }
 
     [JsonPropertyName("Name")]
     public string Name { get; set; }
@@ -151,7 +150,7 @@ public record AssetRoot
 
     //Todo Get rsek to convert these to tags with IDs?
     [JsonPropertyName("Tags")]
-    public System.Collections.Generic.IList<string> Tags { get; set; }
+    public IList<string> Tags { get; set; }
 }
 
 public record AlterMove

@@ -38,7 +38,7 @@ public class OracleGameObjectTemplate
 
         builder.WithFields(Fields);
 
-        await context.RespondAsync(embed: builder.Build(), component: compBuilder.Build());
+        await context.RespondAsync(embed: builder.Build(), components: compBuilder.Build());
     }
 }
 

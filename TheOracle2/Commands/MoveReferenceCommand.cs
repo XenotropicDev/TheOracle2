@@ -5,13 +5,16 @@ namespace TheOracle2;
 
 public class MoveReferenceCommand : ISlashCommand
 {
-    public MoveReferenceCommand(UserContent.EFContext dbContext)
+    public MoveReferenceCommand(EFContext dbContext)
     {
         DbContext = dbContext;
     }
 
     public EFContext DbContext { get; }
-    public SocketSlashCommand SlashCommandContext { get; set; }
+
+    public void SetCommandContext(SocketSlashCommand slashCommandContext) => this.SlashCommandContext = slashCommandContext;
+
+    private SocketSlashCommand SlashCommandContext;
 
     [OracleSlashCommand("reference")]
     public async Task GetReferenceMessage()
@@ -27,17 +30,16 @@ public class MoveReferenceCommand : ISlashCommand
         .WithTitle(move.Name)
         .WithDescription(move.Text);
 
-        //todo add ephemeral option
         await SlashCommandContext.RespondAsync(embed: builder.Build(), ephemeral: ephemeral).ConfigureAwait(false);
 
         if (!keepMsg && !ephemeral)
         {
             await Task.Delay(TimeSpan.FromMinutes(15)).ConfigureAwait(false);
-            await SlashCommandContext.DeleteOriginalResponseAsync().ConfigureAwait(false);
+            var msg = await SlashCommandContext.GetOriginalResponseAsync().ConfigureAwait(false);
+            await msg.DeleteAsync().ConfigureAwait(false);
         }
     }
 
-    //Todo: Add ephemeral option
     public IList<SlashCommandBuilder> GetCommandBuilders()
     {
         var command = new SlashCommandBuilder()
@@ -84,22 +86,5 @@ public class MoveReferenceCommand : ISlashCommand
         }
 
         return new List<SlashCommandBuilder>() { command };
-    }
-}
-
-public class DelayCommand
-{
-    private SocketSlashCommand SlashCommand;
-
-    public DelayCommand(SocketSlashCommand slashCommand)
-    {
-        this.SlashCommand = slashCommand;
-    }
-
-    public async Task DelayTest()
-    {
-        var msg = await SlashCommand.RespondAsync("Message to be deleted").ConfigureAwait(false);
-        await Task.Delay(5000).ConfigureAwait(false);
-        await msg.DeleteAsync().ConfigureAwait(false);
     }
 }

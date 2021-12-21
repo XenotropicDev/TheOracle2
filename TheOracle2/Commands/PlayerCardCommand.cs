@@ -40,7 +40,7 @@ public class PlayerCardCommand : InteractionModuleBase
         builder.AddField("Momentum", 2, true);
         builder.AddField("XP", 0);
 
-        await RespondAsync(embed: builder.Build(), component: compBuilder.Build());
+        await RespondAsync(embed: builder.Build(), components: compBuilder.Build());
     }
 
     [ComponentInteraction("add-momentum")]

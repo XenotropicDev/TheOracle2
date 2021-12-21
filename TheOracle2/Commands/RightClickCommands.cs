@@ -14,7 +14,7 @@ public class RightClickCommands : InteractionModuleBase
         if (msg.Author.Id != Context.Client.CurrentUser.Id) return;
 
         var builder = ComponentBuilder.FromMessage(msg);
-        await RespondAsync(msg.Content, embeds: msg.Embeds.OfType<Embed>().ToArray(), component: builder.Build()).ConfigureAwait(false);
+        await RespondAsync(msg.Content, embeds: msg.Embeds.OfType<Embed>().ToArray(), components: builder.Build()).ConfigureAwait(false);
 
         await msg.DeleteAsync().ConfigureAwait(false);
     }

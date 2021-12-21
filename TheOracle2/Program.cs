@@ -1,9 +1,8 @@
 ﻿global using Discord;
 global using Microsoft.Extensions.DependencyInjection;
-global using System.Text.Json.Serialization;
-global using System.Text.Json;
 global using System.Linq;
-
+global using System.Text.Json;
+global using System.Text.Json.Serialization;
 using Discord.Commands;
 using Discord.Interactions;
 using Discord.WebSocket;
@@ -53,10 +52,7 @@ internal class Program
             await client.StartAsync();
             client.Ready += ClientReady;
 
-
-
             await client.SetGameAsync("TheOracle v2 - Alpha", "", ActivityType.Playing).ConfigureAwait(false);
-
 
             await Task.Delay(Timeout.Infinite);
         }
@@ -74,7 +70,8 @@ internal class Program
             var refCommands = _services.GetRequiredService<ReferencedMessageCommandHandler>();
             refCommands.AddCommandHandler(client);
 
-            interactionService = new InteractionService(client, new InteractionServiceConfig() {DefaultRunMode = Discord.Interactions.RunMode.Async });
+            interactionService = new InteractionService(client, new InteractionServiceConfig() { DefaultRunMode = Discord.Interactions.RunMode.Async });
+            interactionService.Log += LogAsync;
 
             await interactionService.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
 
@@ -87,51 +84,34 @@ internal class Program
 #endif
             await handler.InstallCommandsAsync(_services, false);
 
-            //todo: does this help the missed heartbeat, and if so why?
-            //client.Disconnected += _ => client.StartAsync();
-
-            //client.InteractionCreated += async (arg) =>
-            //{
-            //if (arg is SocketSlashCommand slashCommand && slashCommand.CommandName == "delay")
-            //{
-            //var cmd = new DelayCommand(slashCommand);
-            //await cmd.DelayTest().ConfigureAwait(false);
-            //}
-            //};
-
             client.InteractionCreated += async (arg) =>
             {
-                bool useInteractionService = true;
                 switch (arg)
                 {
                     case SocketSlashCommand slash:
                         logger.LogInformation($"{slash.User.Username} triggered slash command: {slash.CommandName}");
                         if (!interactionService.SlashCommands.Any(cmd => cmd.Name == slash.CommandName || cmd.Module.SlashGroupName == slash.CommandName))
-                            useInteractionService = false;
-                        if (!useInteractionService) await commandHandler.ExecuteAsync(slash, _services).ConfigureAwait(false);
+                        {
+                            await commandHandler.ExecuteAsync(slash, _services);
+                        }
+                        else
+                        {
+                            var slashCtx = new SocketInteractionContext(client, slash);
+                            await interactionService.ExecuteCommandAsync(slashCtx, _services).ConfigureAwait(false);
+                        }
                         break;
 
                     case SocketMessageComponent component:
-                        logger.LogInformation($"{component.User.Username} triggered  message component: {component.Data.CustomId}");
-                        if (!interactionService.ComponentCommands.Any(cmd => cmd.Name == component.Data.CustomId))
-                            useInteractionService = false;
+                        logger.LogInformation($"{component.User.Username} triggered message component (global event): {component.Data.CustomId}");
+                        var msgCtx = new SocketInteractionContext<SocketMessageComponent>(client, component);
+                        await interactionService.ExecuteCommandAsync(msgCtx, _services).ConfigureAwait(false);
                         break;
 
                     default:
-                        break;
-                }
-
-                try
-                {
-                    if (useInteractionService)
-                    {
+                        logger.LogInformation($"{arg.User.Username} triggered unknown interaction {arg.GetType()}: {arg.Data}");
                         var ctx = new SocketInteractionContext(client, arg);
                         await interactionService.ExecuteCommandAsync(ctx, _services).ConfigureAwait(false);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    logger.LogError(ex.Message, ex);
+                        break;
                 }
             };
         }
@@ -152,8 +132,6 @@ internal class Program
         context.Database.EnsureDeleted();
         context.Database.EnsureCreated();
 
-        OracleGuild contentReg = new OracleGuild() { OracleGuildId = 756890506830807071 };
-
         var baseDir = new DirectoryInfo(Directory.GetCurrentDirectory() + "\\Data");
         var file = baseDir.GetFiles("assets.json").FirstOrDefault();
 
@@ -162,7 +140,6 @@ internal class Program
 
         foreach (var asset in root.Assets)
         {
-            asset.OracleGuilds.Add(contentReg);
             context.Assets.Add(asset);
         }
 
@@ -173,7 +150,6 @@ internal class Program
 
         foreach (var move in moveRoot.Moves)
         {
-            move.OracleGuilds.Add(contentReg);
             context.Moves.Add(move);
         }
 
@@ -182,32 +158,33 @@ internal class Program
 
     private Task LogAsync(LogMessage msg)
     {
+        var message = msg.Message ?? msg.Exception.Message;
         using (logger.BeginScope("[scope is enabled]"))
         {
             switch (msg.Severity)
             {
                 case LogSeverity.Critical:
-                    logger.LogCritical(msg.Message, msg.Exception);
+                    logger.LogCritical(message, msg.Exception);
                     break;
 
                 case LogSeverity.Error:
-                    logger.LogError(msg.Message, msg.Exception);
+                    logger.LogError(message, msg.Exception);
                     break;
 
                 case LogSeverity.Warning:
-                    logger.LogWarning(msg.Message, msg.Exception);
+                    logger.LogWarning(message, msg.Exception);
                     break;
 
                 case LogSeverity.Info:
-                    logger.LogInformation(msg.Message, msg.Exception);
+                    logger.LogInformation(message, msg.Exception);
                     break;
 
                 case LogSeverity.Verbose:
-                    logger.LogDebug(msg.Message, msg.Exception);
+                    logger.LogDebug(message, msg.Exception);
                     break;
 
                 case LogSeverity.Debug:
-                    logger.LogDebug(msg.Message, msg.Exception);
+                    logger.LogDebug(message, msg.Exception);
                     break;
 
                 default:
@@ -219,7 +196,7 @@ internal class Program
 
     private ServiceProvider ConfigureServices(DiscordSocketClient client = null, CommandService command = null)
     {
-        var clientConfig = new DiscordSocketConfig { MessageCacheSize = 100, LogLevel = LogSeverity.Info,  };
+        var clientConfig = new DiscordSocketConfig { MessageCacheSize = 100, LogLevel = LogSeverity.Info, };
         client ??= new DiscordSocketClient(clientConfig);
 
         var config = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
