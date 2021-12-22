@@ -18,12 +18,46 @@ public class EFContext : DbContext
     public DbSet<Move> Moves { get; set; }
     public DbSet<OracleInfo> OracleInfo { get; set; }
     public DbSet<Oracle> Oracles { get; set; }
-    public DbSet<Tables> ChanceTables { get; set; }
     public DbSet<Ability> AssetAbilities { get; set; }
-    public DbSet<ConditionMeter> ConditionMeters { get; set; }
-    public DbSet<Counter> AssetCounters { get; set; }
-    public DbSet<Select> Selects { get; set; }
-    public DbSet<Track> AssetTracks { get; set; }
+
+    public async Task RecreateDB()
+    {
+        Database.EnsureDeleted();
+        Database.EnsureCreated();
+
+        var baseDir = new DirectoryInfo(Directory.GetCurrentDirectory() + "\\Data");
+        var file = baseDir.GetFiles("assets.json").FirstOrDefault();
+
+        string text = file.OpenText().ReadToEnd();
+        var root = JsonSerializer.Deserialize<AssetRoot>(text);
+
+        foreach (var asset in root.Assets)
+        {
+            Assets.Add(asset);
+        }
+
+        file = baseDir.GetFiles("moves.json").FirstOrDefault();
+
+        text = file.OpenText().ReadToEnd();
+        var moveRoot = JsonSerializer.Deserialize<MovesInfo>(text);
+
+        foreach (var move in moveRoot.Moves)
+        {
+            Moves.Add(move);
+        }
+
+        file = baseDir.GetFiles("oracles.json").FirstOrDefault();
+
+        text = file.OpenText().ReadToEnd();
+        var oracleRoot = Newtonsoft.Json.JsonConvert.DeserializeObject<List<OracleInfo>>(text);
+
+        foreach (var o in oracleRoot)
+        {
+            OracleInfo.Add(o);
+        }
+
+        await SaveChangesAsync();
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -28,7 +28,21 @@ public class SelectCommands : InteractionModuleBase<SocketInteractionContext<Soc
     [ComponentInteraction("select-1")]
     public async Task UpdateMessage(string[] values)
     {
-        await Context.Interaction.UpdateAsync(msg => msg.Content = $"Selected values {string.Join(", ", values)}");
+        await Context.Interaction
+            .UpdateAsync(msg =>
+            {
+                msg.Content = $"Selected values {string.Join(", ", values)}";
+                var comp = ComponentBuilder.FromMessage(Context.Interaction.Message);
+                foreach (var row in comp.ActionRows.Where(r => r.Components.All(c => c.Type == ComponentType.SelectMenu)))
+                {
+                    var selectBuilder = (row.Components.FirstOrDefault() as SelectMenuComponent)?.ToBuilder();
+                    if (selectBuilder != null && values.Contains(selectBuilder.CustomId))
+                    {
+                        row.WithComponents(new List<IMessageComponent> { selectBuilder.Build() });
+                    }
+                }
+                msg.Components = comp.Build();
+            });
     }
 
     [ComponentInteraction("select-2")]

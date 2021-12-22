@@ -1,6 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using TheOracle2Tests;
 
 namespace TheOracle2.UserContent.Tests
@@ -16,6 +19,30 @@ namespace TheOracle2.UserContent.Tests
             var user = OracleGuild.GetGuild(1, context);
 
             Assert.IsNotNull(user);
+        }
+
+        [TestMethod()]
+        public async Task EFContextLinkingTest()
+        {
+            var services = TestServices.GetServices();
+            var context = services.GetRequiredService<EFContext>();
+
+            //await context.RecreateDB();
+
+            Assert.IsTrue(context.Assets.All(a => a.Abilities.Count > 0));
+        }
+
+        [TestMethod()]
+        public async Task OracleRollerTest()
+        {
+            var services = TestServices.GetServices();
+            var context = services.GetRequiredService<EFContext>();
+            
+            await context.RecreateDB();
+
+            var result = context.Oracles.Find(1).Roll(services.GetRequiredService<Random>());
+
+            Assert.IsTrue(context.Assets.All(a => a.Abilities.Count > 0));
         }
     }
 

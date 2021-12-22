@@ -74,4 +74,8 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="OracleRoller\" />
+  </ItemGroup>
+
 </Project>

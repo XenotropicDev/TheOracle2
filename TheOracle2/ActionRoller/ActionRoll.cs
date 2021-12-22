@@ -8,11 +8,20 @@ namespace TheOracle2;
 
 public class ActionRoll
 {
+    private readonly Random random;
+
+    public ActionRoll(Random random)
+    {
+        this.random = random;
+        ChallengeDie1 = new DieResult(new Die(10, random));
+        ChallengeDie2 = new DieResult(new Die(10, random));
+    }
+
     public int ActionDie { get; set; }
     public string Message { get; }
     public int[] Modifiers { get; set; }
-    public DieResult ChallengeDie1 { get; set; } = new DieResult(new Die(10));
-    public DieResult ChallengeDie2 { get; set; } = new DieResult(new Die(10));
+    public DieResult ChallengeDie1 { get; set; } 
+    public DieResult ChallengeDie2 { get; set; }
     public int ActionScore { get => ActionDie + Modifiers.Sum() <= 10 ? ActionDie + Modifiers.Sum() : 10; }
 
     public ActionRollResult RollResult
@@ -40,7 +49,7 @@ public class ActionRoll
     /// <param name="actionDie">Sets the value of the ActionDie, useful for things like progress rolls</param>
     public ActionRoll(int playerModifier = 0, int? actionDie = null, string message = "")
     {
-        ActionDie = actionDie ?? BotRandom.Instance.Next(1, 7);
+        ActionDie = actionDie ?? random.Next(1, 7);
         Message = message;
         Modifiers = new int[] { playerModifier };
     }
@@ -52,7 +61,7 @@ public class ActionRoll
     /// <param name="actionDie">Sets the value of the ActionDie, useful for things like progress rolls</param>
     public ActionRoll(int[] modifiers, int? actionDie = null, string message = "")
     {
-        ActionDie = actionDie ?? BotRandom.Instance.Next(1, 7);
+        ActionDie = actionDie ?? random.Next(1, 7);
         Message = message;
         Modifiers = modifiers;
     }

@@ -15,12 +15,17 @@ namespace TheOracle2Tests
         {
             return new ServiceCollection()
                 .AddDbContext<EFContext>()
-                .AddLogging(builder => builder.AddSimpleConsole(options =>
-                {
-                    options.IncludeScopes = false;
-                    options.SingleLine = true;
-                    options.TimestampFormat = "hh:mm:ss ";
-                }))
+                .AddSingleton<Random>()
+                .AddLogging(builder => {
+                    builder.AddSimpleConsole(options =>
+                    {
+                        options.IncludeScopes = false;
+                        options.SingleLine = true;
+                        options.TimestampFormat = "hh:mm:ss ";
+
+                    });
+                    builder.SetMinimumLevel(LogLevel.Warning);
+                })
                 .BuildServiceProvider();
         }
     }

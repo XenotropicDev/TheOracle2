@@ -1,4 +1,5 @@
 ﻿using OracleData;
+using System.ComponentModel.DataAnnotations;
 
 namespace TheOracle2.DataClasses;
 
@@ -8,6 +9,11 @@ public class AddTemplate
 {
     [JsonIgnore]
     public int Id { get; set; }
+    
+    [JsonIgnore]
+    public int ChanceTableId { get; set; }
+    [JsonIgnore]
+    public ChanceTable ChanceTable { get; set; }
 
     public Attributes Attributes { get; set; }
 
@@ -20,6 +26,16 @@ public partial class Attributes
     [JsonIgnore]
     public int Id { get; set; }
 
+    [JsonIgnore]
+    public int? AddTemplateId { get; set; }
+    [JsonIgnore]
+    public AddTemplate AddTemplate { get; set; }
+
+    [JsonIgnore]
+    public int? GameObjectId { get; set; }
+    [JsonIgnore]
+    public GameObject GameObject { get; set; }
+
     [JsonPropertyName("Derelict Type")]
     public string DerelictType { get; set; }
 
@@ -31,6 +47,14 @@ public partial class ChanceTable
 {
     [JsonIgnore]
     public int Id { get; set; }
+    [JsonIgnore]
+    public int? OracleId { get; set; }
+    [JsonIgnore]
+    public Oracle Oracle { get; set; }
+    [JsonIgnore]
+    public int? TableId { get; set; }
+    [JsonIgnore]
+    public Tables Tables { get; set; }
 
     [JsonPropertyName("Add template")]
     public AddTemplate Addtemplate { get; set; }
@@ -46,7 +70,6 @@ public partial class ChanceTable
     [JsonPropertyName("Multiple rolls")]
     public MultipleRolls Multiplerolls { get; set; }
 
-    public List<Oracle> Oracles { get; set; }
     public List<Suggest> Suggest { get; set; }
     public string Thumbnail { get; set; }
     public int Value { get; set; }
@@ -56,6 +79,16 @@ public partial class GameObject
 {
     [JsonIgnore]
     public int Id { get; set; }
+
+    [JsonIgnore]
+    public int? ChanceTableId { get; set; }
+    [JsonIgnore]
+    public ChanceTable ChanceTable { get; set; }
+
+    [JsonIgnore]
+    public int? SuggestId { get; set; }
+    [JsonIgnore]
+    public Suggest Suggest { get; set; }
 
     public int Amount { get; set; }
     public Attributes Attributes { get; set; }
@@ -69,6 +102,11 @@ public class Inherit
     [JsonIgnore]
     public int Id { get; set; }
 
+    [JsonIgnore]
+    public int OracleInfoId { get; set; }
+    [JsonIgnore]
+    public OracleInfo OracleInfo { get; set; }
+
     public string Category { get; set; }
     public IList<string> Exclude { get; set; }
     public IList<string> Name { get; set; }
@@ -80,6 +118,11 @@ public class MultipleRolls
     [JsonIgnore]
     public int Id { get; set; }
 
+    [JsonIgnore]
+    public int ChanceTableId { get; set; }
+    [JsonIgnore]
+    public ChanceTable ChanceTable { get; set; }
+
     [JsonPropertyName("Allow duplicates")]
     public bool Allowduplicates { get; set; }
 
@@ -90,6 +133,11 @@ public partial class Oracle
 {
     [JsonIgnore]
     public int Id { get; set; }
+
+    [JsonIgnore]
+    public int OracleInfoId { get; set; }
+    [JsonIgnore]
+    public OracleInfo OracleInfo { get; set; }
 
     public IList<string> Aliases { get; set; }
 
@@ -135,6 +183,35 @@ public partial class Oracle
     public IList<string> ContentTags { get; set; }
 
     public string Group { get; set; }
+
+    public OracleRollResult Roll(Random random, Requires requires = null)
+    {
+        int roll;
+        if (Table?.Count > 0)
+        {
+            roll = random.Next(1, Table.Max(t => t.Chance) + 1);
+
+            var result = Table.OrderBy(t => t.Chance).FirstOrDefault(t => t.Chance >= roll);
+        }
+
+        if (Tables?.Count > 0)
+        {
+
+            var tables = Tables.Where(t => t.Requires == requires);
+
+            foreach (var t in tables)
+            {
+                roll = random.Next(1, t.Table.Max(t => t.Chance) + 1);
+                var result = t.Table.OrderBy(t => t.Chance).FirstOrDefault(t => t.Chance >= roll);
+            }
+        }
+
+        return null;
+    }
+}
+
+public class OracleRollResult
+{
 }
 
 public class OracleInfo
@@ -160,10 +237,25 @@ public class OracleInfo
     public IList<string> Tags { get; set; }
 }
 
-public partial class Requires
+public partial record Requires
 {
     [JsonIgnore]
     public int Id { get; set; }
+
+    [JsonIgnore]
+    public int? InheritId { get; set; }
+    [JsonIgnore]
+    public Inherit Inherit { get; set; }
+
+    [JsonIgnore]
+    public int? OracleId { get; set; }
+    [JsonIgnore]
+    public Oracle Oracle { get; set; }
+
+    [JsonIgnore]
+    public int? TablesId { get; set; }
+    [JsonIgnore]
+    public Tables Tables { get; set; }
 
     [JsonPropertyName("Derelict Type")]
     public IList<string> DerelictType { get; set; }
@@ -202,6 +294,11 @@ public class Subcategory
     [JsonIgnore]
     public int Id { get; set; }
 
+    [JsonIgnore]
+    public int OracleInfoId { get; set; }
+    [JsonIgnore]
+    public OracleInfo OracleInfo { get; set; }
+
     public IList<string> Aliases { get; set; }
     public string Category { get; set; }
     public string Description { get; set; }
@@ -226,16 +323,23 @@ public class Suggest
     [JsonIgnore]
     public int Id { get; set; }
 
+    [JsonIgnore]
+    public int ChanceTableId { get; set; }
+    [JsonIgnore]
+    public ChanceTable ChanceTable { get; set; }
+
     [JsonPropertyName("Game object")]
     public GameObject Gameobject { get; set; }
-
-    public List<Oracle> Oracles { get; set; }
 }
 
 public class Tables
 {
     [JsonIgnore]
     public int Id { get; set; }
+    [JsonIgnore]
+    public int OracleId { get; set; }
+    [JsonIgnore]
+    public Oracle Oracle { get; set; }
 
     public IList<string> Aliases { get; set; }
 
@@ -251,6 +355,11 @@ public class UseWith
 {
     [JsonIgnore]
     public int Id { get; set; }
+
+    [JsonIgnore]
+    public int OracleId { get; set; }
+    [JsonIgnore]
+    public Oracle Oracle { get; set; }
 
     public string Category { get; set; }
     public string Name { get; set; }

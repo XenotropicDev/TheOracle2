@@ -5,11 +5,17 @@ namespace TheOracle2;
 [Group("ask", "Ask the oracle")]
 public class OracleAskPaths : InteractionModuleBase
 {
+    private readonly Random random;
+
+    public OracleAskPaths(Random random)
+    {
+        this.random = random;
+    }
+
     [SlashCommand("with-likelihood", "Ask the oracle based on the predefined likelihoods")]
     public async Task Named([Summary(description: "Ask the oracle based on the predefined likelihoods")] AskOption keyword, string fluff = "")
     {
-        var rnd = BotRandom.Instance;
-        var roll = rnd.Next(101);
+        var roll = random.Next(101);
         string result = (roll >= 100 - (int)keyword) ? "Yes" : "No";
 
         if (fluff?.Length > 0) fluff += "\n";
@@ -19,11 +25,10 @@ public class OracleAskPaths : InteractionModuleBase
     [SlashCommand("with-chance", "Ask the oracle based on a percentage")]
     public async Task Numeric([Summary(description: "Ask the oracle based on a given percent chance of something happening")]
                                 [MaxValue(99)]
-                                [MinValue(1)] int number, 
+                                [MinValue(1)] int number,
         string fluff = null)
     {
-        var rnd = BotRandom.Instance;
-        var roll = rnd.Next(101);
+        var roll = random.Next(101);
         string result = (roll >= 100 - number) ? "Yes" : "No";
 
         if (fluff?.Length > 0) fluff += "\n";
