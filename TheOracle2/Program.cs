@@ -33,7 +33,7 @@ internal class Program
 
             var context = services.GetRequiredService<EFContext>();
 
-            //await RecreateDB(context).ConfigureAwait(true);
+            //await context.RecreateDB().ConfigureAwait(true);
             context.Database.EnsureCreated();
 
             Console.WriteLine($"Starting TheOracle v{Assembly.GetEntryAssembly().GetName().Version}");
@@ -62,10 +62,8 @@ internal class Program
     {
         try
         {
-            var handler = _services.GetRequiredService<SlashCommandHandler>();
-
-            var commandHandler = _services.GetRequiredService<SlashCommandHandler>();
-            commandHandler.LoadFromAssembly(Assembly.GetEntryAssembly(), _services);
+            var oracleCommandHandler = _services.GetRequiredService<SlashCommandHandler>();
+            oracleCommandHandler.LoadFromAssembly(Assembly.GetEntryAssembly(), _services);
 
             var refCommands = _services.GetRequiredService<ReferencedMessageCommandHandler>();
             refCommands.AddCommandHandler(client);
@@ -82,7 +80,7 @@ internal class Program
 #else
             //await interactionService.RegisterCommandsGloballyAsync();
 #endif
-            await handler.InstallCommandsAsync(_services, false);
+            await oracleCommandHandler.InstallCommandsAsync(_services, false);
 
             client.InteractionCreated += async (arg) =>
             {
@@ -92,7 +90,7 @@ internal class Program
                         logger.LogInformation($"{slash.User.Username} triggered slash command: {slash.CommandName}");
                         if (!interactionService.SlashCommands.Any(cmd => cmd.Name == slash.CommandName || cmd.Module.SlashGroupName == slash.CommandName))
                         {
-                            await commandHandler.ExecuteAsync(slash, _services);
+                            await oracleCommandHandler.ExecuteAsync(slash, _services);
                         }
                         else
                         {
@@ -125,35 +123,6 @@ internal class Program
         {
             logger.LogError(ex.Message, ex);
         }
-    }
-
-    private static async Task RecreateDB(EFContext context)
-    {
-        context.Database.EnsureDeleted();
-        context.Database.EnsureCreated();
-
-        var baseDir = new DirectoryInfo(Directory.GetCurrentDirectory() + "\\Data");
-        var file = baseDir.GetFiles("assets.json").FirstOrDefault();
-
-        string text = file.OpenText().ReadToEnd();
-        var root = JsonSerializer.Deserialize<AssetRoot>(text);
-
-        foreach (var asset in root.Assets)
-        {
-            context.Assets.Add(asset);
-        }
-
-        file = baseDir.GetFiles("moves.json").FirstOrDefault();
-
-        text = file.OpenText().ReadToEnd();
-        var moveRoot = JsonSerializer.Deserialize<MovesInfo>(text);
-
-        foreach (var move in moveRoot.Moves)
-        {
-            context.Moves.Add(move);
-        }
-
-        await context.SaveChangesAsync();
     }
 
     private Task LogAsync(LogMessage msg)
@@ -208,6 +177,7 @@ internal class Program
             .AddSingleton(config)
             .AddSingleton(new SlashCommandHandler(client, null))
             .AddSingleton<ReferencedMessageCommandHandler>()
+            .AddSingleton<Random>()
             .AddDbContext<EFContext>()
             .AddLogging(builder => builder.AddSimpleConsole(options =>
             {
