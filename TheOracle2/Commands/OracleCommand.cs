@@ -1,5 +1,6 @@
 ﻿using Discord.Interactions;
 using Discord.WebSocket;
+using Microsoft.EntityFrameworkCore;
 using OracleData;
 using TheOracle2.UserContent;
 
@@ -42,42 +43,72 @@ public class OracleCommand : InteractionModuleBase<SocketInteractionContext<Sock
             .WithName("oracle")
             .WithDescription("Rolls an oracle table");
 
-        foreach (var category in DbContext.Oracles.Select(a => a.Category).Distinct())
+        foreach (var oracleInfo in DbContext.OracleInfo)
         {
-            var chunkedList = DbContext.Oracles.ToList()
-                .Where(a => a.Category == category && a.Id != 0)
-                .OrderBy(a => a.Name)
-                .Chunk(SlashCommandOptionBuilder.MaxChoiceCount);
+            var topLevelOption = new SlashCommandOptionBuilder()
+                .WithName(oracleInfo.Name.Replace(" ", "-").ToLower())
+                .WithDescription($"{oracleInfo.Name} Oracles")
+                .WithType(ApplicationCommandOptionType.SubCommand)
+                ;
 
-            foreach (var OracleGroup in chunkedList)
+            //Add the base oracles first
+            var oracleOption = new SlashCommandOptionBuilder()
+                .WithName("oracle")
+                .WithDescription($"Oracle to roll")
+                .WithRequired(true)
+                .WithType(ApplicationCommandOptionType.Integer);
+
+            foreach (var oracle in oracleInfo.Oracles)
             {
-                string name = category.Replace(" ", "-");
-                if (chunkedList.Count() > 1)
-                {
-                    name += $"-{OracleGroup.First().Name.Substring(0, 1)}-{OracleGroup.Last().Name.Substring(0, 1)}";
-                }
-
-                var option = new SlashCommandOptionBuilder()
-                    .WithName(name.ToLower())
-                    .WithDescription($"{category} Oracles")
-                    .WithType(ApplicationCommandOptionType.SubCommand)
-                    ;
-
-                var subChoicesOption = new SlashCommandOptionBuilder()
-                    .WithName("oracle-name")
-                    .WithDescription("The name of the Oracle to be generated")
-                    .WithRequired(true)
-                    .WithType(ApplicationCommandOptionType.Integer);
-
-                foreach (var Oracle in OracleGroup)
-                {
-                    subChoicesOption.AddChoice(Oracle.Name, Oracle.Id);
-                }
-                option.AddOption(subChoicesOption);
-
-                command.AddOption(option);
+                oracleOption.AddChoice(oracle.Name, oracle.Id);
             }
+
+            //Add any subcategories and their oracles second            
+            if (oracleInfo.Subcategories?.Count > 0)
+            {
+                topLevelOption.WithType(ApplicationCommandOptionType.SubCommandGroup);
+
+                var requiredOption = new SlashCommandOptionBuilder()
+                    .WithName("subcategory")
+                    .WithDescription($"Lists subcategory options for the oracle roll")
+                    .WithType(ApplicationCommandOptionType.SubCommand);
+
+                foreach (var subCat in oracleInfo.Subcategories)
+                {
+                    var oracleChoiceOption = new SlashCommandOptionBuilder()
+                        .WithName(subCat.Name.Replace(" ", "-").ToLower())
+                        .WithDescription($"Oracle to roll")
+                        .WithRequired(true)
+                        .WithType(ApplicationCommandOptionType.Integer);
+
+                    foreach (var oracle in subCat.Oracles)
+                    {
+                        oracleChoiceOption.AddChoice(oracle.Name, oracle.Id);
+                    }
+
+                    requiredOption.AddOption(oracleChoiceOption);
+                }
+                
+                topLevelOption.AddOption(requiredOption);
+            }
+
+            if (topLevelOption.Type == ApplicationCommandOptionType.SubCommandGroup)
+            {
+                var subcommand = new SlashCommandOptionBuilder()
+                    .WithName("oracle")
+                    .WithDescription($"Lists the main oracle rolls.")
+                    .WithType(ApplicationCommandOptionType.SubCommand)
+                    .AddOption(oracleOption);
+                topLevelOption.AddOption(subcommand);
+            }
+            else
+            {
+                topLevelOption.AddOption(oracleOption);
+            }
+
+            command.AddOption(topLevelOption);
         }
+
 
         return new List<SlashCommandBuilder>() { command };
     }
@@ -97,7 +128,7 @@ public class OracleCommand : InteractionModuleBase<SocketInteractionContext<Sock
             string desc = string.Empty;
             foreach (var v in values)
             {
-                if (!int.TryParse(v, out var oracleId)) throw new ArgumentException($"Unknown {nameof(Ability)} with Id {v}");
+                if (!int.TryParse(v, out var oracleId)) throw new ArgumentException($"Unknown {nameof(Oracle)} with Id {v}");
                 var oracle = DbContext.Oracles.Find(oracleId);
 
                 //Todo: Add oracle field
