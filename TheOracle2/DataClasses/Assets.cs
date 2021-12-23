@@ -10,13 +10,13 @@ public record Ability
     public int Id { get; set; }
 
     [JsonPropertyName("Alter Moves")]
-    public IList<AlterMove> AlterMoves { get; set; }
+    public virtual IList<AlterMove> AlterMoves { get; set; }
 
     [JsonPropertyName("Alter Properties")]
-    public AlterProperties AlterProperties { get; set; }
+    public virtual AlterProperties AlterProperties { get; set; }
 
     [JsonPropertyName("Counter")]
-    public Counter Counter { get; set; }
+    public virtual Counter Counter { get; set; }
 
     [JsonPropertyName("Enabled")]
     public bool Enabled { get; set; }
@@ -24,7 +24,7 @@ public record Ability
     [JsonPropertyName("Input")]
     public IList<string> Input { get; set; }
 
-    public Move Move { get; set; }
+    public virtual Move Move { get; set; }
 
     [JsonPropertyName("Text")]
     public string Text { get; set; }
@@ -35,10 +35,10 @@ public record AlterProperties
     [JsonIgnore]
     public int Id { get; set; }
     [JsonPropertyName("Condition Meter")]
-    public ConditionMeter ConditionMeter { get; set; }
+    public virtual ConditionMeter ConditionMeter { get; set; }
 
     [JsonPropertyName("Track")]
-    public Track Track { get; set; }
+    public virtual Track Track { get; set; }
 }
 
 public record Asset
@@ -47,10 +47,10 @@ public record Asset
     public int Id { get; set; }
 
     [JsonIgnore]
-    public IList<OracleGuild> OracleGuilds { get; set; } = new List<OracleGuild>();
+    public virtual IList<OracleGuild> OracleGuilds { get; set; }
 
     [JsonPropertyName("Abilities")]
-    public IList<Ability> Abilities { get; set; }
+    public virtual IList<Ability> Abilities { get; set; }
 
     [JsonPropertyName("Aliases")]
     public IList<string> Aliases { get; set; }
@@ -59,10 +59,10 @@ public record Asset
     public string Category { get; set; }
 
     [JsonPropertyName("Condition Meter")]
-    public ConditionMeter ConditionMeter { get; set; }
+    public virtual ConditionMeter ConditionMeter { get; set; }
 
     [JsonPropertyName("Counter")]
-    public Counter Counter { get; set; }
+    public virtual Counter Counter { get; set; }
 
     [JsonPropertyName("Description")]
     public string Description { get; set; }
@@ -75,10 +75,10 @@ public record Asset
     public string Name { get; set; }
 
     [JsonPropertyName("Select")]
-    public Select Select { get; set; }
+    public virtual Select Select { get; set; }
 
     [JsonPropertyName("Track")]
-    public Track Track { get; set; }
+    public virtual Track Track { get; set; }
 }
 
 public record ConditionMeter
@@ -140,13 +140,13 @@ public record AssetRoot
     [JsonIgnore]
     public int Id { get; set; }
     [JsonPropertyName("Assets")]
-    public IList<Asset> Assets { get; set; }
+    public virtual IList<Asset> Assets { get; set; }
 
     [JsonPropertyName("Name")]
     public string Name { get; set; }
 
     [JsonPropertyName("Source")]
-    public Source Source { get; set; }
+    public virtual Source Source { get; set; }
 
     //Todo Get rsek to convert these to tags with IDs?
     [JsonPropertyName("Tags")]
@@ -160,7 +160,7 @@ public record AlterMove
     [JsonPropertyName("Any Move")]
     public bool AnyMove { get; set; }
     public string Name { get; set; }
-    public IList<Trigger> Triggers { get; set; }
+    public virtual IList<Trigger> Triggers { get; set; }
 }
 
 public record Select

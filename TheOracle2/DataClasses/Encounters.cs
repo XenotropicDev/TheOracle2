@@ -8,10 +8,10 @@ public partial class EncountersRoot
     public string Name { get; set; }
 
     [JsonPropertyName("Source")]
-    public Source Source { get; set; }
+    public virtual Source Source { get; set; }
 
     [JsonPropertyName("Encounters")]
-    public IList<Encounter> Encounters { get; set; }
+    public virtual IList<Encounter> Encounters { get; set; }
 }
 
 public partial class Encounter
@@ -33,7 +33,7 @@ public partial class Encounter
 
     [JsonPropertyName("Variants")]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-    public IList<Variant> Variants { get; set; }
+    public virtual IList<Variant> Variants { get; set; }
 
     [JsonPropertyName("Description")]
     public string Description { get; set; }

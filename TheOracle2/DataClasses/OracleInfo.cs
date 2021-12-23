@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 namespace TheOracle2.DataClasses;
 
 //Todo: convert the classes in this file to records that should be.
+//lazy loading virtual regex: public (?!class|int|string|partial|.List<string>|virtual|.*?\()
 
 public class AddTemplate
 {
@@ -13,9 +14,9 @@ public class AddTemplate
     [JsonIgnore]
     public int ChanceTableId { get; set; }
     [JsonIgnore]
-    public ChanceTable ChanceTable { get; set; }
+    public virtual ChanceTable ChanceTable { get; set; }
 
-    public Attributes Attributes { get; set; }
+    public virtual Attributes Attributes { get; set; }
 
     [JsonPropertyName("Template type")]
     public string Templatetype { get; set; }
@@ -29,17 +30,16 @@ public partial class Attributes
     [JsonIgnore]
     public int? AddTemplateId { get; set; }
     [JsonIgnore]
-    public AddTemplate AddTemplate { get; set; }
+    public virtual AddTemplate AddTemplate { get; set; }
 
     [JsonIgnore]
     public int? GameObjectId { get; set; }
     [JsonIgnore]
-    public GameObject GameObject { get; set; }
+    public virtual GameObject GameObject { get; set; }
 
     [JsonPropertyName("Derelict Type")]
     public string DerelictType { get; set; }
 
-    [JsonConverter(typeof(SingleOrArrayConverter<string>))]
     public IList<string> Location { get; set; }
 }
 
@@ -50,14 +50,14 @@ public partial class ChanceTable
     [JsonIgnore]
     public int? OracleId { get; set; }
     [JsonIgnore]
-    public Oracle Oracle { get; set; }
+    public virtual Oracle Oracle { get; set; }
     [JsonIgnore]
     public int? TableId { get; set; }
     [JsonIgnore]
-    public Tables Tables { get; set; }
+    public virtual Tables Tables { get; set; }
 
     [JsonPropertyName("Add template")]
-    public AddTemplate Addtemplate { get; set; }
+    public virtual AddTemplate Addtemplate { get; set; }
 
     public IList<string> Assets { get; set; }
     public int Chance { get; set; }
@@ -65,12 +65,12 @@ public partial class ChanceTable
     public string Details { get; set; }
 
     [JsonPropertyName("Game object")]
-    public GameObject Gameobject { get; set; }
+    public virtual GameObject Gameobject { get; set; }
 
     [JsonPropertyName("Multiple rolls")]
-    public MultipleRolls Multiplerolls { get; set; }
+    public virtual MultipleRolls Multiplerolls { get; set; }
 
-    public List<Suggest> Suggest { get; set; }
+    public virtual List<Suggest> Suggest { get; set; }
     public string Thumbnail { get; set; }
     public int Value { get; set; }
 }
@@ -83,15 +83,15 @@ public partial class GameObject
     [JsonIgnore]
     public int? ChanceTableId { get; set; }
     [JsonIgnore]
-    public ChanceTable ChanceTable { get; set; }
+    public virtual ChanceTable ChanceTable { get; set; }
 
     [JsonIgnore]
     public int? SuggestId { get; set; }
     [JsonIgnore]
-    public Suggest Suggest { get; set; }
+    public virtual Suggest Suggest { get; set; }
 
     public int Amount { get; set; }
-    public Attributes Attributes { get; set; }
+    public virtual Attributes Attributes { get; set; }
 
     [JsonPropertyName("Object type")]
     public string Objecttype { get; set; }
@@ -103,14 +103,19 @@ public class Inherit
     public int Id { get; set; }
 
     [JsonIgnore]
-    public int OracleInfoId { get; set; }
+    public int? OracleInfoId { get; set; }
     [JsonIgnore]
-    public OracleInfo OracleInfo { get; set; }
+    public virtual OracleInfo OracleInfo { get; set; }
+
+    [JsonIgnore]
+    public int? SubcategoryId { get; set; }
+    [JsonIgnore]
+    public virtual Subcategory Subcategory { get; set; }
 
     public string Category { get; set; }
     public IList<string> Exclude { get; set; }
     public IList<string> Name { get; set; }
-    public Requires Requires { get; set; }
+    public virtual Requires Requires { get; set; }
 }
 
 public class MultipleRolls
@@ -121,7 +126,7 @@ public class MultipleRolls
     [JsonIgnore]
     public int ChanceTableId { get; set; }
     [JsonIgnore]
-    public ChanceTable ChanceTable { get; set; }
+    public virtual ChanceTable ChanceTable { get; set; }
 
     [JsonPropertyName("Allow duplicates")]
     public bool Allowduplicates { get; set; }
@@ -135,9 +140,14 @@ public partial class Oracle
     public int Id { get; set; }
 
     [JsonIgnore]
-    public int OracleInfoId { get; set; }
+    public int? OracleInfoId { get; set; }
     [JsonIgnore]
-    public OracleInfo OracleInfo { get; set; }
+    public virtual OracleInfo OracleInfo { get; set; }
+
+    [JsonIgnore]
+    public int? SubcategoryId { get; set; }
+    [JsonIgnore]
+    public virtual Subcategory Subcategory { get; set; }
 
     public IList<string> Aliases { get; set; }
 
@@ -164,17 +174,17 @@ public partial class Oracle
     public string OracleType { get; set; }
 
     public bool Repeatable { get; set; }
-    public Requires Requires { get; set; }
+    public virtual Requires Requires { get; set; }
 
     [JsonPropertyName("Select table by")]
     public string SelectTableBy { get; set; }
 
     public string Subgroup { get; set; }
-    public List<ChanceTable> Table { get; set; }
-    public List<Tables> Tables { get; set; }
+    public virtual List<ChanceTable> Table { get; set; }
+    public virtual List<Tables> Tables { get; set; }
 
     [JsonPropertyName("Use with")]
-    public List<UseWith> UseWith { get; set; }
+    public virtual List<UseWith> UseWith { get; set; }
 
     [JsonPropertyName("Part of speech")]
     public IList<string> PartOfSpeech { get; set; }
@@ -184,7 +194,7 @@ public partial class Oracle
 
     public string Group { get; set; }
 
-    public OracleRollResult Roll(Random random, Requires requires = null)
+    public virtual OracleRollResult Roll(Random random, Requires requires = null)
     {
         int roll;
         if (Table?.Count > 0)
@@ -216,10 +226,6 @@ public class OracleRollResult
 
 public class OracleInfo
 {
-    public OracleInfo()
-    {
-    }
-
     [JsonIgnore]
     public int Id { get; set; }
 
@@ -229,11 +235,11 @@ public class OracleInfo
     [JsonPropertyName("Display name")]
     public string DisplayName { get; set; }
 
-    public List<Inherit> Inherits { get; set; }
+    public virtual List<Inherit> Inherits { get; set; }
     public string Name { get; set; }
-    public List<Oracle> Oracles { get; set; }
-    public Source Source { get; set; }
-    public List<Subcategory> Subcategories { get; set; }
+    public virtual List<Oracle> Oracles { get; set; }
+    public virtual Source Source { get; set; }
+    public virtual List<Subcategory> Subcategories { get; set; }
     public IList<string> Tags { get; set; }
 }
 
@@ -245,17 +251,17 @@ public partial record Requires
     [JsonIgnore]
     public int? InheritId { get; set; }
     [JsonIgnore]
-    public Inherit Inherit { get; set; }
+    public virtual Inherit Inherit { get; set; }
 
     [JsonIgnore]
     public int? OracleId { get; set; }
     [JsonIgnore]
-    public Oracle Oracle { get; set; }
+    public virtual Oracle Oracle { get; set; }
 
     [JsonIgnore]
     public int? TablesId { get; set; }
     [JsonIgnore]
-    public Tables Tables { get; set; }
+    public virtual Tables Tables { get; set; }
 
     [JsonPropertyName("Derelict Type")]
     public IList<string> DerelictType { get; set; }
@@ -286,7 +292,7 @@ public class Rootobject
     [JsonIgnore]
     public int Id { get; set; }
 
-    public List<OracleInfo> OracleInfos { get; set; }
+    public virtual List<OracleInfo> OracleInfos { get; set; }
 }
 
 public class Subcategory
@@ -297,7 +303,7 @@ public class Subcategory
     [JsonIgnore]
     public int OracleInfoId { get; set; }
     [JsonIgnore]
-    public OracleInfo OracleInfo { get; set; }
+    public virtual OracleInfo OracleInfo { get; set; }
 
     public IList<string> Aliases { get; set; }
     public string Category { get; set; }
@@ -306,15 +312,15 @@ public class Subcategory
     [JsonPropertyName("Display name")]
     public string Displayname { get; set; }
 
-    public List<Inherit> Inherits { get; set; }
+    public virtual List<Inherit> Inherits { get; set; }
     public string Name { get; set; }
-    public List<Oracle> Oracles { get; set; }
-    public Requires Requires { get; set; }
+    public virtual List<Oracle> Oracles { get; set; }
+    public virtual Requires Requires { get; set; }
 
     [JsonPropertyName("Sample Names")]
     public IList<string> SampleNames { get; set; }
 
-    public Source Source { get; set; }
+    public virtual Source Source { get; set; }
     public string Thumbnail { get; set; }
 }
 
@@ -326,10 +332,10 @@ public class Suggest
     [JsonIgnore]
     public int ChanceTableId { get; set; }
     [JsonIgnore]
-    public ChanceTable ChanceTable { get; set; }
+    public virtual ChanceTable ChanceTable { get; set; }
 
     [JsonPropertyName("Game object")]
-    public GameObject Gameobject { get; set; }
+    public virtual GameObject Gameobject { get; set; }
 }
 
 public class Tables
@@ -339,7 +345,7 @@ public class Tables
     [JsonIgnore]
     public int OracleId { get; set; }
     [JsonIgnore]
-    public Oracle Oracle { get; set; }
+    public virtual Oracle Oracle { get; set; }
 
     public IList<string> Aliases { get; set; }
 
@@ -347,8 +353,8 @@ public class Tables
     public string Displayname { get; set; }
 
     public string Name { get; set; }
-    public Requires Requires { get; set; }
-    public List<ChanceTable> Table { get; set; }
+    public virtual Requires Requires { get; set; }
+    public virtual List<ChanceTable> Table { get; set; }
 }
 
 public class UseWith
@@ -359,7 +365,7 @@ public class UseWith
     [JsonIgnore]
     public int OracleId { get; set; }
     [JsonIgnore]
-    public Oracle Oracle { get; set; }
+    public virtual Oracle Oracle { get; set; }
 
     public string Category { get; set; }
     public string Name { get; set; }

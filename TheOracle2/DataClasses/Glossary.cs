@@ -11,10 +11,10 @@ public partial class GlossaryRoot
     public string Category { get; set; }
 
     [JsonPropertyName("Source")]
-    public Source Source { get; set; }
+    public virtual Source Source { get; set; }
 
     [JsonPropertyName("Terms")]
-    public IList<Term> Terms { get; set; }
+    public virtual IList<Term> Terms { get; set; }
 
     [JsonPropertyName("Description")]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
@@ -38,15 +38,15 @@ public partial class Term
 
     [JsonPropertyName("Applied by")]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-    public AppliedBy AppliedBy { get; set; }
+    public virtual AppliedBy AppliedBy { get; set; }
 
     [JsonPropertyName("Removed by")]
 	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-    public RemovedBy RemovedBy { get; set; }
+    public virtual RemovedBy RemovedBy { get; set; }
 
     [JsonPropertyName("Effects")]
 	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-    public Effect Effects { get; set; }
+    public virtual Effect Effects { get; set; }
 
     [JsonPropertyName("Applies to")]
 	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
@@ -54,7 +54,7 @@ public partial class Term
 
     [JsonPropertyName("Effect")]
 	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-    public Effect Effect { get; set; }
+    public virtual Effect Effect { get; set; }
 }
 
 public partial class AppliedBy
@@ -77,7 +77,7 @@ public partial class RemovedBy
 
     [JsonPropertyName("Quest")]
 	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-    public Quest Quest { get; set; }
+    public virtual Quest Quest { get; set; }
 }
 
 public partial class Quest

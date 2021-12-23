@@ -35,6 +35,7 @@ public class EFContext : DbContext
         {
             Assets.Add(asset);
         }
+        await SaveChangesAsync();
 
         file = baseDir.GetFiles("moves.json").FirstOrDefault();
 
@@ -45,18 +46,18 @@ public class EFContext : DbContext
         {
             Moves.Add(move);
         }
+        await SaveChangesAsync();
 
         file = baseDir.GetFiles("oracles.json").FirstOrDefault();
 
         text = file.OpenText().ReadToEnd();
-        var oracleRoot = Newtonsoft.Json.JsonConvert.DeserializeObject<List<OracleInfo>>(text);
+        var oracleRoot = JsonSerializer.Deserialize<List<OracleInfo>>(text);
 
-        foreach (var o in oracleRoot)
+        foreach (var oi in oracleRoot)
         {
-            OracleInfo.Add(o);
+            OracleInfo.Add(oi);
+            await SaveChangesAsync();
         }
-
-        await SaveChangesAsync();
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -71,6 +72,10 @@ public class EFContext : DbContext
             c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
             c => c.ToList()
             );
+
+        //modelBuilder.Entity<Oracle>().HasOne(o => o.OracleInfo).WithMany(oi => oi.Oracles).HasForeignKey(o => o.OracleInfoId);
+        //modelBuilder.Entity<ChanceTable>().HasOne(t => t.Oracle).WithMany(o => o.Table).HasForeignKey(o => o.OracleId);
+        //modelBuilder.Entity<Tables>().HasOne(t => t.Oracle).WithMany(o => o.Tables).HasForeignKey(o => o.OracleId);
 
         modelBuilder.Entity<Asset>().Property(a => a.Aliases).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
         modelBuilder.Entity<Asset>().Property(a => a.Input).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
@@ -104,7 +109,9 @@ public class EFContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlite("Data Source=GameContent.db;Cache=Shared");
+        optionsBuilder
+            .UseSqlite("Data Source=GameContent.db;Cache=Shared")
+            .UseLazyLoadingProxies();
         base.OnConfiguring(optionsBuilder);
     }
 }

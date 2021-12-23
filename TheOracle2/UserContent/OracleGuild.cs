@@ -17,8 +17,8 @@ public class OracleGuild
 
     public ulong OracleGuildId { get; internal set; }
 
-    public ICollection<Asset> Assets { get; set; } = new List<Asset>();
+    public virtual ICollection<Asset> Assets { get; set; }
 
-    public ICollection<OracleInfo> Oracles { get; set; }
-    public ICollection<Move> Moves { get; set; }
+    public virtual ICollection<OracleInfo> Oracles { get; set; }
+    public virtual ICollection<Move> Moves { get; set; }
 }

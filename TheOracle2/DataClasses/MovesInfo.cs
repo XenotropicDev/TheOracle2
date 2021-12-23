@@ -9,7 +9,7 @@ public class Move
     public int Id { get; set; }
 
     [JsonIgnore]
-    public IList<OracleGuild> OracleGuilds { get; set; } = new List<OracleGuild>();
+    public virtual IList<OracleGuild> OracleGuilds { get; set; }
 
     public string Asset { get; set; }
     public string Category { get; set; }
@@ -20,7 +20,7 @@ public class Move
     public bool IsProgressMove { get; set; }
 
     public string Text { get; set; }
-    public List<Trigger> Triggers { get; set; }
+    public virtual List<Trigger> Triggers { get; set; }
 }
 
 public class MovesInfo
@@ -28,9 +28,9 @@ public class MovesInfo
     [JsonIgnore]
     public int Id { get; set; }
 
-    public List<Move> Moves { get; set; }
+    public virtual List<Move> Moves { get; set; }
     public string Name { get; set; }
-    public Source Source { get; set; }
+    public virtual Source Source { get; set; }
 }
 
 public class StatOptions
@@ -50,7 +50,7 @@ public class Trigger
     public string Details { get; set; }
 
     [JsonPropertyName("Stat Options")]
-    public StatOptions StatOptions { get; set; }
+    public virtual StatOptions StatOptions { get; set; }
 
     public string Text { get; set; }
 }

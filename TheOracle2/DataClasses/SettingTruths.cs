@@ -10,10 +10,10 @@ public partial class TruthRoot
     public string Name { get; set; }
 
     [JsonPropertyName("Source")]
-    public Source Source { get; set; }
+    public virtual Source Source { get; set; }
 
     [JsonPropertyName("Setting Truths")]
-    public IList<SettingTruth> SettingTruths { get; set; }
+    public virtual IList<SettingTruth> SettingTruths { get; set; }
 }
 
 public partial class SettingTruth
@@ -22,7 +22,7 @@ public partial class SettingTruth
     public string Name { get; set; }
 
     [JsonPropertyName("Table")]
-    public IList<SettingTruthTable> Table { get; set; }
+    public virtual IList<SettingTruthTable> Table { get; set; }
 
     [JsonPropertyName("Character")]
     public string Character { get; set; }
@@ -41,7 +41,7 @@ public partial class SettingTruthTable
 
     [JsonPropertyName("Table")]
 	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-    public IList<ChanceDescriptionStub> Table { get; set; }
+    public virtual IList<ChanceDescriptionStub> Table { get; set; }
 
     [JsonPropertyName("Quest Starter")]
     public string QuestStarter { get; set; }
