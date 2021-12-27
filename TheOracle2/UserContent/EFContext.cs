@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OracleData;
 using TheOracle2.DataClasses;
@@ -59,6 +61,8 @@ public class EFContext : DbContext
             await SaveChangesAsync();
         }
     }
+
+    public bool HasTables() => Database.GetService<IRelationalDatabaseCreator>().HasTables();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
