@@ -8,9 +8,7 @@ using Discord.Interactions;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using OracleData;
 using System.Reflection;
-using TheOracle2.DataClasses;
 using TheOracle2.UserContent;
 
 namespace TheOracle2;
@@ -31,10 +29,7 @@ internal class Program
         {
             _services = services;
 
-            var context = services.GetRequiredService<EFContext>();
-
-            //await context.RecreateDB().ConfigureAwait(true);
-            context.Database.EnsureCreated();
+            await CheckDB();
 
             Console.WriteLine($"Starting TheOracle v{Assembly.GetEntryAssembly().GetName().Version}");
             client = services.GetRequiredService<DiscordSocketClient>();
@@ -42,15 +37,11 @@ internal class Program
             client.Log += LogAsync;
             logger = services.GetRequiredService<ILoggerFactory>().CreateLogger<Program>();
 
-            var token = Environment.GetEnvironmentVariable("DiscordToken");
-            if (token == null)
-            {
-                token = services.GetRequiredService<IConfigurationRoot>().GetSection("DiscordToken").Value;
-            }
+            string token = GetToken();
 
             await client.LoginAsync(TokenType.Bot, token);
-            await client.StartAsync();
             client.Ready += ClientReady;
+            await client.StartAsync();
 
             await client.SetGameAsync("TheOracle v2 - Alpha", "", ActivityType.Playing).ConfigureAwait(false);
 
@@ -186,5 +177,43 @@ internal class Program
                 options.TimestampFormat = "hh:mm:ss ";
             }))
             .BuildServiceProvider();
+    }
+
+    private async Task CheckDB()
+    {
+        var context = _services.GetRequiredService<EFContext>();
+
+        if (!context.HasTables())
+        {
+            Console.WriteLine($"Database not found, do you want to create it? (y/n)");
+            var key = Console.ReadKey();
+
+            if (key.Key == ConsoleKey.Y)
+            {
+                await context.RecreateDB().ConfigureAwait(true);
+            }
+        }
+
+        context.Database.EnsureCreated();
+    }
+
+    private string GetToken()
+    {
+        var token = Environment.GetEnvironmentVariable("DiscordToken");
+        if (token == null)
+        {
+            token = _services.GetRequiredService<IConfigurationRoot>().GetSection("DiscordToken").Value;
+        }
+
+        if (token == null)
+        {
+            Console.WriteLine($"Couldn't find a discord token. Please enter it here. (It will be saved to the token.json file in your bin folder)");
+            token = Console.ReadLine();
+
+            var json = JsonSerializer.Serialize(new { DiscordToken = token });
+            File.WriteAllText("token.json", json);
+        }
+
+        return token;
     }
 }
