@@ -20,4 +20,8 @@
     <ProjectReference Include="..\TheOracle2\TheOracle2.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DataClasses\" />
+  </ItemGroup>
+
 </Project>

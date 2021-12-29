@@ -1,11 +1,11 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿global using Microsoft.Extensions.DependencyInjection;
+global using Microsoft.VisualStudio.TestTools.UnitTesting;
+global using System;
+global using System.Linq;
+global using System.Threading.Tasks;
+global using TheOracle2.UserContent;
+global using TheOracle2Tests;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TheOracle2.UserContent;
 
 namespace TheOracle2Tests
 {
@@ -15,14 +15,14 @@ namespace TheOracle2Tests
         {
             return new ServiceCollection()
                 .AddDbContext<EFContext>()
-                .AddSingleton<Random>()
-                .AddLogging(builder => {
+                .AddSingleton(new Random(0))
+                .AddLogging(builder =>
+                {
                     builder.AddSimpleConsole(options =>
                     {
                         options.IncludeScopes = false;
                         options.SingleLine = true;
                         options.TimestampFormat = "hh:mm:ss ";
-
                     });
                     builder.SetMinimumLevel(LogLevel.Warning);
                 })
