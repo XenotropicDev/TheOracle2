@@ -77,6 +77,8 @@ public class EFContext : DbContext
             c => c.ToList()
             );
 
+        modelBuilder.Entity<Subcategory>().HasOne(o => o.OracleInfo).WithMany(oi => oi.Subcategories).HasForeignKey(o => o.OracleInfoId).IsRequired();
+        modelBuilder.Entity<Oracle>().HasOne(o => o.Subcategory).WithMany(sub => sub.Oracles).HasForeignKey(o => o.SubcategoryId).IsRequired(false);
         //modelBuilder.Entity<Oracle>().HasOne(o => o.OracleInfo).WithMany(oi => oi.Oracles).HasForeignKey(o => o.OracleInfoId);
         //modelBuilder.Entity<ChanceTable>().HasOne(t => t.Oracle).WithMany(o => o.Table).HasForeignKey(o => o.OracleId);
         //modelBuilder.Entity<Tables>().HasOne(t => t.Oracle).WithMany(o => o.Tables).HasForeignKey(o => o.OracleId);
@@ -93,6 +95,7 @@ public class EFContext : DbContext
         modelBuilder.Entity<OracleInfo>().Property(o => o.Tags).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
         modelBuilder.Entity<Attributes>().Property(a => a.Location).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
         modelBuilder.Entity<ChanceTable>().Property(c => c.Assets).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
+        modelBuilder.Entity<ChanceTable>().Property(c => c.PartOfSpeech).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
         modelBuilder.Entity<Inherit>().Property(i => i.Exclude).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
         modelBuilder.Entity<Inherit>().Property(i => i.Name).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
         modelBuilder.Entity<Requires>().Property(r => r.DerelictType).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
