@@ -66,8 +66,10 @@ internal class Program
 
             //await client.BulkOverwriteGlobalApplicationCommandsAsync(Array.Empty<ApplicationCommandProperties>());
 #if DEBUG
-            await interactionService.RegisterCommandsToGuildAsync(756890506830807071, false);
-            await interactionService.RegisterCommandsToGuildAsync(916381023766470747, false);
+            foreach (var guild in GetDebugGuilds())
+            {
+                await interactionService.RegisterCommandsToGuildAsync(guild, false);
+            }
 #else
             //await interactionService.RegisterCommandsGloballyAsync();
 #endif
@@ -215,5 +217,30 @@ internal class Program
         }
 
         return token;
+    }
+
+    public ulong[] GetDebugGuilds()
+    {
+        if (!File.Exists("debugGuilds.json"))
+        {
+            Console.WriteLine($"\nYou are running in debug and haven't configured any debug guilds.\nPlease enter at least one guild ID below.\nSeparate multiple guild IDs with commas.\nThey will be saved to the debugGuilds.json file in your bin folder, for later editing if needed.");
+            var jsonArray = Console.ReadLine();
+
+            List<ulong> guilds = new List<ulong>();
+            var values = jsonArray.Split(',');
+
+            foreach (var guildId in values)
+            {
+                if (!ulong.TryParse(guildId, out var id)) continue;
+                guilds.Add(id);
+            }
+
+            var jsonSave = JsonSerializer.Serialize(guilds);
+            File.WriteAllText("debugGuilds.json", jsonSave);
+        }
+
+        var file = File.ReadAllText("debugGuilds.json");
+
+        return JsonSerializer.Deserialize<ulong[]>(file);
     }
 }
