@@ -27,8 +27,6 @@ namespace TheOracle2.UserContent.Tests
             var services = TestServices.GetServices();
             var context = services.GetRequiredService<EFContext>();
 
-            //await context.RecreateDB();
-
             Assert.IsTrue(context.Assets.All(a => a.Abilities.Count > 0));
         }
 
@@ -38,25 +36,16 @@ namespace TheOracle2.UserContent.Tests
             var services = TestServices.GetServices();
             var context = services.GetRequiredService<EFContext>();
 
-            try
-            {
-                //await context.RecreateDB();
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+            //var result = context.Oracles.Find(1).Roll(services.GetRequiredService<Random>());
 
-            var result = context.Oracles.Find(1).Roll(services.GetRequiredService<Random>());
-
-            Assert.IsTrue(context.Assets.All(a => a.Abilities.Count > 0));
+            //Assert.IsTrue(context.Assets.All(a => a.Abilities.Count > 0));
             
-            var displayNames = context.OracleInfo.Select(oi => oi.DisplayName).ToList();
-            Console.WriteLine($"Oracle Categories:\n{string.Join("\n", displayNames)}");
+            //var displayNames = context.OracleInfo.Select(oi => oi.DisplayName).ToList();
+            //Console.WriteLine($"Oracle Categories:\n{string.Join("\n", displayNames)}");
 
-            var oiWithSub = context.OracleInfo.Where(oi => oi.Subcategories.Count > 0);
-            var subcatDisplay = oiWithSub.SelectMany(oi => oi.Subcategories).Select(sc => sc.Displayname).ToList();
-            Console.WriteLine("Sub Categories:\n" + String.Join("\n", subcatDisplay));
+            //var oiWithSub = context.OracleInfo.Where(oi => oi.Subcategories.Count > 0);
+            //var subcatDisplay = oiWithSub.SelectMany(oi => oi.Subcategories).Select(sc => sc.Displayname).ToList();
+            //Console.WriteLine("Sub Categories:\n" + String.Join("\n", subcatDisplay));
         }
     }
 
