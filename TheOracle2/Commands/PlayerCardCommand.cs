@@ -168,7 +168,7 @@ public class PlayerCardCommand : InteractionModuleBase
         }
         catch (HttpException hex)
         {
-            string json = JsonSerializer.Serialize(hex.Errors, new JsonSerializerOptions() { WriteIndented = true });
+            string json = JsonConvert.SerializeObject(hex.Errors, Formatting.Indented);
 
             Console.WriteLine(json);
             throw;
@@ -195,7 +195,7 @@ public class PlayerCardCommand : InteractionModuleBase
         }
         catch (HttpException hex)
         {
-            string json = JsonSerializer.Serialize(hex.Errors, new JsonSerializerOptions() { WriteIndented = true });
+            string json = JsonConvert.SerializeObject(hex.Errors, Formatting.Indented);
             Console.WriteLine(json);
             throw;
         }
