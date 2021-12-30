@@ -63,89 +63,86 @@
       },
       {
         "Name": "Asset condition meters",
-        "Description": "Several assets have their own condition meters.\n\n  * Your STARSHIP and other vehicles have an **integrity meter** (seen here at the bottom of this asset card) to measure their condition. When your vehicle faces a damaging situation, make the [Withstand Damage](#Withstand-Damage) move. To get a vehicle back up to speed, make the [Repair](#Repair) move.\n  * Companion assets have a **health meter**, which is reduced when you make the [Companion Takes a Hit](#Companion-Takes-a-Hit) move. Their health is increased through the [Heal](#Heal) move when you treat them or obtain treatment—or using the [Repair](#Repair) move for mechanical companions.\n  * Some assets have a unique condition meter for a specialized resource. For example, if you are a FIREBRAND, you have a fire meter and tap into that inner source to unleash destructive energies.\n\nTo track the value of a condition meter on an asset card, use a paperclip or token. Or you can set a six-sided die on top of the card and rotate it to show the current value. The value of a meter cannot exceed the maximum shown on the card.\n\nYou can learn more about assets starting on page 50."
+        "Description": "Several assets have their own condition meters.\n\n  * Your STARSHIP and other vehicles have an **integrity meter** (seen here at the bottom of this asset card) to measure their condition. When your vehicle faces a damaging situation, make the [Withstand Damage](#Withstand-Damage) move. To get a vehicle back up to speed, make the [Repair](#Repair) move.\n  * Companion assets have a **health meter**, which is reduced when you make the [Companion Takes a Hit](#Companion-Takes-a-Hit) move. Their health is increased through the [Heal](#Heal) move when you treat them or obtain treatmentâ€”or using the [Repair](#Repair) move for mechanical companions.\n  * Some assets have a unique condition meter for a specialized resource. For example, if you are a FIREBRAND, you have a fire meter and tap into that inner source to unleash destructive energies.\n\nTo track the value of a condition meter on an asset card, use a paperclip or token. Or you can set a six-sided die on top of the card and rotate it to show the current value. The value of a meter cannot exceed the maximum shown on the card.\n\nYou can learn more about assets starting on page 50."
       }
     ]
   },
   {
     "Name": "Impact",
     "Category": "Glossary",
-    "Source": {
-      "Name": "Starforged Playtest",
-      "Date": "101221"
-    },
+    "Source": { "Name": "Starforged Playtest", "Date": "101221" },
     "Terms": [
       {
         "Name": "Wounded",
         "Category": "Misfortune",
-        "Applied by": { "Moves": [ "Endure Harm" ] },
-        "Removed by": { "Moves": [ "Heal" ] },
-        "Effects": { "Forbid Increase": [ "Health" ] },
-        "Applies to": [ "PC" ],
+        "Applied by": { "Moves": ["Endure Harm"] },
+        "Removed by": { "Moves": ["Heal"] },
+        "Effects": { "Forbid Increase": ["Health"] },
+        "Applies to": ["PC"],
         "Description": "Wounded may be marked when you are at 0 health and fail to [Endure Harm](#Endure-Harm). You are severely injured.\n\nIf you are wounded, you cannot increase health."
       },
       {
         "Name": "Shaken",
         "Category": "Misfortune",
-        "Applied by": { "Moves": [ "Endure Stress" ] },
-        "Removed by": { "Moves": [ "Hearten" ] },
-        "Effects": { "Forbid Increase": [ "Spirit" ] },
-        "Applies to": [ "PC" ],
+        "Applied by": { "Moves": ["Endure Stress"] },
+        "Removed by": { "Moves": ["Hearten"] },
+        "Effects": { "Forbid Increase": ["Spirit"] },
+        "Applies to": ["PC"],
         "Description": "Shaken may be marked when you are at 0 spirit and fail to [Endure Stress](#Endure-Stress). You are despairing or distraught.\n\nIf you are shaken, you cannot increase spirit."
       },
       {
         "Name": "Unprepared",
         "Category": "Misfortune",
-        "Applied by": { "Moves": [ "Sacrifice Resources" ] },
-        "Removed by": { "Moves": [ "Resupply" ] },
-        "Effects": { "Forbid Increase": [ "Supply" ] },
-        "Applies to": [ "PC" ],
+        "Applied by": { "Moves": ["Sacrifice Resources"] },
+        "Removed by": { "Moves": ["Resupply"] },
+        "Effects": { "Forbid Increase": ["Supply"] },
+        "Applies to": ["PC"],
         "Description": "Unprepared is marked when you [Sacrifice Resources](#Sacrifice-Resources) and are reduced to 0 supply. You are not properly equipped for the dangers of the Forge. Because you and your allies share the same supply value, you mark unprepared together.\n\nIf you are unprepared, you cannot increase supply."
       },
       {
         "Name": "Doomed",
         "Category": "Burden",
-        "Applied by": { "Moves": [ "Face Death" ] },
-        "Removed by": { "Quest": { "Rank": [ "Extreme" ] } },
-        "Applies to": [ "PC" ],
+        "Applied by": { "Moves": ["Face Death"] },
+        "Removed by": { "Quest": { "Rank": ["Extreme"] } },
+        "Applies to": ["PC"],
         "Description": "Doomed is marked when you [Face Death](#Face-Death) and return from death's door with a soul-bound quest."
       },
       {
         "Name": "Tormented",
         "Category": "Burden",
-        "Applied by": { "Moves": [ "Face Desolation" ] },
-        "Removed by": { "Quest": { "Rank": [ "Extreme" ] } },
-        "Applies to": [ "PC" ],
+        "Applied by": { "Moves": ["Face Desolation"] },
+        "Removed by": { "Quest": { "Rank": ["Extreme"] } },
+        "Applies to": ["PC"],
         "Description": "Tormented is marked when you [Face Desolation](#Face-Desolation), gain visions of a distressing future, and undertake a quest to prevent that dire fate."
       },
       {
         "Name": "Indebted",
         "Category": "Burden",
-        "Applied by": { "Moves": [ "Overcome Destruction" ] },
-        "Removed by": { "Quest": { "Rank": [ "Extreme" ] } },
-        "Applies to": [ "PC" ],
+        "Applied by": { "Moves": ["Overcome Destruction"] },
+        "Removed by": { "Quest": { "Rank": ["Extreme"] } },
+        "Applies to": ["PC"],
         "Description": "Indebted is marked when you [Overcome Destruction](#Overcome-Destruction). To replace what was lost and repay the debt, you will take on a duty-bound quest."
       },
       {
         "Name": "Permanently Harmed",
         "Category": "Lasting Effect",
-        "Applied by": { "Moves": [ "Endure Harm" ] },
-        "Applies to": [ "PC" ],
-        "Description": "Permanently harmed may be marked when you are at 0 health and fail to [Endure Harm](#Endure-Harm). You have suffered a wound which you must reckon with, such as the loss of an eye or hand. Or you bear physical scars which are a constant reminder of a harrowing incident.\n\nLasting effects are permanent. They forever impact your character through the momentum adjustment and—more importantly—through the narrative impact of being permanently harmed or traumatized. You should factor this impact into how you perform moves and how you interact with the world.\n\nEnvision the nature of the lasting effect. You may have physical, emotional, or mental factors you must take into account. Your outlook may change. Your goals and methods may change. How others behave toward you may change."
+        "Applied by": { "Moves": ["Endure Harm"] },
+        "Applies to": ["PC"],
+        "Description": "Permanently harmed may be marked when you are at 0 health and fail to [Endure Harm](#Endure-Harm). You have suffered a wound which you must reckon with, such as the loss of an eye or hand. Or you bear physical scars which are a constant reminder of a harrowing incident.\n\nLasting effects are permanent. They forever impact your character through the momentum adjustment andâ€”more importantlyâ€”through the narrative impact of being permanently harmed or traumatized. You should factor this impact into how you perform moves and how you interact with the world.\n\nEnvision the nature of the lasting effect. You may have physical, emotional, or mental factors you must take into account. Your outlook may change. Your goals and methods may change. How others behave toward you may change."
       },
       {
         "Name": "Traumatized",
         "Category": "Lasting Effect",
-        "Applied by": { "Moves": [ "Endure Stress" ] },
-        "Applies to": [ "PC" ],
-        "Description": "Traumatized may be marked when you are at 0 spirit and fail to [Endure Stress](#Endure-Stress). Your experiences have left you emotionally or mentally scarred.\n\nLasting effects are permanent. They forever impact your character through the momentum adjustment and—more importantly—through the narrative impact of being permanently harmed or traumatized. You should factor this impact into how you perform moves and how you interact with the world.\n\nEnvision the nature of the lasting effect. You may have physical, emotional, or mental factors you must take into account. Your outlook may change. Your goals and methods may change. How others behave toward you may change."
+        "Applied by": { "Moves": ["Endure Stress"] },
+        "Applies to": ["PC"],
+        "Description": "Traumatized may be marked when you are at 0 spirit and fail to [Endure Stress](#Endure-Stress). Your experiences have left you emotionally or mentally scarred.\n\nLasting effects are permanent. They forever impact your character through the momentum adjustment andâ€”more importantlyâ€”through the narrative impact of being permanently harmed or traumatized. You should factor this impact into how you perform moves and how you interact with the world.\n\nEnvision the nature of the lasting effect. You may have physical, emotional, or mental factors you must take into account. Your outlook may change. Your goals and methods may change. How others behave toward you may change."
       },
       {
         "Name": "Battered",
         "Category": null,
-        "Applied by": { "Moves": [ "Withstand Damage" ] },
-        "Removed by": { "Moves": [ "Repair" ] },
-        "Effect": { "Forbid Increase": [ "Integrity" ] },
+        "Applied by": { "Moves": ["Withstand Damage"] },
+        "Removed by": { "Moves": ["Repair"] },
+        "Effect": { "Forbid Increase": ["Integrity"] },
         "Applies to": [
           "Command Vehicle",
           "Incidental Vehicle",
@@ -156,8 +153,8 @@
       {
         "Name": "Cursed",
         "Category": null,
-        "Applied by": { "Moves": [ "Withstand Damage" ] },
-        "Applies to": [ "Command Vehicle" ],
+        "Applied by": { "Moves": ["Withstand Damage"] },
+        "Applies to": ["Command Vehicle"],
         "Description": "Cursed may be marked when your command vehicle (STARSHIP asset) is at 0 integrity and you fail to [Withstand Damage](#Withstand-Damage). This is a permanent impact. Your ship will never be quite right again.\n\nCursed is a permanent impact and will forever plague your STARSHIP."
       }
     ]
@@ -173,7 +170,7 @@
     "Terms": [
       {
         "Name": "Out of Action",
-        "Description": "When your companion’s health is at 0 and you score a miss on [Companion Takes a Hit](#Companion-Takes-a-Hit), they are out of action. You cannot leverage their support until they gain at least +1 health. Envision what this means in the fiction of your scene.\n\nTo give aid to a companion, make an appropriate move. Unless the asset describes otherwise, this is typically [Heal](#Heal) for people and creatures, and [Repair](#Repair) for mechanical companions."
+        "Description": "When your companionâ€™s health is at 0 and you score a miss on [Companion Takes a Hit](#Companion-Takes-a-Hit), they are out of action. You cannot leverage their support until they gain at least +1 health. Envision what this means in the fiction of your scene.\n\nTo give aid to a companion, make an appropriate move. Unless the asset describes otherwise, this is typically [Heal](#Heal) for people and creatures, and [Repair](#Repair) for mechanical companions."
       }
     ]
   },
@@ -193,23 +190,23 @@
       },
       {
         "Name": "Toxic",
-        "Description": "This planet’s atmosphere is not compatible with human life. Exploring this place will require a sealed environment or breathing apparatus. Otherwise, survival is measured in minutes."
+        "Description": "This planetâ€™s atmosphere is not compatible with human life. Exploring this place will require a sealed environment or breathing apparatus. Otherwise, survival is measured in minutes."
       },
       {
         "Name": "Corrosive",
-        "Description": "This planet’s atmosphere is deadly to humans. As a bonus, it can damage exposed skin, materials, plastics, and metals over time."
+        "Description": "This planetâ€™s atmosphere is deadly to humans. As a bonus, it can damage exposed skin, materials, plastics, and metals over time."
       },
       {
         "Name": "Marginal",
-        "Description": "It’s unhealthy to breathe this planet’s atmosphere for more than a few hours at a time."
+        "Description": "Itâ€™s unhealthy to breathe this planetâ€™s atmosphere for more than a few hours at a time."
       },
       {
         "Name": "Breathable",
-        "Description": "This atmosphere is not perfect, but it’s good enough to sustain human life."
+        "Description": "This atmosphere is not perfect, but itâ€™s good enough to sustain human life."
       },
       {
         "Name": "Ideal",
-        "Description": "This planet’s atmosphere is ideally suited to human life."
+        "Description": "This planetâ€™s atmosphere is ideally suited to human life."
       }
     ]
   },
@@ -265,10 +262,7 @@
         "Name": "Shadow",
         "Description": "Sneakiness, deceptiveness, and cunning"
       },
-      {
-        "Name": "Wits",
-        "Description": "Expertise, knowledge, and observation"
-      }
+      { "Name": "Wits", "Description": "Expertise, knowledge, and observation" }
     ]
   }
 ]

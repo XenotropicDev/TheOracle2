@@ -1,5 +1,4 @@
-﻿using OracleData;
-using TheOracle2.UserContent;
+﻿using TheOracle2.UserContent;
 
 namespace TheOracle2.DataClasses;
 
@@ -11,7 +10,6 @@ public class Move
     [JsonIgnore]
     public virtual IList<OracleGuild> OracleGuilds { get; set; }
 
-    public string Asset { get; set; }
     public string Category { get; set; }
     public string Name { get; set; }
     public bool Oracle { get; set; }
@@ -20,7 +18,7 @@ public class Move
     public bool IsProgressMove { get; set; }
 
     public string Text { get; set; }
-    public virtual List<Trigger> Triggers { get; set; }
+    public virtual List<MoveTrigger> Triggers { get; set; }
 }
 
 public class MovesInfo
@@ -33,17 +31,20 @@ public class MovesInfo
     public virtual Source Source { get; set; }
 }
 
-public class StatOptions
+public class MoveStatOptions
 {
     [JsonIgnore]
     public int Id { get; set; }
 
     public string Method { get; set; }
     public IList<string> Stats { get; set; }
+
     public IList<string> Progress { get; set; }
+
+    public IList<string> Legacies { get; set; }
 }
 
-public class Trigger
+public class MoveTrigger
 {
     [JsonIgnore]
     public int Id { get; set; }
@@ -51,7 +52,8 @@ public class Trigger
     public string Details { get; set; }
 
     [JsonProperty("Stat Options")]
-    public virtual StatOptions StatOptions { get; set; }
+    public virtual MoveStatOptions StatOptions { get; set; }
 
     public string Text { get; set; }
+    public virtual IList<Special> Special { get; set; }
 }

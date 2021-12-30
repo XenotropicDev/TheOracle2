@@ -25,7 +25,7 @@ public class AssetCommand : InteractionModuleBase<SocketInteractionContext<Socke
         ComponentBuilder compBuilder = null;
 
         var builder = new EmbedBuilder()
-            .WithAuthor($"Asset: {asset.Category}")
+            .WithAuthor($"Asset: {asset.AssetType}")
             .WithTitle(asset.Name);
 
         if (asset.Abilities != null)
@@ -94,10 +94,10 @@ public class AssetCommand : InteractionModuleBase<SocketInteractionContext<Socke
             .WithName("asset")
             .WithDescription("Generates an asset");
 
-        foreach (var category in DbContext.Assets.Select(a => a.Category).Distinct())
+        foreach (var category in DbContext.Assets.Select(a => a.AssetType).Distinct())
         {
             var chunkedList = DbContext.Assets.ToList()
-                .Where(a => a.Category == category && a.Id != 0)
+                .Where(a => a.AssetType == category && a.Id != 0)
                 .OrderBy(a => a.Name)
                 .Chunk(SlashCommandOptionBuilder.MaxChoiceCount);
 

@@ -14,7 +14,7 @@ namespace TheOracle2.UserContent.Tests
     public class DataLoading
     {
         [TestMethod()]
-        [DataRow(typeof(AssetRoot), "asset*.json")]
+        [DataRow(typeof(List<Asset>), "asset*.json")]
         [DataRow(typeof(EncountersRoot), "encounter*.json")]
         [DataRow(typeof(List<GlossaryRoot>), "glossary*.json")]
         [DataRow(typeof(MovesInfo), "move*.json")]

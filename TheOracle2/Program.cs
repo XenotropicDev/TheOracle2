@@ -183,19 +183,24 @@ internal class Program
     private async Task CheckDB()
     {
         var context = _services.GetRequiredService<EFContext>();
+#if DEBUG
+        Console.WriteLine($"\nYou are debugging, do you want to recreate the database? (y/n)");
+        if (Console.ReadKey().Key == ConsoleKey.Y) await context.RecreateDB().ConfigureAwait(true);
+#endif
 
         if (!context.HasTables())
         {
-            Console.WriteLine($"Database not found, do you want to create it? (y/n)");
-            var key = Console.ReadKey();
+            Console.WriteLine($"\nDatabase not found, do you want to create it? (y/n)");
 
-            if (key.Key == ConsoleKey.Y)
+            if (Console.ReadKey().Key == ConsoleKey.Y)
             {
                 await context.RecreateDB().ConfigureAwait(true);
             }
+            else
+            {
+                Console.WriteLine($"Cannot continue without database.");
+            }
         }
-
-        context.Database.EnsureCreated();
     }
 
     private string GetToken()

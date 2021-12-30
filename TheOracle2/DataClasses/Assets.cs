@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using TheOracle2.DataClasses;
+﻿using TheOracle2.DataClasses;
 using TheOracle2.UserContent;
 
 namespace OracleData;
@@ -24,7 +23,7 @@ public record Ability
     [JsonProperty("Input")]
     public IList<string> Input { get; set; }
 
-    public virtual Move Move { get; set; }
+    public virtual AssetMove Move { get; set; }
 
     [JsonProperty("Text")]
     public string Text { get; set; }
@@ -41,6 +40,23 @@ public record AlterProperties
     public virtual Track Track { get; set; }
 }
 
+public record AssetRoot
+{
+    [JsonIgnore]
+    public int Id { get; set; }
+    [JsonProperty("Assets")]
+    public virtual IList<Asset> Assets { get; set; }
+
+    [JsonProperty("Name")]
+    public string Name { get; set; }
+
+    [JsonProperty("Source")]
+    public virtual Source Source { get; set; }
+
+    [JsonProperty("Tags")]
+    public IList<string> Tags { get; set; }
+}
+
 public record Asset
 {
     [JsonIgnore]
@@ -55,8 +71,8 @@ public record Asset
     [JsonProperty("Aliases")]
     public IList<string> Aliases { get; set; }
 
-    [JsonProperty("Category")]
-    public string Category { get; set; }
+    [JsonProperty("Asset Type")]
+    public string AssetType { get; set; }
 
     [JsonProperty("Condition Meter")]
     public virtual ConditionMeter ConditionMeter { get; set; }
@@ -68,8 +84,9 @@ public record Asset
     public string Description { get; set; }
 
     [JsonProperty("Input")]
-    [NotMapped]
     public IList<string> Input { get; set; }
+
+    public bool Modules { get; set; }
 
     [JsonProperty("Name")]
     public string Name { get; set; }
@@ -81,12 +98,54 @@ public record Asset
     public virtual Track Track { get; set; }
 }
 
+public class AssetStatOptions
+{
+    [JsonIgnore]
+    public int Id { get; set; }
+
+    public string Select { get; set; }
+    public IList<string> Stats { get; set; }
+    public IList<string> Resources { get; set; }
+    public virtual IList<Special> Special { get; set; }
+    public IList<string> Legacies { get; set; }
+    public string Selection { get; set; }
+}
+
+public class AssetTrigger
+{
+    [JsonIgnore]
+    public int Id { get; set; }
+
+    public string Details { get; set; }
+    public string Text { get; set; }
+
+    [JsonProperty("Stat Options")]
+    public virtual AssetStatOptions StatOptions { get; set; }
+}
+
+public class AssetMove
+{
+    [JsonIgnore]
+    public int Id { get; set; }
+
+    public string Name { get; set; }
+    public string Category { get; set; }
+    public string Asset { get; set; }
+    public virtual IList<AssetTrigger> Triggers { get; set; }
+    public string Text { get; set; }
+
+    [JsonProperty("Progress Move")]
+    public bool ProgressMove { get; set; }
+}
+
 public record ConditionMeter
 {
     [JsonIgnore]
     public int Id { get; set; }
     public string Name { get; set; }
     public int Max { get; set; }
+
+    public IList<string> Conditions { get; set; }
 
     [JsonProperty("Starts At")]
     public int StartsAt { get; set; }
@@ -106,20 +165,6 @@ public record Counter
     public int Max { get; set; }
 }
 
-public record Source
-{
-    [JsonIgnore]
-    public int Id { get; set; }
-    [JsonProperty("Name")]
-    public string Name { get; set; }
-
-    [JsonProperty("Page")]
-    public string Page { get; set; }
-
-    [JsonProperty("Date", DefaultValueHandling = DefaultValueHandling.Ignore)]
-    public string Date { get; set; }
-}
-
 public record Track
 {
     [JsonIgnore]
@@ -134,24 +179,6 @@ public record Track
     public int Value { get; set; }
 }
 
-public record AssetRoot
-{
-    [JsonIgnore]
-    public int Id { get; set; }
-    [JsonProperty("Assets")]
-    public virtual IList<Asset> Assets { get; set; }
-
-    [JsonProperty("Name")]
-    public string Name { get; set; }
-
-    [JsonProperty("Source")]
-    public virtual Source Source { get; set; }
-
-    //Todo Get rsek to convert these to tags with IDs?
-    [JsonProperty("Tags")]
-    public IList<string> Tags { get; set; }
-}
-
 public record AlterMove
 {
     [JsonIgnore]
@@ -159,7 +186,7 @@ public record AlterMove
     [JsonProperty("Any Move")]
     public bool AnyMove { get; set; }
     public string Name { get; set; }
-    public virtual IList<Trigger> Triggers { get; set; }
+    public virtual IList<AssetTrigger> Triggers { get; set; }
 }
 
 public record Select
