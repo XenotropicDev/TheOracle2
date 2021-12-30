@@ -28,7 +28,7 @@ public class EFContext : DbContext
         Database.EnsureDeleted();
         Database.EnsureCreated();
 
-        var baseDir = new DirectoryInfo(Directory.GetCurrentDirectory() + "\\Data");
+        var baseDir = new DirectoryInfo(Path.Combine(Directory.GetCurrentDirectory(), "Data"));
         var file = baseDir.GetFiles("assets.json").FirstOrDefault();
 
         string text = file.OpenText().ReadToEnd();

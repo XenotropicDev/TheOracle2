@@ -22,7 +22,7 @@ namespace TheOracle2.UserContent.Tests
         [DataRow(typeof(TruthRoot), "*truth*.json")]
         public void LoadAndGenerateTest(Type T, string searchOption)
         {
-            var baseDir = new DirectoryInfo(Directory.GetCurrentDirectory() + "\\Data");
+            var baseDir = new DirectoryInfo(Path.Combine(Directory.GetCurrentDirectory(), "Data"));
             var files = baseDir.GetFiles(searchOption);
 
             Assert.IsTrue(files.Length >= 1);
