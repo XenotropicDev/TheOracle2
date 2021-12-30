@@ -4,52 +4,53 @@ namespace TheOracle2.DataClasses;
 
 public partial class EncountersRoot
 {
-    [JsonPropertyName("Name")]
+    [JsonProperty("Name")]
     public string Name { get; set; }
 
-    [JsonPropertyName("Source")]
+    [JsonProperty("Source")]
     public virtual Source Source { get; set; }
 
-    [JsonPropertyName("Encounters")]
+    [JsonProperty("Encounters")]
     public virtual IList<Encounter> Encounters { get; set; }
 }
 
 public partial class Encounter
 {
-    [JsonPropertyName("Name")]
+    [JsonProperty("Name")]
     public string Name { get; set; }
 
-    [JsonPropertyName("Rank")]
+    [JsonProperty("Rank")]
     public long Rank { get; set; }
 
-    [JsonPropertyName("Features")]
+    public string Nature { get; set; }
+
+    [JsonProperty("Features")]
     public IList<string> Features { get; set; }
 
-    [JsonPropertyName("Drives")]
+    [JsonProperty("Drives")]
     public IList<string> Drives { get; set; }
 
-    [JsonPropertyName("Tactics")]
+    [JsonProperty("Tactics")]
     public IList<string> Tactics { get; set; }
 
-    [JsonPropertyName("Variants")]
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    [JsonProperty("Variants", DefaultValueHandling = DefaultValueHandling.Ignore)]
     public virtual IList<Variant> Variants { get; set; }
 
-    [JsonPropertyName("Description")]
+    [JsonProperty("Description")]
     public string Description { get; set; }
 
-    [JsonPropertyName("Quest Starter")]
+    [JsonProperty("Quest Starter")]
     public string QuestStarter { get; set; }
 }
 
 public partial class Variant
 {
-    [JsonPropertyName("Name")]
+    [JsonProperty("Name")]
     public string Name { get; set; }
 
-    [JsonPropertyName("Rank")]
+    [JsonProperty("Rank")]
     public long Rank { get; set; }
 
-    [JsonPropertyName("Description")]
+    [JsonProperty("Description")]
     public string Description { get; set; }
 }

@@ -21,6 +21,7 @@ public class EFContext : DbContext
     public DbSet<OracleInfo> OracleInfo { get; set; }
     public DbSet<Oracle> Oracles { get; set; }
     public DbSet<Ability> AssetAbilities { get; set; }
+    public DbSet<Tables> Tables { get; set; }
 
     public async Task RecreateDB()
     {
@@ -31,7 +32,7 @@ public class EFContext : DbContext
         var file = baseDir.GetFiles("assets.json").FirstOrDefault();
 
         string text = file.OpenText().ReadToEnd();
-        var root = JsonSerializer.Deserialize<AssetRoot>(text);
+        var root = JsonConvert.DeserializeObject<AssetRoot>(text);
 
         foreach (var asset in root.Assets)
         {
@@ -42,7 +43,7 @@ public class EFContext : DbContext
         file = baseDir.GetFiles("moves.json").FirstOrDefault();
 
         text = file.OpenText().ReadToEnd();
-        var moveRoot = JsonSerializer.Deserialize<MovesInfo>(text);
+        var moveRoot = JsonConvert.DeserializeObject<MovesInfo>(text);
 
         foreach (var move in moveRoot.Moves)
         {
@@ -53,7 +54,7 @@ public class EFContext : DbContext
         file = baseDir.GetFiles("oracles.json").FirstOrDefault();
 
         text = file.OpenText().ReadToEnd();
-        var oracleRoot = JsonSerializer.Deserialize<List<OracleInfo>>(text);
+        var oracleRoot = JsonConvert.DeserializeObject<List<OracleInfo>>(text);
 
         foreach (var oi in oracleRoot)
         {
@@ -67,8 +68,8 @@ public class EFContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         var stringArrayToCSVConverter = new ValueConverter<IList<string>, string>(
-            v => JsonSerializer.Serialize(v, new JsonSerializerOptions()),
-            v => JsonSerializer.Deserialize<IList<string>>(v, new JsonSerializerOptions())
+            v => JsonConvert.SerializeObject(v),
+            v => JsonConvert.DeserializeObject<IList<string>>(v)
             );
 
         var valueComparer = new ValueComparer<IList<string>>(

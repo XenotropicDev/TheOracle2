@@ -1,8 +1,7 @@
 ﻿global using Discord;
 global using Microsoft.Extensions.DependencyInjection;
 global using System.Linq;
-global using System.Text.Json;
-global using System.Text.Json.Serialization;
+global using Newtonsoft.Json;
 using Discord.Commands;
 using Discord.Interactions;
 using Discord.WebSocket;
@@ -108,7 +107,7 @@ internal class Program
         }
         catch (Discord.Net.HttpException ex)
         {
-            string json = JsonSerializer.Serialize(ex.Errors);
+            string json = JsonConvert.SerializeObject(ex.Errors);
             logger.LogError(ex.Message, ex);
             logger.LogError(json);
         }
@@ -212,7 +211,7 @@ internal class Program
             Console.WriteLine($"Couldn't find a discord token. Please enter it here. (It will be saved to the token.json file in your bin folder)");
             token = Console.ReadLine();
 
-            var json = JsonSerializer.Serialize(new { DiscordToken = token });
+            var json = JsonConvert.SerializeObject(new { DiscordToken = token });
             File.WriteAllText("token.json", json);
         }
 
@@ -235,12 +234,12 @@ internal class Program
                 guilds.Add(id);
             }
 
-            var jsonSave = JsonSerializer.Serialize(guilds);
+            var jsonSave = JsonConvert.SerializeObject(guilds);
             File.WriteAllText("debugGuilds.json", jsonSave);
         }
 
         var file = File.ReadAllText("debugGuilds.json");
 
-        return JsonSerializer.Deserialize<ulong[]>(file);
+        return JsonConvert.DeserializeObject<ulong[]>(file);
     }
 }

@@ -95,7 +95,8 @@ public class SlashCommandHandler
             }
             catch (HttpException ex)
             {
-                string json = JsonSerializer.Serialize(ex.Errors, new JsonSerializerOptions() { WriteIndented = true });
+                string json = JsonConvert.SerializeObject(ex.Errors, Formatting.Indented);
+                _logger.LogError(ex.Message);
                 _logger.LogError(json);
             }
             catch (Exception ex)
@@ -147,7 +148,7 @@ public class SlashCommandHandler
         }
         catch (HttpException exception)
         {
-            string json = JsonSerializer.Serialize(exception.Errors, new JsonSerializerOptions() { WriteIndented = true });
+            string json = JsonConvert.SerializeObject(exception.Errors, Formatting.Indented);
             Console.WriteLine(json);
         }
         catch (Exception ex)

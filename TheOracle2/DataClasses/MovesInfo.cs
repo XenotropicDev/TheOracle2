@@ -16,7 +16,7 @@ public class Move
     public string Name { get; set; }
     public bool Oracle { get; set; }
 
-    [JsonPropertyName("Progress Move")]
+    [JsonProperty("Progress Move")]
     public bool IsProgressMove { get; set; }
 
     public string Text { get; set; }
@@ -40,6 +40,7 @@ public class StatOptions
 
     public string Method { get; set; }
     public IList<string> Stats { get; set; }
+    public IList<string> Progress { get; set; }
 }
 
 public class Trigger
@@ -49,7 +50,7 @@ public class Trigger
 
     public string Details { get; set; }
 
-    [JsonPropertyName("Stat Options")]
+    [JsonProperty("Stat Options")]
     public virtual StatOptions StatOptions { get; set; }
 
     public string Text { get; set; }

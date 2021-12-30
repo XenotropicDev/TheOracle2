@@ -6,52 +6,51 @@ namespace TheOracle2.DataClasses;
 
 public partial class TruthRoot
 {
-    [JsonPropertyName("Name")]
+    [JsonProperty("Name")]
     public string Name { get; set; }
 
-    [JsonPropertyName("Source")]
+    [JsonProperty("Source")]
     public virtual Source Source { get; set; }
 
-    [JsonPropertyName("Setting Truths")]
+    [JsonProperty("Setting Truths")]
     public virtual IList<SettingTruth> SettingTruths { get; set; }
 }
 
 public partial class SettingTruth
 {
-    [JsonPropertyName("Name")]
+    [JsonProperty("Name")]
     public string Name { get; set; }
 
-    [JsonPropertyName("Table")]
+    [JsonProperty("Table")]
     public virtual IList<SettingTruthTable> Table { get; set; }
 
-    [JsonPropertyName("Character")]
+    [JsonProperty("Character")]
     public string Character { get; set; }
 }
 
 public partial class SettingTruthTable
 {
-    [JsonPropertyName("Chance")]
+    [JsonProperty("Chance")]
     public long Chance { get; set; }
 
-    [JsonPropertyName("Description")]
+    [JsonProperty("Description")]
     public string Description { get; set; }
 
-    [JsonPropertyName("Details")]
+    [JsonProperty("Details")]
     public string Details { get; set; }
 
-    [JsonPropertyName("Table")]
-	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    [JsonProperty("Table", DefaultValueHandling = DefaultValueHandling.Ignore)]
     public virtual IList<ChanceDescriptionStub> Table { get; set; }
 
-    [JsonPropertyName("Quest Starter")]
+    [JsonProperty("Quest Starter")]
     public string QuestStarter { get; set; }
 }
 
 public partial class ChanceDescriptionStub
 {
-    [JsonPropertyName("Chance")]
+    [JsonProperty("Chance")]
     public long Chance { get; set; }
 
-    [JsonPropertyName("Description")]
+    [JsonProperty("Description")]
     public string Description { get; set; }
 }
