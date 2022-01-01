@@ -22,6 +22,8 @@ public class EFContext : DbContext
     public DbSet<Oracle> Oracles { get; set; }
     public DbSet<Ability> AssetAbilities { get; set; }
     public DbSet<Tables> Tables { get; set; }
+    public DbSet<OracleStub> OracleStubs { get; set; }
+    public DbSet<ChanceTable> ChanceTables { get; set; }
 
     public async Task RecreateDB()
     {
@@ -78,6 +80,17 @@ public class EFContext : DbContext
             c => c.ToList()
             );
 
+        var requiresConverter = new ValueConverter<IDictionary<string, string[]>, string>(
+            v => JsonConvert.SerializeObject(v),
+            v => JsonConvert.DeserializeObject<IDictionary<string, string[]>>(v)
+            );
+
+        var requiresComparer = new ValueComparer<IDictionary<string, string[]>>(
+            (c1, c2) => c1.SequenceEqual(c2),
+            c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+            c => c
+            );
+
         modelBuilder.Entity<Subcategory>().HasOne(o => o.OracleInfo).WithMany(oi => oi.Subcategories).HasForeignKey(o => o.OracleInfoId).IsRequired();
         modelBuilder.Entity<Oracle>().HasOne(o => o.Subcategory).WithMany(sub => sub.Oracles).HasForeignKey(o => o.SubcategoryId).IsRequired(false);
         //modelBuilder.Entity<Oracle>().HasOne(o => o.OracleInfo).WithMany(oi => oi.Oracles).HasForeignKey(o => o.OracleInfoId);
@@ -98,31 +111,23 @@ public class EFContext : DbContext
         modelBuilder.Entity<ConditionMeter>().Property(c => c.Conditions).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
         modelBuilder.Entity<Inherit>().Property(i => i.Exclude).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
         modelBuilder.Entity<Inherit>().Property(i => i.Name).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
-        modelBuilder.Entity<MoveStatOptions>().Property(a => a.Stats).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
+        modelBuilder.Entity<Inherit>().Property(s => s.Requires).HasConversion(requiresConverter).Metadata.SetValueComparer(requiresComparer);
         modelBuilder.Entity<MoveStatOptions>().Property(a => a.Legacies).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
         modelBuilder.Entity<MoveStatOptions>().Property(a => a.Progress).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
+        modelBuilder.Entity<MoveStatOptions>().Property(a => a.Stats).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
         modelBuilder.Entity<Oracle>().Property(o => o.Aliases).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
         modelBuilder.Entity<Oracle>().Property(o => o.ContentTags).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
         modelBuilder.Entity<Oracle>().Property(o => o.PartOfSpeech).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
+        modelBuilder.Entity<Oracle>().Property(s => s.Requires).HasConversion(requiresConverter).Metadata.SetValueComparer(requiresComparer);
         modelBuilder.Entity<OracleInfo>().Property(o => o.Aliases).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
         modelBuilder.Entity<OracleInfo>().Property(o => o.Tags).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
-        modelBuilder.Entity<Requires>().Property(r => r.DerelictType).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
-        modelBuilder.Entity<Requires>().Property(r => r.Environment).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
-        modelBuilder.Entity<Requires>().Property(r => r.Life).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
-        modelBuilder.Entity<Requires>().Property(r => r.Location).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
-        modelBuilder.Entity<Requires>().Property(r => r.PlanetaryClass).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
-        modelBuilder.Entity<Requires>().Property(r => r.Region).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
-        modelBuilder.Entity<Requires>().Property(r => r.Scale).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
-        modelBuilder.Entity<Requires>().Property(r => r.StarshipType).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
-        modelBuilder.Entity<Requires>().Property(r => r.ThemeType).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
-        modelBuilder.Entity<Requires>().Property(r => r.Type).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
-        modelBuilder.Entity<Requires>().Property(r => r.Zone).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
         modelBuilder.Entity<Select>().Property(a => a.Options).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
         modelBuilder.Entity<Subcategory>().Property(s => s.Aliases).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
         modelBuilder.Entity<Subcategory>().Property(s => s.ContentTags).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
+        modelBuilder.Entity<Subcategory>().Property(s => s.Requires).HasConversion(requiresConverter).Metadata.SetValueComparer(requiresComparer);
         modelBuilder.Entity<Subcategory>().Property(s => s.SampleNames).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
         modelBuilder.Entity<Tables>().Property(s => s.Aliases).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
-        
+        modelBuilder.Entity<Tables>().Property(s => s.Requires).HasConversion(requiresConverter).Metadata.SetValueComparer(requiresComparer);
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

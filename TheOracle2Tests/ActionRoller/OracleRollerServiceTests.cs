@@ -9,29 +9,34 @@ public class OracleRollerServiceTests
         var services = TestServices.GetServices();
         var context = services.GetRequiredService<EFContext>();
         //await context.RecreateDB();
-        
-        var roller = new OracleRollerService(new Random(1), context);
 
         var oracle = context.Oracles.FirstOrDefault(o => o.Name == "Planetary Class");
+        
+        var result = new OracleRoller(new Random(1), context, oracle)
+            .Build();
 
-        var result = roller.Roll(oracle);
-
-        //var embed = result.GetEmbedBuilder();
-        Assert.IsNotNull(result.ChildResults.FirstOrDefault()?.Result.Oracle?.OracleInfo);
+        //Assert.IsNotNull(result.ChildResults.FirstOrDefault()?.Result.Oracle?.OracleInfo);
         Assert.AreEqual(1, result.ChildResults.Count);
-        Assert.AreEqual(4, result.ChildResults.FirstOrDefault().FollowUpTables.Count);
+        Assert.AreEqual(4, result.FollowUpTables.Count);
         Assert.IsTrue(result.Result.Description.Length > 0);
     }
 
     [TestMethod()]
-    public async Task LinkedInfoTest()
+    public async Task RollerEmbedTest()
     {
         var services = TestServices.GetServices();
         var context = services.GetRequiredService<EFContext>();
-        //await context.RecreateDB();
 
         var oracle = context.Oracles.FirstOrDefault(o => o.Name == "Planetary Class");
+        var roller = new OracleRoller(new Random(1), context, oracle);
 
-        Assert.IsNotNull(oracle.OracleInfo);
+        var result = roller.Build();
+
+        var embed = new DiscordOracleBuilder(result).Build().EmbedBuilder;
+
+        foreach (var field in embed.Fields)
+        {
+            Assert.AreEqual(1, embed.Fields.Count(f => f.Name == field.Name));
+        }
     }
 }

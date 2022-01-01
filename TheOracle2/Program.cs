@@ -50,6 +50,7 @@ internal class Program
 
     private async Task ClientReady()
     {
+        //Todo: Do we need a different one time ready method? I'm not sure if this gets fired on a reconnect.
         try
         {
             var oracleCommandHandler = _services.GetRequiredService<SlashCommandHandler>();
@@ -70,7 +71,7 @@ internal class Program
                 await interactionService.RegisterCommandsToGuildAsync(guild, false);
             }
 #else
-            //await interactionService.RegisterCommandsGloballyAsync();
+            await interactionService.RegisterCommandsGloballyAsync(deleteMissing: false);
 #endif
             await oracleCommandHandler.InstallCommandsAsync(_services, false);
 

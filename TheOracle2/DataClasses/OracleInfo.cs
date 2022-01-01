@@ -46,7 +46,7 @@ public partial class Attributes
     public IList<string> Type { get; set; }
 }
 
-public partial class ChanceTable : IRollResult
+public partial class ChanceTable
 {
     [JsonIgnore]
     public int Id { get; set; }
@@ -84,6 +84,7 @@ public partial class ChanceTable : IRollResult
     public IList<string> PartOfSpeech { get; set; }
 
     public virtual Suggest Suggestions { get; set; }
+    [JsonProperty("Thumbnail")]
     public string Image { get; set; }
     public int Value { get; set; }
 }
@@ -154,7 +155,7 @@ public class Inherit
     public string Category { get; set; }
     public IList<string> Exclude { get; set; }
     public IList<string> Name { get; set; }
-    public virtual Requires Requires { get; set; }
+    public IDictionary<string, string[]> Requires { get; set; }
 }
 
 public class MultipleRolls
@@ -196,7 +197,7 @@ public partial class Oracle
     [JsonProperty("Allow duplicate rolls")]
     public bool AllowDuplicateRolls { get; set; }
 
-    public string Category { get => OracleInfo.Name; }
+    public string Category { get => OracleInfo?.Name; }
     public string Description { get; set; }
 
     [JsonProperty("Display name")]
@@ -216,7 +217,7 @@ public partial class Oracle
     public string OracleType { get; set; }
 
     public bool Repeatable { get; set; }
-    public virtual Requires Requires { get; set; }
+    public IDictionary<string, string[]> Requires { get; set; }
 
     [JsonProperty("Select table by")]
     public string SelectTableBy { get; set; }
@@ -259,49 +260,49 @@ public class OracleInfo
     public IList<string> Tags { get; set; }
 }
 
-public partial record Requires
-{
-    [JsonIgnore]
-    public int Id { get; set; }
+//public partial record Requires
+//{
+//    [JsonIgnore]
+//    public int Id { get; set; }
 
-    [JsonIgnore]
-    public int? InheritId { get; set; }
-    [JsonIgnore]
-    public virtual Inherit Inherit { get; set; }
+//    [JsonIgnore]
+//    public int? InheritId { get; set; }
+//    [JsonIgnore]
+//    public virtual Inherit Inherit { get; set; }
 
-    [JsonIgnore]
-    public int? OracleId { get; set; }
-    [JsonIgnore]
-    public virtual Oracle Oracle { get; set; }
+//    [JsonIgnore]
+//    public int? OracleId { get; set; }
+//    [JsonIgnore]
+//    public virtual Oracle Oracle { get; set; }
 
-    [JsonIgnore]
-    public int? TablesId { get; set; }
-    [JsonIgnore]
-    public virtual Tables Tables { get; set; }
+//    [JsonIgnore]
+//    public int? TablesId { get; set; }
+//    [JsonIgnore]
+//    public virtual Tables Tables { get; set; }
 
-    [JsonProperty("Derelict Type")]
-    public IList<string> DerelictType { get; set; }
+//    [JsonProperty("Derelict Type")]
+//    public IList<string> DerelictType { get; set; }
 
-    public IList<string> Environment { get; set; }
-    public IList<string> Life { get; set; }
-    public IList<string> Location { get; set; }
+//    public IList<string> Environment { get; set; }
+//    public IList<string> Life { get; set; }
+//    public IList<string> Location { get; set; }
 
-    [JsonProperty("Planetary Class")]
-    public IList<string> PlanetaryClass { get; set; }
+//    [JsonProperty("Planetary Class")]
+//    public IList<string> PlanetaryClass { get; set; }
 
-    public IList<string> Region { get; set; }
-    public IList<string> Scale { get; set; }
+//    public IList<string> Region { get; set; }
+//    public IList<string> Scale { get; set; }
 
-    [JsonProperty("Starship Type")]
-    public IList<string> StarshipType { get; set; }
+//    [JsonProperty("Starship Type")]
+//    public IList<string> StarshipType { get; set; }
 
-    [JsonProperty("Theme Type")]
-    public IList<string> ThemeType { get; set; }
+//    [JsonProperty("Theme Type")]
+//    public IList<string> ThemeType { get; set; }
 
-    public IList<string> Type { get; set; }
+//    public IList<string> Type { get; set; }
 
-    public IList<string> Zone { get; set; }
-}
+//    public IList<string> Zone { get; set; }
+//}
 
 public class Rootobject
 {
@@ -336,7 +337,7 @@ public class Subcategory
     public virtual List<Inherit> Inherits { get; set; }
     public string Name { get; set; }
     public virtual List<Oracle> Oracles { get; set; }
-    public virtual Requires Requires { get; set; }
+    public IDictionary<string, string[]> Requires { get; set; }
 
     [JsonProperty("Sample Names")]
     public IList<string> SampleNames { get; set; }
@@ -346,6 +347,7 @@ public class Subcategory
     [JsonProperty("Subcategory of")]
     public string SubcategoryOf { get; set; }
 
+    [JsonProperty("Thumbnail")]
     public string Image { get; set; }
 }
 
@@ -386,7 +388,7 @@ public class Tables
     public string Displayname { get; set; }
 
     public string Name { get; set; }
-    public virtual Requires Requires { get; set; }
+    public IDictionary<string, string[]> Requires { get; set; }
     public virtual List<ChanceTable> Table { get; set; }
 }
 

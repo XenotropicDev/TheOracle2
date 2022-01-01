@@ -148,7 +148,7 @@ public record ConditionMeter
     public IList<string> Conditions { get; set; }
 
     [JsonProperty("Starts At")]
-    public int StartsAt { get; set; }
+    public int? StartsAt { get; set; }
 }
 
 public record Counter

@@ -48,21 +48,4 @@ namespace TheOracle2.UserContent.Tests
             //Console.WriteLine("Sub Categories:\n" + String.Join("\n", subcatDisplay));
         }
     }
-
-    [TestClass()]
-    public class RegexTest
-    {
-        [TestMethod()]
-        public void regex()
-        {
-            string expected = "replace these 'But  not these' and replace these";
-
-            string source = "replace      these    'But  not these' and    replace  these";
-            var regex = new Regex(@"\s+");
-
-            var result = regex.Replace(source, " ");
-
-            Assert.AreEqual(expected, result);
-        }
-    }
 }

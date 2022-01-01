@@ -10,9 +10,24 @@ using TheOracle2.DataClasses;
 
 namespace TheOracle2.UserContent.Tests
 {
+
+
     [TestClass()]
     public class DataLoading
     {
+        [TestMethod()]
+        public async Task CheckDBItems()
+        {
+            IServiceProvider services = TestServices.GetServices();
+            var db = services.GetRequiredService<EFContext>();
+            await db.RecreateDB();
+
+            var planetClassOracle = db.Oracles.Find(112);
+            var furnaceWorld = planetClassOracle.Table[1];
+
+            Assert.IsNotNull(planetClassOracle);
+        }
+
         [TestMethod()]
         [DataRow(typeof(List<Asset>), "asset*.json")]
         [DataRow(typeof(EncountersRoot), "encounter*.json")]

@@ -142,7 +142,7 @@ public class SlashCommandHandler
             foreach (var cmd in applicationCommands) await _client.Rest.CreateGuildCommand(cmd, 756890506830807071);
             foreach (var cmd in applicationCommands) await _client.Rest.CreateGuildCommand(cmd, 916381023766470747);
 #else
-            //await _client.Rest.BulkOverwriteGlobalCommands(applicationCommands.ToArray());
+            foreach (var cmd in applicationCommands) await _client.Rest.CreateGlobalCommand(cmd);
 #endif
             _logger.LogInformation("Commands have been recreated");
         }
