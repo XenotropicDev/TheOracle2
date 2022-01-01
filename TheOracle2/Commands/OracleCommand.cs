@@ -1,5 +1,7 @@
 ﻿using Discord.Interactions;
 using Discord.WebSocket;
+using TheOracle2.ActionRoller;
+using TheOracle2.DataClasses;
 using TheOracle2.UserContent;
 
 namespace TheOracle2;
@@ -9,15 +11,12 @@ public class OracleCommand : InteractionModuleBase<SocketInteractionContext<Sock
     public OracleCommand(EFContext dbContext, Random random)
     {
         DbContext = dbContext;
-        this.random = random;
-        Roller = new OracleRollerService(random, dbContext);
+        RollerFactory = new TableRollerFactory(dbContext, random);
     }
 
     private SocketSlashCommand SlashCommandContext;
-    private readonly Random random;
-
-    public OracleRollerService Roller { get; }
     public EFContext DbContext { get; }
+    public TableRollerFactory RollerFactory { get; }
 
     [OracleSlashCommand("oracle")]
     public async Task RollOracle()
@@ -33,9 +32,27 @@ public class OracleCommand : InteractionModuleBase<SocketInteractionContext<Sock
         }
 
         var oracle = DbContext.Oracles.Find(Id);
-        var rollResult = Roller.Roll(oracle);
+        //IRollerService rollerType = RollerFactory.GetRoller(oracle);
 
-        await SlashCommandContext.RespondAsync(embed: rollResult.GetEmbedBuilder().Build(), components: rollResult.GetComponentBuilder()?.Build()).ConfigureAwait(false);
+        if (oracle.Tables?.Count > 0)
+        {
+            var selectMenu = new SelectMenuBuilder()
+                .WithPlaceholder($"Select the {oracle.SelectTableBy} type.")
+                .WithCustomId($"tables-oracle-{Id}");
+            foreach (var table in oracle.Tables)
+            {
+                selectMenu.AddOption(table.Name, $"{table.Id}");
+            }
+
+            await SlashCommandContext.RespondAsync("Please select one", components: new ComponentBuilder().WithSelectMenu(selectMenu).Build());
+            return;
+        }
+
+        var rollResult = RollerFactory.GetRoller(oracle).Build();
+
+        var ob = new DiscordOracleBuilder(rollResult).Build();
+
+        await SlashCommandContext.RespondAsync(embed: ob.EmbedBuilder.Build(), components: ob.ComponentBuilder.Build()).ConfigureAwait(false);
     }
 
     public IList<SlashCommandBuilder> GetCommandBuilders()
@@ -49,8 +66,7 @@ public class OracleCommand : InteractionModuleBase<SocketInteractionContext<Sock
             var topLevelOption = new SlashCommandOptionBuilder()
                 .WithName(oracleInfo.Name.Replace(" ", "-").ToLower())
                 .WithDescription($"{oracleInfo.Name} Oracles")
-                .WithType(ApplicationCommandOptionType.SubCommand)
-                ;
+                .WithType(ApplicationCommandOptionType.SubCommand);
 
             //Add the base oracles first
             var oracleOption = new SlashCommandOptionBuilder()
@@ -65,32 +81,7 @@ public class OracleCommand : InteractionModuleBase<SocketInteractionContext<Sock
             }
 
             //Add any subcategories and their oracles second
-            if (oracleInfo.Subcategories?.Count > 0)
-            {
-                topLevelOption.WithType(ApplicationCommandOptionType.SubCommandGroup);
-
-                foreach (var subcat in oracleInfo.Subcategories)
-                {
-                    var subcatOption = new SlashCommandOptionBuilder()
-                        .WithName(subcat.Name.Replace(" ", "-").ToLower())
-                        .WithDescription(subcat.Name)
-                        .WithType(ApplicationCommandOptionType.SubCommand);
-
-                    var oracleChoiceOption = new SlashCommandOptionBuilder()
-                        .WithName("oracle")
-                        .WithDescription($"Oracle to roll")
-                        .WithRequired(true)
-                        .WithType(ApplicationCommandOptionType.Integer);
-
-                    foreach (var oracle in subcat.Oracles)
-                    {
-                        oracleChoiceOption.AddChoice(oracle.Name, oracle.Id);
-                    }
-
-                    subcatOption.AddOption(oracleChoiceOption);
-                    topLevelOption.AddOption(subcatOption);
-                }
-            }
+            AddSubcategories(topLevelOption, oracleInfo);
 
             if (topLevelOption.Type == ApplicationCommandOptionType.SubCommandGroup)
             {
@@ -99,6 +90,7 @@ public class OracleCommand : InteractionModuleBase<SocketInteractionContext<Sock
                     .WithDescription($"Lists the main oracle rolls.")
                     .WithType(ApplicationCommandOptionType.SubCommand)
                     .AddOption(oracleOption);
+
                 topLevelOption.AddOption(subcommand);
             }
             else
@@ -112,30 +104,141 @@ public class OracleCommand : InteractionModuleBase<SocketInteractionContext<Sock
         return new List<SlashCommandBuilder>() { command };
     }
 
+    private SlashCommandOptionBuilder AddSubcategories(SlashCommandOptionBuilder builder, OracleInfo oracleInfo)
+    {
+        if (oracleInfo.Subcategories == null || oracleInfo.Subcategories?.Count == 0) return builder;
+
+        builder.WithType(ApplicationCommandOptionType.SubCommandGroup);
+
+        foreach (var subcat in oracleInfo.Subcategories)
+        {
+            var subcatOption = new SlashCommandOptionBuilder()
+                .WithName(subcat.Name.Replace(" ", "-").ToLower())
+                .WithDescription(subcat.Name)
+                .WithType(ApplicationCommandOptionType.SubCommand);
+
+            var oracleChoiceOption = new SlashCommandOptionBuilder()
+                .WithName("oracle")
+                .WithDescription($"Oracle to roll")
+                .WithRequired(true)
+                .WithType(ApplicationCommandOptionType.Integer);
+
+            foreach (var oracle in subcat.Oracles)
+            {
+                oracleChoiceOption.AddChoice(oracle.Name, oracle.Id);
+            }
+
+            subcatOption.AddOption(oracleChoiceOption);
+            builder.AddOption(subcatOption);
+        }
+
+        return builder;
+    }
+
+    //This isn't used because it makes the command too large for discord to use
+    private SlashCommandOptionBuilder GetRequiredList(IEnumerable<Oracle> oralces)
+    {
+        var require = new Dictionary<string, int>();
+
+        string desc = "options";
+        foreach (var oracle in oralces.Where(o => o.Tables != null))
+        {
+            desc = oracle.SelectTableBy ?? desc;
+
+            foreach (var table in oracle.Tables)
+            {
+                if (table == null || require.ContainsKey(table.Name)) continue;
+
+                require.Add(table.Name, table.Id);
+            }
+        }
+
+        if (require.Count == 0) return null;
+
+        var builder = new SlashCommandOptionBuilder().WithType(ApplicationCommandOptionType.Integer).WithName("req").WithDescription(desc);
+
+        foreach (var item in require)
+        {
+            builder.AddChoice(item.Key, item.Value);
+        }
+
+        return builder;
+    }
+
     public void SetCommandContext(SocketSlashCommand slashCommandContext) => this.SlashCommandContext = slashCommandContext;
 
-    [ComponentInteraction("oracle-pair:*")]
-    public async Task AddPair(string idStr)
+    [ComponentInteraction("add-oracle-select")]
+    public async Task FollowUp(string[] values)
     {
-        //Todo: add support for this. Is it even support in dataforged any more?
-        if (!int.TryParse(idStr, out int id)) throw new ArgumentException($"Unknown id '{idStr}'");
-        var Oracle = DbContext.Oracles.Find(id);
-
-        var embed = Context.Interaction.Message?.Embeds?.FirstOrDefault()?.ToEmbedBuilder();
-        if (embed != null)
+        var builder = Context.Interaction.Message.Embeds.FirstOrDefault().ToEmbedBuilder();
+        foreach (var value in values)
         {
-            
-            await Context.Interaction.UpdateAsync(msg => msg.Embeds = new Embed[] { embed.Build() }).ConfigureAwait(false);
+            var roll = RollerFactory.GetRoller(value).Build();
+
+            builder = DiscordOracleBuilder.AddFieldsToBuilder(roll, builder);
         }
+
+        await Context.Interaction.UpdateAsync(msg =>
+        {
+            msg.Embeds = new Embed[] { builder.Build() };
+        }).ConfigureAwait(false);
     }
 
-    [ComponentInteraction("oracle-followup:*")]
-    public async Task FollowUp(string idStr)
+    [ComponentInteraction("tables-oracle-*")]
+    public async Task SelectedTableRoll(string oracleId, string[] values)
     {
-        //await DeferAsync();
-        if (!int.TryParse(idStr, out int id)) throw new ArgumentException($"Unknown id '{idStr}'");
-        var Oracle = DbContext.Oracles.Find(id);
+        int.TryParse(values.FirstOrDefault(), out int Id);
 
-        
+        var table = DbContext.Tables.Find(Id);
+
+        var rollResult = RollerFactory.GetRoller(table).Build();
+
+        var ob = new DiscordOracleBuilder(rollResult).Build();
+
+        await Context.Interaction.UpdateAsync(msg =>
+        {
+            msg.Embed = ob.EmbedBuilder.Build();
+            msg.Components = ob.ComponentBuilder.Build();
+            msg.Content = "";
+        }).ConfigureAwait(false);
     }
 }
+
+//internal class OracleFetchFactory
+//{
+//    internal static IOracleFetcher Get(string value)
+//    {
+//        if (value.StartsWith("oracle:")) return new OracleFetcher();
+//        if (value.StartsWith("tables:")) return new TablesFetcher();
+//        return new OracleFetcher();
+//    }
+
+//    internal static Oracle Fetch(EFContext context, string value)
+//    {
+//        var fetcher = Get(value);
+//        return fetcher.Fetch(context, value);
+//    }
+//}
+
+//public interface IOracleFetcher
+//{
+//    public Oracle Fetch(EFContext context, string value);
+//}
+
+//public class OracleFetcher : IOracleFetcher
+//{
+//    public Oracle Fetch(EFContext context, string value)
+//    {
+//        if (!int.TryParse(value.Replace("oracle:", "", StringComparison.OrdinalIgnoreCase), out int id)) throw new ArgumentException($"Unknown value {value}");
+//        return context.Oracles.Find(id);
+//    }
+//}
+
+//public class TablesFetcher : IOracleFetcher
+//{
+//    public Oracle Fetch(EFContext context, string value)
+//    {
+//        if (!int.TryParse(value.Replace("tables:", "", StringComparison.OrdinalIgnoreCase), out int id)) throw new ArgumentException($"Unknown value {value}");
+//        return context.Tables.Find(id).Oracle;
+//    }
+//}
