@@ -3,13 +3,14 @@ using TheOracle2.UserContent;
 
 namespace TheOracle2.Commands;
 
-public class AddContentCommand : ISlashCommand
+//This command has been disabled for now.
+public class AddContentCommand //: ISlashCommand
 {
     public void SetCommandContext(SocketSlashCommand slashCommandContext) => this.SlashCommandContext = slashCommandContext;
 
     private SocketSlashCommand SlashCommandContext;
 
-    [OracleSlashCommand("add-content")]
+    //[OracleSlashCommand("add-content")]
     public async Task Register(EFContext efContext)
     {
         int id = Convert.ToInt32(SlashCommandContext.Data.Options.FirstOrDefault().Value);
