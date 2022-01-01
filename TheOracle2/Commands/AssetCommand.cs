@@ -7,12 +7,15 @@ namespace TheOracle2;
 
 public class AssetCommand : InteractionModuleBase<SocketInteractionContext<SocketMessageComponent>>, ISlashCommand
 {
-    public AssetCommand(EFContext dbContext)
+    public AssetCommand(EFContext dbContext, Random random)
     {
         DbContext = dbContext;
+        this.random = random;
     }
 
     private SocketSlashCommand SlashCommandContext;
+    private readonly Random random;
+
     public EFContext DbContext { get; }
 
     [OracleSlashCommand("asset")]
@@ -44,12 +47,12 @@ public class AssetCommand : InteractionModuleBase<SocketInteractionContext<Socke
                 select.AddOption(new SelectMenuOptionBuilder()
                     .WithLabel($"Ability {asset.Abilities.IndexOf(ability) + 1}")
                     .WithValue($"{ability.Id}")
-                    //.WithDefault(ability.Enabled)
+                    .WithDefault(ability.Enabled)
                     );
 
                 if (ability.Enabled)
                 {
-                    description += ability.Text + "\n\n";
+                    description += $"⬢ {ability.Text}\n\n";
                 }
             }
             builder.WithDescription(description);
@@ -61,8 +64,8 @@ public class AssetCommand : InteractionModuleBase<SocketInteractionContext<Socke
             compBuilder ??= new ComponentBuilder();
 
             compBuilder.WithSelectMenu(new SelectMenuBuilder()
-                .WithCustomId("asset-counter-select")
-                .WithPlaceholder($"{asset.Counter.Name} {asset.Counter.StartsAt} / {asset.Counter.Max}")
+                .WithCustomId($"asset-counter-select:{asset.Id}")
+                .WithPlaceholder($"{asset.Counter.Name} actions")
                 .WithMinValues(1)
                 .WithMaxValues(1)
                 .AddOption(new SelectMenuOptionBuilder().WithLabel($"+1 {asset.Counter.Name}").WithValue("asset-counter-up"))
@@ -73,16 +76,28 @@ public class AssetCommand : InteractionModuleBase<SocketInteractionContext<Socke
 
         if (asset.ConditionMeter != null)
         {
-            compBuilder ??= new ComponentBuilder();
-            compBuilder.WithSelectMenu(new SelectMenuBuilder()
-                .WithCustomId("asset-condition-select")
-                .WithPlaceholder($"{asset.ConditionMeter.Name} {asset.ConditionMeter.StartsAt} / {asset.ConditionMeter.Max}")
+            builder.AddField(asset.ConditionMeter.Name, asset.ConditionMeter.StartsAt ?? asset.ConditionMeter.Max, false);
+
+            //todo: show condition in select?
+            var select = new SelectMenuBuilder()
+                .WithCustomId($"asset-condition-select:{asset.Id}")
+                .WithPlaceholder($"{asset.ConditionMeter.Name} actions")
                 .WithMinValues(1)
                 .WithMaxValues(1)
                 .AddOption(new SelectMenuOptionBuilder().WithLabel($"+1 {asset.ConditionMeter.Name}").WithValue("asset-condition-up"))
                 .AddOption(new SelectMenuOptionBuilder().WithLabel($"-1 {asset.ConditionMeter.Name}").WithValue("asset-condition-down"))
-                .AddOption(new SelectMenuOptionBuilder().WithLabel($"Roll {asset.ConditionMeter.Name}").WithValue("asset-condition-roll"))
-                );
+                .AddOption(new SelectMenuOptionBuilder().WithLabel($"Roll {asset.ConditionMeter.Name}").WithValue("asset-condition-roll"));
+
+            if (asset.ConditionMeter.Conditions?.Count > 0)
+            {
+                foreach (var condition in asset.ConditionMeter.Conditions)
+                {
+                    select.AddOption(new SelectMenuOptionBuilder().WithLabel($"Condition: {condition}").WithValue(condition));
+                }
+            }
+
+            compBuilder ??= new ComponentBuilder();
+            compBuilder.WithSelectMenu(select);
         }
 
         await SlashCommandContext.RespondAsync(embed: builder.Build(), components: compBuilder?.Build()).ConfigureAwait(false);
@@ -136,41 +151,124 @@ public class AssetCommand : InteractionModuleBase<SocketInteractionContext<Socke
 
     public void SetCommandContext(SocketSlashCommand slashCommandContext) => this.SlashCommandContext = slashCommandContext;
 
-    [ComponentInteraction("asset-condition-select")]
-    public async Task ConditionSelection(string[] values)
+    [ComponentInteraction("asset-condition-select:*")]
+    public async Task ConditionSelection(string assetId, string[] values)
     {
-        await DeferAsync();
-        await RespondAsync();
+        if (!int.TryParse(assetId, out var id)) throw new ArgumentException($"Unknown asset id {assetId}");
+        var asset = DbContext.Assets.Find(id);
+
+        var embed = Context.Interaction.Message.Embeds.FirstOrDefault().ToEmbedBuilder();
+        ComponentBuilder component = ComponentBuilder.FromMessage(Context.Interaction.Message);
+        var conditionField = embed.Fields.Find(f => f.Name == asset.ConditionMeter.Name);
+
+        //clear all the selected items
+        foreach (var row in component.ActionRows)
+        {
+            var select = row.Components.OfType<SelectMenuComponent>().FirstOrDefault(c => c.CustomId == Context.Interaction.Data.CustomId);
+            if (select == null) continue;
+
+            var selectBuilder = select.ToBuilder();
+            selectBuilder.Options.ForEach(o => o.WithDefault(false));
+            row.WithComponents(new List<IMessageComponent> { selectBuilder.Build() });
+        }
+        if (asset.ConditionMeter.Conditions.Contains(conditionField.Value.ToString()))
+        {
+            conditionField.Value = 0;
+        }
+
+        switch (values.FirstOrDefault())
+        {
+            case "asset-condition-up":
+                embed.ChangeNumericField(asset.ConditionMeter.Name, 1, 0, asset.ConditionMeter.Max);
+                break;
+
+            case "asset-condition-down":
+                embed.ChangeNumericField(asset.ConditionMeter.Name, -1, 0, asset.ConditionMeter.Max);
+                break;
+
+            case "asset-condition-roll":
+                if (!int.TryParse(conditionField.Value.ToString(), out int value)) throw new ArgumentException();
+                var roller = new ActionRoll(random, value, message: $"{asset.ConditionMeter.Name} Roll");
+                await RespondAsync(embed: roller.ToEmbed().Build()).ConfigureAwait(false);
+                await Context.Interaction.Message.ModifyAsync(msg => msg.Components = component.Build());
+                return;
+
+            case string s when (asset.ConditionMeter?.Conditions?.Contains(s) ?? false):
+                component.MarkSelectionByOptionId(s);
+                conditionField.Value = s;
+                break;
+
+            default:
+                break;
+        }
+
+        await Context.Interaction.UpdateAsync(msg =>
+        {
+            msg.Embeds = new Embed[] { embed.Build() };
+            msg.Components = component.Build();
+        }).ConfigureAwait(false);
     }
 
-    [ComponentInteraction("asset-counter-select")]
-    public async Task CounterSelection(string[] values)
+    [ComponentInteraction("asset-counter-select:*")]
+    public async Task CounterSelection(string assetId, string[] values)
     {
-        await DeferAsync();
-        await RespondAsync();
+        if (!int.TryParse(assetId, out var id)) throw new ArgumentException($"Unknown asset id {assetId}");
+        var asset = DbContext.Assets.Find(id);
+
+        var embed = Context.Interaction.Message.Embeds.FirstOrDefault().ToEmbedBuilder();
+        ComponentBuilder component = ComponentBuilder.FromMessage(Context.Interaction.Message);
+
+        switch (values.FirstOrDefault())
+        {
+            case "asset-counter-up":
+                break;
+
+            case "asset-counter-down":
+                break;
+
+            case "asset-counter-roll":
+                break;
+
+            default:
+                break;
+        }
+
+        await Context.Interaction.UpdateAsync(msg =>
+        {
+            msg.Embeds = new Embed[] { embed.Build() };
+            msg.Components = component.Build();
+        }).ConfigureAwait(false);
     }
 
     [ComponentInteraction("asset-ability-select:*")]
-    public async Task AbilitySelection(string idStr, string[] values)
+    public async Task AbilitySelection(string idStr, string[] selections)
     {
         //await DeferAsync();
         if (!int.TryParse(idStr, out int id)) throw new ArgumentException($"Unknown id '{idStr}'");
         var asset = DbContext.Assets.Find(id);
 
         var embed = Context.Interaction.Message?.Embeds?.FirstOrDefault()?.ToEmbedBuilder();
+        var component = ComponentBuilder.FromMessage(Context.Interaction.Message);
+
         if (embed != null)
         {
             string desc = string.Empty;
-            foreach (var v in values)
+            foreach (var v in selections)
             {
                 if (!int.TryParse(v, out var abilityId)) throw new ArgumentException($"Unknown {nameof(Ability)} with Id {v}");
                 var ability = DbContext.AssetAbilities.Find(abilityId);
 
-                desc += ability.Text + "\n\n";
+                desc += $"⬢ {ability.Text}\n\n";
+
+                component.MarkSelectionByOptionId(v);
             }
             embed.WithDescription(desc);
 
-            await Context.Interaction.UpdateAsync(msg => msg.Embeds = new Embed[] { embed.Build() }).ConfigureAwait(false);
+            await Context.Interaction.UpdateAsync(msg =>
+            {
+                msg.Embeds = new Embed[] { embed.Build() };
+                msg.Components = component.Build();
+            }).ConfigureAwait(false);
         }
     }
 }
