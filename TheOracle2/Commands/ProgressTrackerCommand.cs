@@ -11,6 +11,12 @@ public class ProgressTrackerCommand : InteractionModuleBase
     public const int formidableTicks = 4;
     public const int totalTicks = 40;
     public const int troublesomeTicks = 12;
+    private readonly Random random;
+
+    public ProgressTrackerCommand(Random random)
+    {
+        this.random = random;
+    }
 
     [SlashCommand("track", "Creates a generic tracker for things like vows, expeditions, and combat")]
     public async Task PostTracker(string Description, ChallengeRank Rank)
@@ -118,7 +124,7 @@ public class ProgressTrackerCommand : InteractionModuleBase
         {
             await RespondAsync("Unknown progress type");
         }
-        var roll = new ActionRoll(0, ticks / 4, interaction.Message.Embeds.FirstOrDefault().Description);
+        var roll = new ActionRoll(random, 0, ticks / 4, interaction.Message.Embeds.FirstOrDefault().Description);
 
         await interaction.RespondAsync(embed: roll.ToEmbed().WithAuthor($"Progress Roll").Build()).ConfigureAwait(false);
     }

@@ -18,15 +18,15 @@ public class PlayerCardCommand : InteractionModuleBase
     public async Task BuildPlayerCard(string name, [MaxValue(4)][MinValue(1)] int edge, [MaxValue(4)][MinValue(1)] int heart, [MaxValue(4)][MinValue(1)] int iron, [MaxValue(4)][MinValue(1)] int shadow, [MaxValue(4)][MinValue(1)] int wits)
     {
         var compBuilder = new ComponentBuilder()
-        .WithButton("+H", "add-health", row: 0, style: ButtonStyle.Success)
-        .WithButton("-H", "lose-health", row: 1, style: ButtonStyle.Secondary)
+        .WithButton("+Hp", "add-health", row: 0, style: ButtonStyle.Success)
+        .WithButton("-Hp", "lose-health", row: 1, style: ButtonStyle.Secondary)
         .WithButton("+Sp", "add-spirit", row: 0, style: ButtonStyle.Success)
         .WithButton("-Sp", "lose-spirit", row: 1, style: ButtonStyle.Secondary)
         .WithButton("+Su", "add-supply", row: 0, style: ButtonStyle.Success)
         .WithButton("-Su", "lose-supply", row: 1, style: ButtonStyle.Secondary)
-        .WithButton("+M", "add-momentum", row: 0, style: ButtonStyle.Success)
-        .WithButton("-M", "lose-momentum", row: 1, style: ButtonStyle.Secondary)
-        .WithButton("Burn", "burn-momentum", row: 0, style: ButtonStyle.Danger)
+        .WithButton("+Mo", "add-momentum", row: 0, style: ButtonStyle.Success)
+        .WithButton("-Mo", "lose-momentum", row: 1, style: ButtonStyle.Secondary)
+        .WithButton("Burn", "burn-momentum", row: 0, style: ButtonStyle.Danger, emote: new Emoji("🔥"))
         .WithButton("...", "player-more", row: 0, style: ButtonStyle.Primary)
         ;
 
@@ -131,6 +131,28 @@ public class PlayerCardCommand : InteractionModuleBase
         }).ConfigureAwait(false);
     }
 
+    [ComponentInteraction("add-xp")]
+    public async Task addXp()
+    {
+        var interaction = Context.Interaction as SocketMessageComponent;
+
+        await interaction.UpdateAsync(msg =>
+        {
+            msg.Embeds = UpdateField(interaction, "XP", 1);
+        }).ConfigureAwait(false);
+    }
+
+    [ComponentInteraction("lose-xp")]
+    public async Task loseXp()
+    {
+        var interaction = Context.Interaction as SocketMessageComponent;
+
+        await interaction.UpdateAsync(msg =>
+        {
+            msg.Embeds = UpdateField(interaction, "XP", -1);
+        }).ConfigureAwait(false);
+    }
+
     [ComponentInteraction("burn-momentum")]
     public async Task burn()
     {
@@ -204,15 +226,7 @@ public class PlayerCardCommand : InteractionModuleBase
     private static Embed[] UpdateField(SocketMessageComponent interaction, string fieldName, int change, int min = 0, int max = 5)
     {
         var embed = interaction.Message.Embeds.FirstOrDefault().ToEmbedBuilder();
-        int index = embed.Fields.FindIndex(f => f.Name == fieldName);
-        if (int.TryParse(embed.Fields[index].Value.ToString(), out var value))
-        {
-            value += change;
-            if (value < min) value = min;
-            if (value > max) value = max;
-            embed.Fields[index].Value = value;
-            return new Embed[] { embed.Build() };
-        }
-        return null;
+        embed.ChangeNumericField(fieldName, change, min, max);
+        return new Embed[] { embed.Build() };
     }
 }
