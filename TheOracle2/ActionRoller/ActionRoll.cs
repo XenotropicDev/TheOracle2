@@ -47,11 +47,14 @@ public class ActionRoll
     /// </summary>
     /// <param name="playerModifier"></param>
     /// <param name="actionDie">Sets the value of the ActionDie, useful for things like progress rolls</param>
-    public ActionRoll(int playerModifier = 0, int? actionDie = null, string message = "")
+    public ActionRoll(Random random, int playerModifier = 0, int? actionDie = null, string message = "")
     {
+        this.random = random;
         ActionDie = actionDie ?? random.Next(1, 7);
         Message = message;
         Modifiers = new int[] { playerModifier };
+        ChallengeDie1 = new DieResult(new Die(10, random));
+        ChallengeDie2 = new DieResult(new Die(10, random));
     }
 
     /// <summary>
@@ -59,11 +62,13 @@ public class ActionRoll
     /// </summary>
     /// <param name="modifiers"></param>
     /// <param name="actionDie">Sets the value of the ActionDie, useful for things like progress rolls</param>
-    public ActionRoll(int[] modifiers, int? actionDie = null, string message = "")
+    public ActionRoll(Random random, int[] modifiers, int? actionDie = null, string message = "")
     {
         ActionDie = actionDie ?? random.Next(1, 7);
         Message = message;
         Modifiers = modifiers;
+        ChallengeDie1 = new DieResult(new Die(10, random));
+        ChallengeDie2 = new DieResult(new Die(10, random));
     }
 
     public string ResultText()
