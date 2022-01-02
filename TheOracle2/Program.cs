@@ -172,12 +172,16 @@ internal class Program
             .AddSingleton<ReferencedMessageCommandHandler>()
             .AddSingleton<Random>()
             .AddDbContext<EFContext>()
-            .AddLogging(builder => builder.AddSimpleConsole(options =>
-            {
-                options.IncludeScopes = false;
-                options.SingleLine = true;
-                options.TimestampFormat = "hh:mm:ss ";
-            }))
+            .AddLogging(builder => 
+                builder.AddSimpleConsole(options =>
+                {
+                    options.IncludeScopes = false;
+                    options.SingleLine = true;
+                    options.TimestampFormat = "hh:mm:ss ";
+                })
+                .AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Warning)
+            )
+            
             .BuildServiceProvider();
     }
 
