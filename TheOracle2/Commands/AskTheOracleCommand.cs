@@ -16,7 +16,7 @@ public class OracleAskPaths : InteractionModuleBase
     [SlashCommand("with-likelihood", "Ask the oracle based on the predefined likelihoods")]
     public async Task Named(
         [Summary(description: "Ask the oracle based on the predefined likelihoods")]
-        [Choice("Almost Certain", "AlmostCertain"), 
+        [Choice("Sure Thing", "SureThing"), 
         Choice("Likely", "Likely"),
         Choice("Fifty-fifty", "FiftyFifty"), 
         Choice("Unlikely", "Unlikely"), 
@@ -26,11 +26,11 @@ public class OracleAskPaths : InteractionModuleBase
     {
         if (!Enum.TryParse<AskOption>(keyword, out var value)) throw new ArgumentException($"Unknown value {keyword}");
         var roll = random.Next(101);
-        string result = (roll >= 100 - (int)value) ? "Yes" : "No";
+        string result = (roll <= (int)value) ? "Yes" : "No";
         
         var displayValue = GetAttributeOfType<DisplayAttribute>(value)?.Name ?? keyword;
-        if (fluff?.Length > 0) fluff += "\n";
-        await RespondAsync($"{fluff}You rolled {roll} VS. {displayValue} ({(int)value}%)\n**{result}**.").ConfigureAwait(false);
+        if (fluff?.Length > 0) fluff = $"You asked: {fluff}\n";
+        await RespondAsync($"{fluff}You rolled: {roll} VS. {displayValue} ({(int)value} or less)\n**{result}**.").ConfigureAwait(false);
     }
 
     [SlashCommand("with-chance", "Ask the oracle based on a percentage")]
@@ -40,10 +40,10 @@ public class OracleAskPaths : InteractionModuleBase
         string fluff = null)
     {
         var roll = random.Next(101);
-        string result = (roll >= 100 - number) ? "Yes" : "No";
+        string result = (roll <= number) ? "Yes" : "No";
 
         if (fluff?.Length > 0) fluff += "\n";
-        await RespondAsync($"{fluff}You rolled {roll} VS. {number}%\n**{result}**.").ConfigureAwait(false);
+        await RespondAsync($"{fluff}You rolled {roll} VS. {number} or less\n**{result}**.").ConfigureAwait(false);
     }
 
     public static T GetAttributeOfType<T>(Enum enumVal) where T : Attribute
@@ -57,13 +57,13 @@ public class OracleAskPaths : InteractionModuleBase
 
 public enum AskOption
 {
-    [Display(Name = "Almost Certain")]
-    AlmostCertain = 10, 
-    Likely = 25,
+    [Display(Name = "Sure thing")]
+    SureThing = 90, 
+    Likely = 75,
     [Display(Name = "Fifty-fifty")]
     FiftyFifty = 50,
-    Unlikely = 75,
+    Unlikely = 25,
     [Display(Name = "Small Chance")]
-    SmallChance = 90
+    SmallChance = 10
 }
 
