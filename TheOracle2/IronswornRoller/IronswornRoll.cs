@@ -15,27 +15,32 @@ public abstract class IronswornRoll {
     ChallengeDie1 = new Die(10, challengeDieValue1 ?? null);
     ChallengeDie2 = new Die(10, challengeDieValue2 ?? null);
   }
-
+  /// <summary>A user-provided text annotation to the roll.</summary>
   public string Text { get; }
+  /// <summary>The first Challenge Die.</summary>
   public Die ChallengeDie1 { get; set; }
+  /// <summary>The second Challenge Die.</summary>
   public Die ChallengeDie2 { get; set; }
+  /// <summary>Whether the Value properties of the Challenge Dice match.</summary>
   public bool IsMatch { get => ChallengeDie1.Value == ChallengeDie2.Value; }
+  /// <summary>The roll's score before it's reduced by the score cap.</summary>
   public abstract int RawScore { get; }
+  /// <summary>The Score to be compared to the Challenge Dice, capped at 10.</summary>
   public int Score { get => Math.Min(10, RawScore); }
-
+  /// <summary>A Markdown string representation of the Challenge Dice values for use in text output.</summary>
   public string ToChallengeString() => $"{ChallengeDie1.Value}, {ChallengeDie2.Value}";
 
+  /// <summary>A Markdown string representation of the Score (and any relevant arithmetic) for use in text output.</summary>
   public virtual string ToScoreString() => $"**{Score}**";
-
+  /// <summary>A Markdown string representation of the roll and any user-provided text, for use in text output.</summary>
   public override string ToString() {
     var baseString = $"{ToScoreString()} vs. {ToChallengeString()}";
     if (Text.Length > 0) {
       return $"{Text}\n{baseString}";
     }
-
     return baseString;
   }
-
+  /// <summary>The outcome of the roll - a Strong Hit, Weak Hit, or Miss.</summary>
   public IronswornRollOutcome Outcome {
     get {
       if (Score > ChallengeDie1.Value && Score > ChallengeDie2.Value) {
@@ -49,6 +54,7 @@ public abstract class IronswornRoll {
       return IronswornRollOutcome.WeakHit;
     }
   }
+  /// <summary>The string representation of the roll outcome - a Strong Hit, Weak Hit, or Miss - and whether or not it's a Match.</summary>
 
   public string OutcomeText() {
     if (IsMatch) {
@@ -95,6 +101,6 @@ public abstract class IronswornRoll {
   public string OverMaxMessage() => RawScore > 10 ? string.Format(IronswornRollResources.OverMaxMessage, Score) : "";
 
   public virtual string FooterText() => OverMaxMessage();
-
+  // <summary>A string description of the roll type (e.g. Progress Roll, Action Roll), used as a surtitle in the embed field.</summary>
   public virtual string AuthorText { get => "Roll"; }
 }
