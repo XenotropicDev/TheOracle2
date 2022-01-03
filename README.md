@@ -28,4 +28,5 @@ Unfortunately discord doesn’t show all the options in a scrollable, or well so
 ## Other features
 #### Recreate message:
 You can recreate a message, similar to the old ⏬ reaction method by right clicking a bot message and selecting recreate message from the apps menu.
+
 ![image](https://user-images.githubusercontent.com/6792312/147948167-a1b67087-5064-40e4-b4e5-9f3738ade82a.png)
