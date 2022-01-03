@@ -95,12 +95,12 @@ public abstract class IronswornRoll {
         .WithTitle(OutcomeText())
         .WithDescription(ToString())
         .WithFooter(FooterText())
-        .WithAuthor(AuthorText);
+        .WithAuthor(RollTypeLabel);
   }
 
   public string OverMaxMessage() => RawScore > 10 ? string.Format(IronswornRollResources.OverMaxMessage, Score) : "";
 
   public virtual string FooterText() => OverMaxMessage();
-  // <summary>A string description of the roll type (e.g. Progress Roll, Action Roll), used as a surtitle in the embed field.</summary>
-  public virtual string AuthorText { get => "Roll"; }
+  // <summary>A string description of the roll type (e.g. "Progress Roll", "Action Roll"), for use in labelling output.</summary>
+  public virtual string RollTypeLabel { get => "Roll"; }
 }

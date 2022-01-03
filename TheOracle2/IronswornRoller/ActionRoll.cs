@@ -61,7 +61,7 @@ public class ActionRoll : IronswornRoll {
   }
 
   /// <inheritdoc/>
-  public override string AuthorText { get => "Action Roll"; }
+  public override string RollTypeLabel { get => "Action Roll"; }
 
   /// <inheritdoc/>
   public override string ToScoreString() => IsActionDieCanceled
