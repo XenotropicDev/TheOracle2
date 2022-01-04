@@ -364,3 +364,12 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# vscode / omnisharp config
+omnisharp.json
+.vscode
+
+# local configuration
+debugGuilds.json
+GameContent.db
+token.json

@@ -124,7 +124,7 @@ public class ProgressTrackerCommand : InteractionModuleBase
         {
             await RespondAsync("Unknown progress type");
         }
-        var roll = new ActionRoll(random, 0, ticks / 4, interaction.Message.Embeds.FirstOrDefault().Description);
+        var roll = new ProgressRoll(ticks / 4, interaction.Message.Embeds.FirstOrDefault().Description);
 
         await interaction.RespondAsync(embed: roll.ToEmbed().WithAuthor($"Progress Roll").Build()).ConfigureAwait(false);
     }
