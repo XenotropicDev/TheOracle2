@@ -24,13 +24,10 @@ public class MoveReferenceCommand : ISlashCommand
         var ephemeral = (SlashCommandContext.Data.Options.FirstOrDefault().Options.FirstOrDefault(o => o.Name == "ephemeral")?.Value as bool?) == true;
         var keepMsg = (SlashCommandContext.Data.Options.FirstOrDefault().Options.FirstOrDefault(o => o.Name == "keep-message")?.Value as bool?) == true;
         var move = DbContext.Moves.Find(Id);
+        
+        var moveItems = new DiscordMoveEntity(move, ephemeral);
 
-        var builder = new EmbedBuilder()
-        .WithAuthor(move.Category)
-        .WithTitle(move.Name)
-        .WithDescription(move.Text);
-
-        await SlashCommandContext.RespondAsync(embed: builder.Build(), ephemeral: ephemeral).ConfigureAwait(false);
+        await SlashCommandContext.RespondAsync(embeds: moveItems.GetEmbeds(), ephemeral: ephemeral).ConfigureAwait(false);
 
         if (!keepMsg && !ephemeral)
         {

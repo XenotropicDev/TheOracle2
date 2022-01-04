@@ -25,82 +25,9 @@ public class AssetCommand : InteractionModuleBase<SocketInteractionContext<Socke
 
         var asset = DbContext.Assets.Find(Id);
 
-        ComponentBuilder compBuilder = null;
+        var discordItems = new DiscordAssetEntity(asset);
 
-        var builder = new EmbedBuilder()
-            .WithAuthor($"Asset: {asset.AssetType}")
-            .WithTitle(asset.Name);
-
-        if (asset.Abilities != null)
-        {
-            compBuilder ??= new ComponentBuilder();
-
-            var select = new SelectMenuBuilder()
-                .WithCustomId($"asset-ability-select:{asset.Id}")
-                .WithPlaceholder($"Ability Selection")
-                .WithMinValues(0)
-                .WithMaxValues(asset.Abilities.Count);
-
-            string description = string.Empty;
-            foreach (var ability in asset.Abilities)
-            {
-                select.AddOption(new SelectMenuOptionBuilder()
-                    .WithLabel($"Ability {asset.Abilities.IndexOf(ability) + 1}")
-                    .WithValue($"{ability.Id}")
-                    .WithDefault(ability.Enabled)
-                    );
-
-                if (ability.Enabled)
-                {
-                    description += $"⬢ {ability.Text}\n\n";
-                }
-            }
-            builder.WithDescription(description);
-            compBuilder.WithSelectMenu(select);
-        }
-
-        if (asset.Counter != null)
-        {
-            compBuilder ??= new ComponentBuilder();
-
-            compBuilder.WithSelectMenu(new SelectMenuBuilder()
-                .WithCustomId($"asset-counter-select:{asset.Id}")
-                .WithPlaceholder($"{asset.Counter.Name} actions")
-                .WithMinValues(1)
-                .WithMaxValues(1)
-                .AddOption(new SelectMenuOptionBuilder().WithLabel($"+1 {asset.Counter.Name}").WithValue("asset-counter-up"))
-                .AddOption(new SelectMenuOptionBuilder().WithLabel($"-1 {asset.Counter.Name}").WithValue("asset-counter-down"))
-                .AddOption(new SelectMenuOptionBuilder().WithLabel($"Roll {asset.Counter.Name}").WithValue("asset-counter-roll"))
-                );
-        }
-
-        if (asset.ConditionMeter != null)
-        {
-            builder.AddField(asset.ConditionMeter.Name, asset.ConditionMeter.StartsAt ?? asset.ConditionMeter.Max, false);
-
-            //todo: show condition in select?
-            var select = new SelectMenuBuilder()
-                .WithCustomId($"asset-condition-select:{asset.Id}")
-                .WithPlaceholder($"{asset.ConditionMeter.Name} actions")
-                .WithMinValues(1)
-                .WithMaxValues(1)
-                .AddOption(new SelectMenuOptionBuilder().WithLabel($"+1 {asset.ConditionMeter.Name}").WithValue("asset-condition-up"))
-                .AddOption(new SelectMenuOptionBuilder().WithLabel($"-1 {asset.ConditionMeter.Name}").WithValue("asset-condition-down"))
-                .AddOption(new SelectMenuOptionBuilder().WithLabel($"Roll {asset.ConditionMeter.Name}").WithValue("asset-condition-roll"));
-
-            if (asset.ConditionMeter.Conditions?.Count > 0)
-            {
-                foreach (var condition in asset.ConditionMeter.Conditions)
-                {
-                    select.AddOption(new SelectMenuOptionBuilder().WithLabel($"Condition: {condition}").WithValue(condition));
-                }
-            }
-
-            compBuilder ??= new ComponentBuilder();
-            compBuilder.WithSelectMenu(select);
-        }
-
-        await SlashCommandContext.RespondAsync(embed: builder.Build(), components: compBuilder?.Build()).ConfigureAwait(false);
+        await SlashCommandContext.RespondAsync(embeds: discordItems.GetEmbeds(), components: discordItems.GetComponents()).ConfigureAwait(false);
     }
 
     public IList<SlashCommandBuilder> GetCommandBuilders()
