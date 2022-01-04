@@ -88,7 +88,11 @@ public class DatabaseModule : InteractionModuleBase<SocketInteractionContext>
                     return;
             }
 
-            if (entityItem != null) await RespondAsync(entityItem.GetDiscordMessage(), embeds: entityItem.GetEmbeds(), ephemeral: entityItem.IsEphemeral, components: entityItem.GetComponents());
+            if (entityItem != null)
+            {
+                await RespondAsync(entityItem.GetDiscordMessage(), embeds: entityItem.GetEmbeds(), ephemeral: entityItem.IsEphemeral, components: entityItem.GetComponents());
+                return;
+            }
         }
 
         await RespondAsync($"{query} is not a valid {searchType} id");
