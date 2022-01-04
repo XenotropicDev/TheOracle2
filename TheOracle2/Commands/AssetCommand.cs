@@ -11,60 +11,21 @@ public class AssetCommand : InteractionModuleBase<SocketInteractionContext<Socke
     this.random = random;
   }
 
-  private SocketSlashCommand SlashCommandContext;
-  private readonly Random random;
+    private SocketSlashCommand SlashCommandContext;
+    private readonly Random random;
 
-  public EFContext DbContext { get; }
+    public EFContext DbContext { get; }
 
-  [OracleSlashCommand("asset")]
-  public async Task BuildAsset() {
-    int Id = Convert.ToInt32(SlashCommandContext.Data.Options.FirstOrDefault().Options.FirstOrDefault().Value);
+    [OracleSlashCommand("asset")]
+    public async Task BuildAsset()
+    {
+        int Id = Convert.ToInt32(SlashCommandContext.Data.Options.FirstOrDefault().Options.FirstOrDefault().Value);
 
-    var asset = DbContext.Assets.Find(Id);
+        var asset = DbContext.Assets.Find(Id);
 
-    ComponentBuilder compBuilder = null;
+        var discordItems = new DiscordAssetEntity(asset);
 
-    var builder = new EmbedBuilder()
-        .WithAuthor($"Asset: {asset.AssetType}")
-        .WithTitle(asset.Name);
-
-    if (asset.Abilities != null) {
-      compBuilder ??= new ComponentBuilder();
-
-      var select = new SelectMenuBuilder()
-          .WithCustomId($"asset-ability-select:{asset.Id}")
-          .WithPlaceholder($"Ability Selection")
-          .WithMinValues(0)
-          .WithMaxValues(asset.Abilities.Count);
-
-      string description = string.Empty;
-      foreach (var ability in asset.Abilities) {
-        select.AddOption(new SelectMenuOptionBuilder()
-            .WithLabel($"Ability {asset.Abilities.IndexOf(ability) + 1}")
-            .WithValue($"{ability.Id}")
-            .WithDefault(ability.Enabled)
-            );
-
-        if (ability.Enabled) {
-          description += $"⬢ {ability.Text}\n\n";
-        }
-      }
-      builder.WithDescription(description);
-      compBuilder.WithSelectMenu(select);
-    }
-
-    if (asset.Counter != null) {
-      compBuilder ??= new ComponentBuilder();
-
-      compBuilder.WithSelectMenu(new SelectMenuBuilder()
-          .WithCustomId($"asset-counter-select:{asset.Id}")
-          .WithPlaceholder($"{asset.Counter.Name} actions")
-          .WithMinValues(1)
-          .WithMaxValues(1)
-          .AddOption(new SelectMenuOptionBuilder().WithLabel($"+1 {asset.Counter.Name}").WithValue("asset-counter-up"))
-          .AddOption(new SelectMenuOptionBuilder().WithLabel($"-1 {asset.Counter.Name}").WithValue("asset-counter-down"))
-          .AddOption(new SelectMenuOptionBuilder().WithLabel($"Roll {asset.Counter.Name}").WithValue("asset-counter-roll"))
-          );
+        await SlashCommandContext.RespondAsync(embeds: discordItems.GetEmbeds(), components: discordItems.GetComponents()).ConfigureAwait(false);
     }
 
     if (asset.ConditionMeter != null) {
