@@ -15,17 +15,18 @@ Some oracles that have subsets of oracle tables (I’m looking at you planets) u
 
 #### Oracle categories
 Unfortunately discord doesn’t show all the options in a scrollable, or well sorted manner for the oracle tables, so here’s a list of all the root options:
-* Character
-* Character Creation
-* Core
-* Creature
-* Derelict
-* Faction
-* Location Theme
-* Miscellaneous
-* Move
-* Planet
-* Precursor Vault
-* Settlement
-* Space
-* Starship
+| Table | Table |
+| --- | --- |
+| Character | Miscellaneous |
+| Character Creation | Move |
+| Core | Planet |
+| Creature | Precursor Vault |
+| Derelict | Settlement |
+| Faction | Space |
+| Location Theme | Starship |
+
+## Other features
+#### Recreate message:
+You can recreate a message, similar to the old ⏬ reaction method by right clicking a bot message and selecting recreate message from the apps menu.
+
+![image](https://user-images.githubusercontent.com/6792312/147948167-a1b67087-5064-40e4-b4e5-9f3738ade82a.png)

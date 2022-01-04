@@ -68,10 +68,10 @@ internal class Program
 #if DEBUG
             foreach (var guild in GetDebugGuilds())
             {
-                await interactionService.RegisterCommandsToGuildAsync(guild, false);
+                await interactionService.RegisterCommandsToGuildAsync(guild, true);
             }
 #else
-            await interactionService.RegisterCommandsGloballyAsync(deleteMissing: false);
+            await interactionService.RegisterCommandsGloballyAsync(deleteMissing: true);
 #endif
             await oracleCommandHandler.InstallCommandsAsync(_services, false);
 
@@ -96,6 +96,12 @@ internal class Program
                         logger.LogInformation($"{component.User.Username} triggered message component (global event): {component.Data.CustomId}");
                         var msgCtx = new SocketInteractionContext<SocketMessageComponent>(client, component);
                         await interactionService.ExecuteCommandAsync(msgCtx, _services).ConfigureAwait(false);
+                        break;
+
+                    case SocketAutocompleteInteraction auto:
+                        logger.LogInformation($"{arg.User.Username} triggered an auto complete interaction for {auto.Data.CommandName}, value: {auto.Data.Current.Value}");
+                        var autoCtx = new SocketInteractionContext(client, arg);
+                        await interactionService.ExecuteCommandAsync(autoCtx, _services).ConfigureAwait(false);
                         break;
 
                     default:
@@ -190,15 +196,16 @@ internal class Program
         var context = _services.GetRequiredService<EFContext>();
 #if DEBUG
         Console.WriteLine($"\nYou are debugging, do you want to recreate the database? (y/n)");
-        if (Console.ReadKey().Key == ConsoleKey.Y) await context.RecreateDB().ConfigureAwait(true);
+        if (Console.ReadKey(true).Key == ConsoleKey.Y) { Console.WriteLine("Rebuilding Database..."); await context.RecreateDB().ConfigureAwait(true); }
 #endif
 
         if (!context.HasTables())
         {
             Console.WriteLine($"\nDatabase not found, do you want to create it? (y/n)");
 
-            if (Console.ReadKey().Key == ConsoleKey.Y)
+            if (Console.ReadKey(true).Key == ConsoleKey.Y)
             {
+                Console.WriteLine("Rebuilding Database...");
                 await context.RecreateDB().ConfigureAwait(true);
             }
             else
