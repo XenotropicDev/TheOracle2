@@ -14,7 +14,7 @@ public class ClockCommand : InteractionModuleBase
     Choice("6 segments", 6),
     Choice("8 segments", 8),
     Choice("10 segments", 10)]
-    int segments = 6
+    int segments
   )
   {
     Clock clock = new((ClockSize)segments, 0, text);
@@ -24,6 +24,22 @@ public class ClockCommand : InteractionModuleBase
   [ComponentInteraction("advance-clock")]
   public async Task AdvanceClock()
   {
+    var interaction = Context.Interaction as SocketMessageComponent;
+    var oldEmbed = interaction.Message.Embeds.FirstOrDefault();
+    Clock clock = new(oldEmbed);
+    clock.Advance();
+    ComponentBuilder components = new ComponentBuilder().WithButton(clock.AdvanceButton());
+    await interaction.UpdateAsync(msg =>
+    {
+      msg.Components = components.Build();
+      msg.Embed = clock.ToEmbed().Build();
+    });
+  }
+
+  [ComponentInteraction("advance-clock-*")]
+  public async Task AdvanceClock(string askChoice)
+  {
+    AskOption askOption = (AskOption)int.Parse(askChoice);
     var interaction = Context.Interaction as SocketMessageComponent;
     var oldEmbed = interaction.Message.Embeds.FirstOrDefault();
     Clock clock = new(oldEmbed);
