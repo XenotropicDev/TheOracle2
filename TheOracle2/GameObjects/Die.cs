@@ -25,7 +25,7 @@ public class Die
   /// <param name="sides">The number of sides the die has (minimum 2)</param>
   /// <param name="value">A preset value for the die</param>
   /// <exception cref="ArgumentOutOfRangeException"></exception>
-  public Die(int sides, int? value)
+  public Die(int sides, int? value = null)
   {
     random = new System.Random();
     if (sides < 2) { throw new ArgumentOutOfRangeException(nameof(sides), "Die must have at least 2 sides."); }
