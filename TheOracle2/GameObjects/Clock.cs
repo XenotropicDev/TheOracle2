@@ -5,10 +5,15 @@ public class Clock
 {
   public Clock(Embed embed)
   {
-    // if (embed.Author.ToString() != "Clock")
     Text = embed.Title;
-    FilledSegments = int.Parse(embed.Description.Split(" / ")[0]);
-    Segments = int.Parse(embed.Description.Split(" / ")[1]);
+    FilledSegments = ParseFilledSegments(embed.Description);
+    Segments = ParseSegments(embed.Description);
+  }
+  public Clock(EmbedField embedField)
+  {
+    Text = embedField.Name.Replace(ClockType+": ", "");
+    FilledSegments = ParseFilledSegments(embedField.Value);
+    Segments = ParseSegments(embedField.Value);
   }
   public Clock(ClockSize segments = (ClockSize)6, int filledSegments = 0, string text = "")
   {
@@ -29,7 +34,22 @@ public class Clock
       ;
   }
 
+  public EmbedFieldBuilder ToEmbedField(bool IsInline = true)
+  {
+    return new EmbedFieldBuilder()
+    .WithName($"{ClockType}: {Text}")
+    .WithValue(ToString())
+    .WithIsInline(IsInline);
+  }
 
+  private static int ParseFilledSegments(string clockString, string delimiter = " / ")
+  {
+    return int.Parse(clockString.Split(delimiter)[0]);
+  }
+  private static int ParseSegments(string clockString, string delimiter = " / ")
+  {
+    return int.Parse(clockString.Split(delimiter)[1]);
+  }
   public int Segments { get; }
 
   public string Text { get; set; }
@@ -53,7 +73,7 @@ public class Clock
   public ButtonBuilder AdvanceButton()
   {
     return new ButtonBuilder()
-    .WithLabel("Advance")
+    .WithLabel("Advance Clock")
     .WithCustomId("advance-clock")
     .WithStyle(ButtonStyle.Primary)
     .WithEmote(new Emoji("🕦"))
