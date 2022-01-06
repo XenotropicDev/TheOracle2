@@ -1,7 +1,7 @@
 ﻿global using Discord;
 global using Microsoft.Extensions.DependencyInjection;
-global using System.Linq;
 global using Newtonsoft.Json;
+global using System.Linq;
 using Discord.Commands;
 using Discord.Interactions;
 using Discord.WebSocket;
@@ -9,7 +9,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
 using TheOracle2.UserContent;
-using System.Diagnostics;
 
 namespace TheOracle2;
 
@@ -66,15 +65,8 @@ internal class Program
             await interactionService.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
 
             //await client.BulkOverwriteGlobalApplicationCommandsAsync(Array.Empty<ApplicationCommandProperties>());
-#if DEBUG
-            foreach (var guild in GetDebugGuilds())
-            {
-                await interactionService.RegisterCommandsToGuildAsync(guild, true);
-            }
-#else
-            await interactionService.RegisterCommandsGloballyAsync(deleteMissing: true);
-#endif
-            await oracleCommandHandler.InstallCommandsAsync(_services, false);
+            Console.WriteLine($"\nDo you want to register the commands? (y/n)\n");
+            if (Console.ReadKey(true).Key == ConsoleKey.Y) await RegisterCommands(oracleCommandHandler);
 
             client.InteractionCreated += async (arg) =>
             {
@@ -125,6 +117,25 @@ internal class Program
         }
     }
 
+    private async Task RegisterCommands(SlashCommandHandler oracleCommandHandler)
+    {
+        Console.WriteLine($"Do you want to delete all global commands before recreating them? (y/n)\n");
+        var deleteAll = Console.ReadKey(true).Key == ConsoleKey.Y;
+        if (deleteAll)
+        {
+            await client.Rest.DeleteAllGlobalCommandsAsync();
+        }
+#if DEBUG
+        foreach (var guild in GetDebugGuilds())
+        {
+            await interactionService.RegisterCommandsToGuildAsync(guild, true);
+        }
+#else
+            await interactionService.RegisterCommandsGloballyAsync(deleteMissing: true);
+#endif
+        await oracleCommandHandler.InstallCommandsAsync(_services, false);
+    }
+
     private Task LogAsync(LogMessage msg)
     {
         var message = msg.Message ?? msg.Exception.Message;
@@ -165,7 +176,7 @@ internal class Program
 
     private ServiceProvider ConfigureServices(DiscordSocketClient client = null, CommandService command = null)
     {
-        var clientConfig = new DiscordSocketConfig { MessageCacheSize = 100, LogLevel = LogSeverity.Info, };
+        var clientConfig = new DiscordSocketConfig { MessageCacheSize = 100, LogLevel = LogSeverity.Info, GatewayIntents = GatewayIntents.DirectMessages | GatewayIntents.GuildMessages | GatewayIntents.Guilds};
         client ??= new DiscordSocketClient(clientConfig);
 
         var config = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
@@ -179,7 +190,7 @@ internal class Program
             .AddSingleton<ReferencedMessageCommandHandler>()
             .AddSingleton<Random>()
             .AddDbContext<EFContext>()
-            .AddLogging(builder => 
+            .AddLogging(builder =>
                 builder.AddSimpleConsole(options =>
                 {
                     options.IncludeScopes = false;
@@ -188,7 +199,7 @@ internal class Program
                 })
                 .AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Warning)
             )
-            
+
             .BuildServiceProvider();
     }
 
@@ -196,7 +207,7 @@ internal class Program
     {
         var context = _services.GetRequiredService<EFContext>();
 #if DEBUG
-        Console.WriteLine($"\nYou are debugging, do you want to recreate the database? (y/n)");
+        Console.WriteLine($"You are debugging, do you want to recreate the database? (y/n)");
         if (Console.ReadKey(true).Key == ConsoleKey.Y) { Console.WriteLine("Rebuilding Database..."); await context.RecreateDB().ConfigureAwait(true); }
 #endif
 
