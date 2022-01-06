@@ -10,11 +10,11 @@ public class AssetCommand : InteractionModuleBase<SocketInteractionContext<Socke
     public AssetCommand(EFContext dbContext, Random random)
     {
         DbContext = dbContext;
-        this.random = random;
+        Random = random;
     }
 
     private SocketSlashCommand SlashCommandContext;
-    private readonly Random random;
+    private readonly Random Random;
 
     public EFContext DbContext { get; }
 
@@ -115,7 +115,7 @@ public class AssetCommand : InteractionModuleBase<SocketInteractionContext<Socke
 
             case "asset-condition-roll":
                 if (!int.TryParse(conditionField.Value.ToString(), out int value)) throw new ArgumentException();
-                var roller = new ActionRoll(value, 0, text: $"{asset.ConditionMeter.Name} Roll");
+                var roller = new ActionRoll(Random, value, 0, text: $"{asset.ConditionMeter.Name} Roll");
                 await RespondAsync(embed: roller.ToEmbed().Build()).ConfigureAwait(false);
                 await Context.Interaction.Message.ModifyAsync(msg => msg.Components = component.Build());
                 return;

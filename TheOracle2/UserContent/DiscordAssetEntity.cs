@@ -16,8 +16,6 @@ namespace TheOracle2.UserContent
         {
             Asset = asset;
 
-            compBuilder = null;
-
             builder = new EmbedBuilder()
                 .WithAuthor($"Asset: {asset.AssetType}")
                 .WithTitle(asset.Name);
