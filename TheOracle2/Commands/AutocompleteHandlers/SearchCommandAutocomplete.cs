@@ -1,8 +1,8 @@
 ﻿using Discord.Interactions;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using TheOracle2.DataClasses;
 using TheOracle2.UserContent;
 
 namespace TheOracle2.Commands;
@@ -28,8 +28,10 @@ public class SearchCommandAutocomplete : AutocompleteHandler
             switch (entityType)
             {
                 case GameEntityType.Oracle:
-                    var oracles = Db.Oracles.Where(x => Regex.IsMatch(x.Name, $@"\b(?i){value}"));
-                    successList = oracles.Select(x => new AutocompleteResult(x.Name, x.Id.ToString())).Take(SelectMenuBuilder.MaxOptionCount);
+                    var oracles = Db.Oracles.Where(x => Regex.IsMatch(x.Name, $@"\b(?i){value}") || Regex.IsMatch(x.OracleInfo.Name, $@"\b(?i){value}")).AsEnumerable();
+                    successList = oracles
+                        .SelectMany(x => GetOracleAutocompleteResults(x))
+                        .Take(SelectMenuBuilder.MaxOptionCount);
                     break;
 
                 case GameEntityType.Reference:
@@ -55,6 +57,33 @@ public class SearchCommandAutocomplete : AutocompleteHandler
         {
             return Task.FromResult(AutocompletionResult.FromError(ex));
         }
+    }
+
+    private IEnumerable<AutocompleteResult> GetOracleAutocompleteResults(Oracle oracle)
+    {
+        var list = new List<AutocompleteResult>();
+        if (oracle.Tables != null)
+        {
+            foreach (var t in oracle.Tables)
+            {
+                list.Add(new AutocompleteResult(GetOracleDisplayName(oracle, t), $"tables:{t.Id}"));
+            }
+        }
+        else
+        {
+            list.Add(new AutocompleteResult(GetOracleDisplayName(oracle), $"oracle:{oracle.Id}"));
+        }
+        return list;
+    }
+
+    private string GetOracleDisplayName(Oracle oracle, Tables t = null)
+    {
+        string name = oracle.Name;
+        if (oracle.Subcategory != null) name = $"{oracle.Subcategory.Name} - {oracle.Name}";
+
+        if (t != null) name += $" - {t.Name}";
+
+        return name;
     }
 
     protected override string GetLogString(IInteractionContext context) => $"Accessing DB from {context.Guild}-{context.Channel}";

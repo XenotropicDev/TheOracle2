@@ -11,32 +11,31 @@ public class SearchCommand : InteractionModuleBase<SocketInteractionContext>
     [SlashCommand("search", "Get an item from the database")]
     public async Task GetDbItem(GameEntityType searchType, [Autocomplete(typeof(SearchCommandAutocomplete))] string query)
     {
-        if (int.TryParse(query, out var id))
+        IDiscordEntity entityItem = null;
+        switch (searchType)
         {
-            IDiscordEntity entityItem;
-            switch (searchType)
-            {
-                case GameEntityType.Oracle:
-                    entityItem = new DiscordOracleEntity(Db.Oracles.Find(id), Db, Random);
-                    break;
+            case GameEntityType.Oracle:
+                entityItem = new DiscordOracleEntity(query, Db, Random);
+                break;
 
-                case GameEntityType.Reference:
-                    entityItem = new DiscordMoveEntity(Db.Moves.Find(id));
-                    break;
+            case GameEntityType.Reference:
+                if (!int.TryParse(query, out var ReferenceId)) break;
+                entityItem = new DiscordMoveEntity(Db.Moves.Find(ReferenceId));
+                break;
 
-                case GameEntityType.Asset:
-                    entityItem = new DiscordAssetEntity(Db.Assets.Find(id));
-                    break;
+            case GameEntityType.Asset:
+                if (!int.TryParse(query, out var assetId)) break;
+                entityItem = new DiscordAssetEntity(Db.Assets.Find(assetId));
+                break;
 
-                default:
-                    return;
-            }
+            default:
+                break;
+        }
 
-            if (entityItem != null)
-            {
-                await RespondAsync(entityItem.GetDiscordMessage(), embeds: entityItem.GetEmbeds(), ephemeral: entityItem.IsEphemeral, components: entityItem.GetComponents());
-                return;
-            }
+        if (entityItem != null)
+        {
+            await RespondAsync(entityItem.GetDiscordMessage(), embeds: entityItem.GetEmbeds(), ephemeral: entityItem.IsEphemeral, components: entityItem.GetComponents());
+            return;
         }
 
         await RespondAsync($"{query} is not a valid {searchType} id");
