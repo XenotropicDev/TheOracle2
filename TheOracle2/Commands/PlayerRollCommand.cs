@@ -17,7 +17,7 @@ public class PlayerRollCommand : InteractionModuleBase
     public Random Random { get; }
     public EFContext EfContext { get; }
 
-    [SlashCommand("action-roll-pc", "Performs an Ironsworn action roll using a player character's stats.")]
+    [SlashCommand("action-pc-roll", "Performs an Ironsworn action roll using a player character's stats.")]
     public async Task ActionRoll(
         [Summary(description: "The character to use for the roll")][Autocomplete(typeof(CharacterAutocomplete))] string character,
         [Summary(description: "The stat value to use for the roll")] RollableStats stat,
@@ -44,10 +44,15 @@ public class PlayerRollCommand : InteractionModuleBase
                 .WithButton("Burn", $"burn-roll-{roll.ChallengeDie1.Value},{roll.ChallengeDie2.Value},{pc.Id}", ButtonStyle.Danger, new Emoji("🔥"));
         }
 
-        IMessageChannel channel = (pc.ChannelId == Context.Channel.Id) ? Context.Channel : await (Context.Client as DiscordSocketClient).Rest.GetChannelAsync(pc.ChannelId) as IMessageChannel;
-        var msg = await channel.GetMessageAsync(pc.MessageId);
+        EmbedAuthorBuilder author = new EmbedAuthorBuilder().WithName($"{roll.RollTypeLabel}: +{stat}");
+        if (pc.MessageId > 0)
+        {
+            IMessageChannel channel = (pc.ChannelId == Context.Channel.Id) ? Context.Channel : await (Context.Client as DiscordSocketClient).Rest.GetChannelAsync(pc.ChannelId) as IMessageChannel;
+            var msg = await channel.GetMessageAsync(pc.MessageId);
+            author.WithUrl(msg.GetJumpUrl());
+        }
 
-        await RespondAsync(embed: roll.ToEmbed().WithAuthor($"{roll.RollTypeLabel}: +{stat}", url: msg.GetJumpUrl()).Build(), components: component?.Build()).ConfigureAwait(false);
+        await RespondAsync(embed: roll.ToEmbed().WithAuthor(author).Build(), components: component?.Build()).ConfigureAwait(false);
     }
 
     private int GetStatValue(RollableStats stat, PlayerCharacter pc)
