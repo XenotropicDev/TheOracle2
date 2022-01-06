@@ -21,7 +21,7 @@ public class ActionRollCommand : InteractionModuleBase
         [Summary(description: "A preset value for the second Challenge Die (d10) to use instead of rolling.")][MinValue(1)][MaxValue(10)] int? challengeDie2 = null,
         [Summary(description: "Any notes, fiction, or other text you'd like to include in the post")] string text = "")
     {
-        var roll = new ActionRoll(stat, adds, momentum, text, actionDie, challengeDie1, challengeDie2);
+        var roll = new ActionRoll(Random, stat, adds, momentum, text, actionDie, challengeDie1, challengeDie2);
         await RespondAsync(embed: roll.ToEmbed().Build()).ConfigureAwait(false);
     }
 }

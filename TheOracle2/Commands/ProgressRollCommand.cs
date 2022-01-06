@@ -18,7 +18,7 @@ public class ProgressRollCommand : InteractionModuleBase
       [Summary(description: "A preset value for the second Challenge Die to use instead of rolling")][MinValue(1)][MaxValue(10)] int? challengeDie2 = null,
       [Summary(description: "Notes, fiction, or other text to include with the roll.")] string text = "")
     {
-        var roll = new ProgressRoll(progressScore, text, challengeDie1, challengeDie2);
+        var roll = new ProgressRoll(Random, progressScore, text, challengeDie1, challengeDie2);
         await RespondAsync(embed: roll.ToEmbed().Build()).ConfigureAwait(false);
     }
 }
