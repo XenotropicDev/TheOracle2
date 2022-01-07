@@ -6,6 +6,7 @@ public class ClockImages : Dictionary<int, string[]>
 {
 
   public ClockImages()
+  // imgur gallery: https://imgur.com/a/uf9oBgT
   {
     Add(
       4,

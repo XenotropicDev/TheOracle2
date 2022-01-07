@@ -83,11 +83,10 @@ public class ClockCommand : InteractionModuleBase
     Embed embed = interaction.Message.Embeds.FirstOrDefault();
     Clock clock = Clock.FromEmbed(embed);
 
-
     if (int.TryParse(optionValue.Replace("advance-", ""), out int odds))
     {
       OracleAnswer answer = new(odds, $"Does the clock *{clock.Text}* advance?");
-      EmbedBuilder answerEmbed = answer.ToEmbed().WithThumbnailUrl(clock.GetImage());
+      EmbedBuilder answerEmbed = answer.ToEmbed();
       if (answer.IsYes)
       {
         if (answer.IsMatch)
@@ -95,12 +94,12 @@ public class ClockCommand : InteractionModuleBase
           answerEmbed.WithFooter("You rolled a match! Two segments have been marked on the clock. Envision how this situation or project gains dramatic support or inertia.");
         }
         clock.Advance(answer.IsMatch ? 2 : 1);
-        // string resultText = "The situation or project has stalled for now, or encountered resistance.";
         await interaction.UpdateAsync(msg =>
         {
           msg.Embed = clock.ToEmbed().Build();
           msg.Components = clock.MakeComponents().Build();
         });
+        answerEmbed = answerEmbed.WithThumbnailUrl(clock.GetImage());
         await interaction.FollowupAsync(embed: answerEmbed.Build());
         return;
       }
@@ -109,7 +108,9 @@ public class ClockCommand : InteractionModuleBase
       {
         answerEmbed.WithFooter("You rolled a match! Envision a surprising turn of events which pits new factors or forces against the clock.");
       }
-      await interaction.RespondAsync(embed: answerEmbed.Build());
+      answerEmbed = answerEmbed.WithThumbnailUrl(clock.GetImage());
+      await interaction.RespondAsync(
+        embed: answerEmbed.Build());
       return;
     }
 
