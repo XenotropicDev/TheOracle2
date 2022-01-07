@@ -1,21 +1,21 @@
-using Discord;
+using TheOracle2.Images;
 namespace TheOracle2.GameObjects;
 
-public class Clock
+public abstract class Clock
 {
-  public Clock(Embed embed)
+  protected Clock(Embed embed)
   {
     Text = embed.Title;
     FilledSegments = ParseFilledSegments(embed.Description);
     Segments = ParseSegments(embed.Description);
   }
-  public Clock(EmbedField embedField)
+  protected Clock(EmbedField embedField)
   {
-    Text = embedField.Name.Replace(ClockType+": ", "");
+    Text = embedField.Name.Replace(ClockType + ": ", "");
     FilledSegments = ParseFilledSegments(embedField.Value);
     Segments = ParseSegments(embedField.Value);
   }
-  public Clock(ClockSize segments = (ClockSize)6, int filledSegments = 0, string text = "")
+  protected Clock(ClockSize segments = (ClockSize)6, int filledSegments = 0, string text = "")
   {
     if (filledSegments < 0 || filledSegments > ((int)segments))
     {
@@ -25,12 +25,27 @@ public class Clock
     Segments = (int)segments;
     FilledSegments = filledSegments;
   }
+
+  public void Advance(int amount = 1)
+  {
+    FilledSegments += amount;
+    if (FilledSegments > Segments)
+    {
+      FilledSegments = Segments;
+    }
+  }
+  public void Reset()
+  {
+    FilledSegments = 0;
+  }
+
   public EmbedBuilder ToEmbed()
   {
     return new EmbedBuilder()
       .WithAuthor(ClockType)
       .WithTitle(Text)
       .WithDescription(ToString())
+      .WithThumbnailUrl(GetImage())
       ;
   }
 
@@ -58,25 +73,74 @@ public class Clock
   {
     return $"{FilledSegments} / {Segments}";
   }
-  public void Advance(int amount = 1)
-  {
-    FilledSegments += amount;
-    if (FilledSegments > Segments)
-    {
-      FilledSegments = Segments;
-    }
-  }
 
-  public virtual string ClockType { get => "Clock"; }
+
+  public abstract string ClockType { get; }
   public bool IsFull { get => FilledSegments >= Segments; }
-
-  public ButtonBuilder AdvanceButton()
+  public static string AdvanceLabel { get => "Advance Clock"; }
+  public virtual ButtonBuilder AdvanceButton(string customId = "advance-clock")
   {
     return new ButtonBuilder()
-    .WithLabel("Advance Clock")
-    .WithCustomId("advance-clock")
+    .WithLabel(AdvanceLabel)
     .WithStyle(ButtonStyle.Primary)
-    .WithEmote(new Emoji("🕦"))
-    .WithDisabled(IsFull);
+    .WithDisabled(IsFull)
+    .WithCustomId(customId)
+    .WithEmote(new Emoji("🕦"));
+  }
+  public virtual ButtonBuilder ResetButton(string customId = "reset-clock")
+  {
+    return new ButtonBuilder()
+    .WithLabel("Reset Clock")
+    .WithStyle(ButtonStyle.Danger)
+    .WithCustomId(customId)
+    .WithEmote(UxEmoji["reset"]);
+  }
+  public virtual ComponentBuilder MakeComponents()
+  {
+    return new ComponentBuilder()
+    .WithButton(AdvanceButton())
+    .WithButton(ResetButton());
+  }
+  protected static Dictionary<string, Emoji> UxEmoji
+  {
+    get => new Dictionary<string, Emoji>(){
+      {"reset", new Emoji("↩️")}
+    };
+  }
+
+  protected static Dictionary<int, Emoji> OddsEmoji
+  {
+    get => new Dictionary<int, Emoji>(){
+      { 10, new Emoji("🕐")},
+      { 25, new Emoji("🕒")},
+      { 50, new Emoji("🕧")},
+      { 75, new Emoji("🕘")},
+      { 90, new Emoji("🕚")},
+      {100, new Emoji("🕛")}
+    };
+  }
+  protected static Dictionary<int, string[]> Images
+  {
+    get => new ClockImages();
+  }
+  public string GetImage()
+  {
+    return Images[Segments].ElementAt(FilledSegments);
+  }
+
+  public static Clock FromEmbed(Embed embed)
+  {
+    switch (embed.Author.ToString())
+    {
+      case "Campaign Clock":
+        return new CampaignClock(embed);
+      case "Tension Clock":
+        return new TensionClock(embed);
+      // case "Scene Challenge":
+      //   return new SceneChallenge(embed);
+      //   break;
+      default:
+        throw new ArgumentOutOfRangeException(nameof(embed), "Embed must be a 'Campaign Clock', 'Tension Clock', or 'Scene Challenge'");
+    }
   }
 }
