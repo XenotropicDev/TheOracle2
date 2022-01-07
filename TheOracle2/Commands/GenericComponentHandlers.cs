@@ -16,7 +16,8 @@ public class GenericComponentHandlers : InteractionModuleBase<SocketInteractionC
     [ComponentInteraction("delete-original-response")]
     public async Task DeleteOriginalAction()
     {
-        await DeleteOriginalResponseAsync();
+        await DeferAsync();
+        await Context.Interaction.Message.DeleteAsync();
     }
 
     public static ButtonBuilder CancelButton(string label = null)

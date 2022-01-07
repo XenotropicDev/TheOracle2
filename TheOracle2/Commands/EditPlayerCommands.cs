@@ -75,13 +75,19 @@ public class EditPlayerComponents : InteractionModuleBase<SocketInteractionConte
         if (!int.TryParse(pcId, out var id)) return;
         var pc = await EfContext.PlayerCharacters.FindAsync(id);
 
+        if (pc == null)
+        {
+            await RespondAsync($"I couldn't find that character, is it maybe already deleted?", ephemeral: true);
+            return;
+        }
+
         if (pc.DiscordGuildId != Context.Guild.Id || (pc.UserId != Context.User.Id && Context.Guild.OwnerId != Context.User.Id))
         {
             await RespondAsync($"You are not allowed to delete this player character.", ephemeral: true);
             return;
         }
 
-        List<string> errors = new List<string>();
+        var errors = new List<string>();
         if (pc.MessageId > 0)
         {
             try
@@ -92,8 +98,12 @@ public class EditPlayerComponents : InteractionModuleBase<SocketInteractionConte
             catch (Exception ex)
             {
                 logger.LogWarning($"Unable to delete player card post for player id {pcId}:\n{ex}");
-                errors.Add($"Unable to delete player card post");
+                errors.Add($"`Unable to delete player card post (this does not mean the character wasn't removed from command search results)`");
             }
+        }
+        else
+        {
+            errors.Add("`Unable to delete player card post (this does not mean the character wasn't removed from command search results)`");
         }
 
         try
@@ -104,10 +114,10 @@ public class EditPlayerComponents : InteractionModuleBase<SocketInteractionConte
         catch (Exception ex)
         {
             logger.LogError($"Unable to delete player from database. Id: {pcId}\n{ex}");
-            errors.Add($"Unable to player from database, please try again, and post an issue on discord/github if it continues.");
+            errors.Add($"`Unable to player from database, please try again, and post an issue on discord/github if it continues.`");
         }
 
-        await Context.Interaction.DeleteOriginalResponseAsync();
+        await Context.Interaction.Message.DeleteAsync();
 
         string message = (errors.Count == 0) ? $"Deleted {pc.Name}" : $"Finished with error(s):\n{string.Join('\n', errors)}";
         await FollowupAsync(message, ephemeral: true);
