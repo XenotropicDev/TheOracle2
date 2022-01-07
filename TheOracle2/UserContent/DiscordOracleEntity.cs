@@ -14,7 +14,6 @@ namespace TheOracle2.UserContent
 
         public DiscordOracleEntity(Oracle oracle, EFContext dbContext, Random random)
         {
-            Oracle = oracle;
             var RollerFactory = new TableRollerFactory(dbContext, random);
 
             var rollResult = RollerFactory.GetRoller(oracle).Build();
@@ -22,8 +21,16 @@ namespace TheOracle2.UserContent
             ob = new DiscordOracleBuilder(rollResult).Build();
         }
 
+        public DiscordOracleEntity(string oracleQuery, EFContext dbContext, Random random)
+        {
+            var RollerFactory = new TableRollerFactory(dbContext, random);
+
+            var rollResult = RollerFactory.GetRoller(oracleQuery).Build();
+
+            ob = new DiscordOracleBuilder(rollResult).Build();
+        }
+
         public bool IsEphemeral { get; set; } = false;
-        public Oracle Oracle { get; }
 
         public MessageComponent GetComponents()
         {
