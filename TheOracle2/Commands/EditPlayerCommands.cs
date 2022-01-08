@@ -47,7 +47,7 @@ public class EditPlayerPaths : InteractionModuleBase
             await RespondAsync($"You are not allowed to delete this player character.", ephemeral: true);
         }
 
-        await RespondAsync($"Are you sure you want to delete {pc.Name}?",
+        await RespondAsync($"Are you sure you want to delete {pc.Name}?\nMomentum: {pc.Momentum}, xp: {pc.XpGained}\nPlayer id: {pc.Id}, last known message id: {pc.MessageId}",
             components: new ComponentBuilder()
             .WithButton(GenericComponentHandlers.CancelButton())
             .WithButton("Delete", $"delete-player-{pc.Id}", style: ButtonStyle.Danger)
@@ -88,24 +88,6 @@ public class EditPlayerComponents : InteractionModuleBase<SocketInteractionConte
         }
 
         var errors = new List<string>();
-        if (pc.MessageId > 0)
-        {
-            try
-            {
-                var msg = await ((await Context.Client.GetChannelAsync(pc.ChannelId)) as IMessageChannel).GetMessageAsync(pc.MessageId);
-                await msg.DeleteAsync();
-            }
-            catch (Exception ex)
-            {
-                logger.LogWarning($"Unable to delete player card post for player id {pcId}:\n{ex}");
-                errors.Add($"`Unable to delete player card post (this does not mean the character wasn't removed from command search results)`");
-            }
-        }
-        else
-        {
-            errors.Add("`Unable to delete player card post (this does not mean the character wasn't removed from command search results)`");
-        }
-
         try
         {
             EfContext.PlayerCharacters.Remove(pc);
@@ -114,7 +96,26 @@ public class EditPlayerComponents : InteractionModuleBase<SocketInteractionConte
         catch (Exception ex)
         {
             logger.LogError($"Unable to delete player from database. Id: {pcId}\n{ex}");
-            errors.Add($"`Unable to player from database, please try again, and post an issue on discord/github if it continues.`");
+            await FollowupAsync($"Unable to delete player {pc.Name} from the player database. Please try again, then make an issue on github, or post on the Ironsworn discord.", ephemeral: true);
+            return;
+        }
+
+        if (pc.MessageId > 0)
+        {
+            try
+            {
+                var msg = await ((await Context.Client.GetChannelAsync(pc.ChannelId)) as IMessageChannel)?.GetMessageAsync(pc.MessageId);
+                await msg?.DeleteAsync(); //The message could've been deleted by the user.
+            }
+            catch (Exception ex)
+            {
+                logger.LogWarning($"Unable to delete player card post for player id {pcId}:\n{ex}");
+                errors.Add($"`The player was deleted from the database, but I was unable to delete player card post. If you already deleted the post you can ignore this message, otherwise you might want to delete the post yourself.`");
+            }
+        }
+        else
+        {
+            errors.Add("`Unable to delete player card post (this does not mean the character wasn't removed from command search results)`");
         }
 
         await Context.Interaction.Message.DeleteAsync();
