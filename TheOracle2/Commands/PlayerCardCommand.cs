@@ -105,7 +105,7 @@ public class PlayerCardComponents : InteractionModuleBase<SocketInteractionConte
     }
 
     [ComponentInteraction("player-more-*")]
-    public async Task toggleMore()
+    public async Task toggleMore(string pcId)
     {
         try
         {
@@ -113,10 +113,10 @@ public class PlayerCardComponents : InteractionModuleBase<SocketInteractionConte
             {
                 ComponentBuilder components = ComponentBuilder.FromMessage(Context.Interaction.Message);
 
-                components.TryAdd(ButtonBuilder.CreateSuccessButton("+Xp", "add-xp").Build(), 2);
-                components.TryAdd(ButtonBuilder.CreateSecondaryButton("-Xp", "lose-xp").Build(), 2);
+                components.TryAdd(ButtonBuilder.CreateSuccessButton("+Xp", $"add-xp-{pcId}").Build(), 2);
+                components.TryAdd(ButtonBuilder.CreateSecondaryButton("-Xp", $"lose-xp-{pcId}").Build(), 2);
 
-                components.ReplaceComponentById("player-more", ButtonBuilder.CreatePrimaryButton("less", "player-less").Build());
+                components.ReplaceComponentById($"player-more-{pcId}", ButtonBuilder.CreatePrimaryButton("less", $"player-less-{pcId}").Build());
 
                 msg.Components = components.Build();
             }).ConfigureAwait(false);
@@ -131,17 +131,17 @@ public class PlayerCardComponents : InteractionModuleBase<SocketInteractionConte
     }
 
     [ComponentInteraction("player-less-*")]
-    public async Task toggleLess()
+    public async Task toggleLess(string pcId)
     {
         try
         {
             await Context.Interaction.UpdateAsync(msg =>
             {
                 ComponentBuilder components = ComponentBuilder.FromMessage(Context.Interaction.Message)
-                .RemoveComponentById("add-xp")
-                .RemoveComponentById("lose-xp");
+                .RemoveComponentById($"add-xp-{pcId}")
+                .RemoveComponentById($"lose-xp-{pcId}");
 
-                components.ReplaceComponentById("player-less", ButtonBuilder.CreatePrimaryButton("...", "player-more").Build());
+                components.ReplaceComponentById($"player-less-{pcId}", ButtonBuilder.CreatePrimaryButton("...", $"player-more-{pcId}").Build());
 
                 msg.Components = components.Build();
             }).ConfigureAwait(false);
