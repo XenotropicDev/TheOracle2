@@ -11,29 +11,40 @@ public abstract class IronswornRoll
   /// <param name="text">A user-provided text annotation to the roll.</param>
   /// <param name="challengeDieValue1">A preset value for the first challenge die.</param>
   /// <param name="challengeDieValue2">A preset value for the second challenge die.</param>
-  public IronswornRoll(string text = "", int? challengeDieValue1 = null, int? challengeDieValue2 = null)
+  public IronswornRoll(Random random, string text = "", int? challengeDieValue1 = null, int? challengeDieValue2 = null)
   {
+    Random = random;
     Text = text;
-    ChallengeDie1 = new Die(10, challengeDieValue1 ?? null);
-    ChallengeDie2 = new Die(10, challengeDieValue2 ?? null);
+    ChallengeDie1 = new Die(Random, 10, challengeDieValue1 ?? null);
+    ChallengeDie2 = new Die(Random, 10, challengeDieValue2 ?? null);
   }
+
+  public Random Random { get; }
+
   /// <summary>A user-provided text annotation to the roll.</summary>
   public string Text { get; }
+
   /// <summary>The first Challenge Die.</summary>
   public Die ChallengeDie1 { get; set; }
+
   /// <summary>The second Challenge Die.</summary>
   public Die ChallengeDie2 { get; set; }
+
   /// <summary>Whether the Value properties of the Challenge Dice match.</summary>
   public bool IsMatch { get => ChallengeDie1.Value == ChallengeDie2.Value; }
+
   /// <summary>The roll's score before it's reduced by the score cap.</summary>
   public abstract int RawScore { get; }
+
   /// <summary>The Score to be compared to the Challenge Dice, capped at 10.</summary>
   public int Score { get => Math.Min(10, RawScore); }
+
   /// <summary>A Markdown string representation of the Challenge Dice values for use in text output.</summary>
   public string ToChallengeString() => $"{ChallengeDie1.Value}, {ChallengeDie2.Value}";
 
   /// <summary>A Markdown string representation of the Score (and any relevant arithmetic) for use in text output.</summary>
   public virtual string ToScoreString() => $"**{Score}**";
+
   /// <summary>A Markdown string representation of the roll and any user-provided text, for use in text output.</summary>
   public override string ToString()
   {
@@ -44,6 +55,7 @@ public abstract class IronswornRoll
     }
     return baseString;
   }
+
   /// <summary>The outcome of the roll - a Strong Hit, Weak Hit, or Miss.</summary>
   public IronswornRollOutcome Outcome
   {
@@ -62,8 +74,8 @@ public abstract class IronswornRoll
       return IronswornRollOutcome.WeakHit;
     }
   }
-  /// <summary>The string representation of the roll outcome - a Strong Hit, Weak Hit, or Miss - and whether or not it's a Match.</summary>
 
+  /// <summary>The string representation of the roll outcome - a Strong Hit, Weak Hit, or Miss - and whether or not it's a Match.</summary>
   public string OutcomeText()
   {
     if (IsMatch)
@@ -108,17 +120,15 @@ public abstract class IronswornRoll
         .WithColor(OutcomeColor())
         .WithThumbnailUrl(OutcomeIcon())
         .WithTitle(OutcomeText())
-        .WithDescription(Text)
+        .WithDescription(ToString())
         .WithFooter(FooterText())
-        .WithAuthor(RollTypeLabel)
-        .AddField(RollTypeLabel.Replace("Roll", "") + "Score", ToScoreString())
-        .AddField("Challenge Dice", ToChallengeString())
-        ;
+        .WithAuthor(RollTypeLabel);
   }
 
   public string OverMaxMessage() => RawScore > 10 ? string.Format(IronswornRollResources.OverMaxMessage, Score) : "";
 
   public virtual string FooterText() => OverMaxMessage();
+
   // <summary>A string description of the roll type (e.g. "Progress Roll", "Action Roll"), for use in labelling output.</summary>
   public virtual string RollTypeLabel { get => "Roll"; }
 }

@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OracleData;
 using TheOracle2.DataClasses;
+using TheOracle2.GameObjects;
 
 namespace TheOracle2.UserContent;
 
@@ -12,7 +13,7 @@ public class EFContext : DbContext
 {
     public EFContext(DbContextOptions<EFContext> options) : base(options)
     {
-        Database.EnsureCreated();
+        //Database.EnsureCreated();
     }
 
     public DbSet<OracleGuild> OracleGuilds { get; set; }
@@ -24,6 +25,7 @@ public class EFContext : DbContext
     public DbSet<Tables> Tables { get; set; }
     public DbSet<OracleStub> OracleStubs { get; set; }
     public DbSet<ChanceTable> ChanceTables { get; set; }
+    public DbSet<PlayerCharacter> PlayerCharacters { get; set; }
 
     public async Task RecreateDB()
     {
@@ -69,6 +71,8 @@ public class EFContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.UseCollation("NOCASE");
+
         var stringArrayToCSVConverter = new ValueConverter<IList<string>, string>(
             v => JsonConvert.SerializeObject(v),
             v => JsonConvert.DeserializeObject<IList<string>>(v)
@@ -93,10 +97,11 @@ public class EFContext : DbContext
 
         modelBuilder.Entity<Subcategory>().HasOne(o => o.OracleInfo).WithMany(oi => oi.Subcategories).HasForeignKey(o => o.OracleInfoId).IsRequired();
         modelBuilder.Entity<Oracle>().HasOne(o => o.Subcategory).WithMany(sub => sub.Oracles).HasForeignKey(o => o.SubcategoryId).IsRequired(false);
-        //modelBuilder.Entity<Oracle>().HasOne(o => o.OracleInfo).WithMany(oi => oi.Oracles).HasForeignKey(o => o.OracleInfoId);
-        //modelBuilder.Entity<ChanceTable>().HasOne(t => t.Oracle).WithMany(o => o.Table).HasForeignKey(o => o.OracleId);
-        //modelBuilder.Entity<Tables>().HasOne(t => t.Oracle).WithMany(o => o.Tables).HasForeignKey(o => o.OracleId);
 
+        //TheOracle Stuff
+        modelBuilder.Entity<PlayerCharacter>().Property(pc => pc.Impacts).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
+
+        //Dataforged stuff
         modelBuilder.Entity<Ability>().Property(a => a.Input).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
         modelBuilder.Entity<Asset>().Property(a => a.Aliases).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
         modelBuilder.Entity<Asset>().Property(a => a.Input).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
@@ -133,6 +138,7 @@ public class EFContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder
+            //.UseNpgsql("Host=TheOracle;Database=GameData;")
             .UseSqlite("Data Source=GameContent.db;Cache=Shared")
             .UseLazyLoadingProxies();
         base.OnConfiguring(optionsBuilder);

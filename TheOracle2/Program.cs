@@ -1,7 +1,7 @@
 ﻿global using Discord;
 global using Microsoft.Extensions.DependencyInjection;
-global using System.Linq;
 global using Newtonsoft.Json;
+global using System.Linq;
 using Discord.Commands;
 using Discord.Interactions;
 using Discord.WebSocket;
@@ -51,78 +51,99 @@ internal class Program
 
     private async Task ClientReady()
     {
-        //Todo: Do we need a different one time ready method? I'm not sure if this gets fired on a reconnect.
-        try
+        _ = Task.Run(async () =>
         {
-            var oracleCommandHandler = _services.GetRequiredService<SlashCommandHandler>();
-            oracleCommandHandler.LoadFromAssembly(Assembly.GetEntryAssembly(), _services);
-
-            var refCommands = _services.GetRequiredService<ReferencedMessageCommandHandler>();
-            refCommands.AddCommandHandler(client);
-
-            interactionService = new InteractionService(client, new InteractionServiceConfig() { DefaultRunMode = Discord.Interactions.RunMode.Async });
-            interactionService.Log += LogAsync;
-
-            await interactionService.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
-
-            //await client.BulkOverwriteGlobalApplicationCommandsAsync(Array.Empty<ApplicationCommandProperties>());
-#if DEBUG
-            foreach (var guild in GetDebugGuilds())
+            try
             {
-                await interactionService.RegisterCommandsToGuildAsync(guild, true);
+                var oracleCommandHandler = _services.GetRequiredService<SlashCommandHandler>();
+                oracleCommandHandler.LoadFromAssembly(Assembly.GetEntryAssembly(), _services);
+
+                var refCommands = _services.GetRequiredService<ReferencedMessageCommandHandler>();
+                refCommands.AddCommandHandler(client);
+
+                interactionService = new InteractionService(client, new InteractionServiceConfig() { DefaultRunMode = Discord.Interactions.RunMode.Async });
+                interactionService.Log += LogAsync;
+
+                await interactionService.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
+
+                //await client.BulkOverwriteGlobalApplicationCommandsAsync(Array.Empty<ApplicationCommandProperties>());
+                Console.WriteLine($"\nDo you want to register the commands? (y/n)\n");
+                if (Console.ReadKey(true).Key == ConsoleKey.Y) await RegisterCommands(oracleCommandHandler);
+
+                client.InteractionCreated += InteractionHandler(oracleCommandHandler);
             }
-#else
-            await interactionService.RegisterCommandsGloballyAsync(deleteMissing: true);
-#endif
-            await oracleCommandHandler.InstallCommandsAsync(_services, false);
-
-            client.InteractionCreated += async (arg) =>
+            catch (Discord.Net.HttpException ex)
             {
-                switch (arg)
-                {
-                    case SocketSlashCommand slash:
-                        logger.LogInformation($"{slash.User.Username} triggered slash command: {slash.CommandName}");
-                        if (!interactionService.SlashCommands.Any(cmd => cmd.Name == slash.CommandName || cmd.Module.SlashGroupName == slash.CommandName))
-                        {
-                            await oracleCommandHandler.ExecuteAsync(slash, _services);
-                        }
-                        else
-                        {
-                            var slashCtx = new SocketInteractionContext(client, slash);
-                            await interactionService.ExecuteCommandAsync(slashCtx, _services).ConfigureAwait(false);
-                        }
-                        break;
+                string json = JsonConvert.SerializeObject(ex.Errors);
+                logger.LogError(ex.Message, ex);
+                logger.LogError(json);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.Message, ex);
+            }
 
-                    case SocketMessageComponent component:
-                        logger.LogInformation($"{component.User.Username} triggered message component (global event): {component.Data.CustomId}");
-                        var msgCtx = new SocketInteractionContext<SocketMessageComponent>(client, component);
-                        await interactionService.ExecuteCommandAsync(msgCtx, _services).ConfigureAwait(false);
-                        break;
+            logger.LogInformation($"{nameof(ClientReady)} event complete");
+        });
+    }
 
-                    case SocketAutocompleteInteraction auto:
-                        logger.LogInformation($"{arg.User.Username} triggered an auto complete interaction for {auto.Data.CommandName}, value: {auto.Data.Current.Value}");
-                        var autoCtx = new SocketInteractionContext(client, arg);
-                        await interactionService.ExecuteCommandAsync(autoCtx, _services).ConfigureAwait(false);
-                        break;
-
-                    default:
-                        logger.LogInformation($"{arg.User.Username} triggered unknown interaction {arg.GetType()}: {arg.Data}");
-                        var ctx = new SocketInteractionContext(client, arg);
-                        await interactionService.ExecuteCommandAsync(ctx, _services).ConfigureAwait(false);
-                        break;
-                }
-            };
-        }
-        catch (Discord.Net.HttpException ex)
+    private Func<SocketInteraction, Task> InteractionHandler(SlashCommandHandler oracleCommandHandler)
+    {
+        return async (arg) =>
         {
-            string json = JsonConvert.SerializeObject(ex.Errors);
-            logger.LogError(ex.Message, ex);
-            logger.LogError(json);
-        }
-        catch (Exception ex)
+            switch (arg)
+            {
+                case SocketSlashCommand slash:
+                    logger.LogInformation($"{slash.User.Username} triggered slash command: {slash.CommandName}");
+                    if (!interactionService.SlashCommands.Any(cmd => cmd.Name == slash.CommandName || cmd.Module.SlashGroupName == slash.CommandName))
+                    {
+                        await oracleCommandHandler.ExecuteAsync(slash, _services);
+                    }
+                    else
+                    {
+                        var slashCtx = new SocketInteractionContext(client, slash);
+                        await interactionService.ExecuteCommandAsync(slashCtx, _services).ConfigureAwait(false);
+                    }
+                    break;
+
+                case SocketMessageComponent component:
+                    logger.LogInformation($"{component.User.Username} triggered message component: {component.Data.CustomId}");
+                    var msgCtx = new SocketInteractionContext<SocketMessageComponent>(client, component);
+                    await interactionService.ExecuteCommandAsync(msgCtx, _services).ConfigureAwait(false);
+                    break;
+
+                case SocketAutocompleteInteraction auto:
+                    logger.LogInformation($"{arg.User.Username} triggered an auto complete interaction for {auto.Data.CommandName}, value: {auto.Data.Current.Value}");
+                    var autoCtx = new SocketInteractionContext(client, arg);
+                    await interactionService.ExecuteCommandAsync(autoCtx, _services).ConfigureAwait(false);
+                    break;
+
+                default:
+                    logger.LogInformation($"{arg.User.Username} triggered unknown interaction {arg.GetType()}: {arg.Data}");
+                    var ctx = new SocketInteractionContext(client, arg);
+                    await interactionService.ExecuteCommandAsync(ctx, _services).ConfigureAwait(false);
+                    break;
+            }
+        };
+    }
+
+    private async Task RegisterCommands(SlashCommandHandler oracleCommandHandler)
+    {
+        Console.WriteLine($"Do you want to delete all global commands before recreating them? (y/n)\n");
+        var deleteAll = Console.ReadKey(true).Key == ConsoleKey.Y;
+        if (deleteAll)
         {
-            logger.LogError(ex.Message, ex);
+            await client.Rest.DeleteAllGlobalCommandsAsync();
         }
+#if DEBUG
+        foreach (var guild in GetDebugGuilds())
+        {
+            await interactionService.RegisterCommandsToGuildAsync(guild, true);
+        }
+#else
+        await interactionService.RegisterCommandsGloballyAsync(deleteMissing: true);
+#endif
+        await oracleCommandHandler.InstallCommandsAsync(_services, false);
     }
 
     private Task LogAsync(LogMessage msg)
@@ -165,7 +186,7 @@ internal class Program
 
     private ServiceProvider ConfigureServices(DiscordSocketClient client = null, CommandService command = null)
     {
-        var clientConfig = new DiscordSocketConfig { MessageCacheSize = 100, LogLevel = LogSeverity.Info, };
+        var clientConfig = new DiscordSocketConfig { MessageCacheSize = 100, LogLevel = LogSeverity.Info }; //GatewayIntents = GatewayIntents.DirectMessages | GatewayIntents.GuildMessages | GatewayIntents.Guilds
         client ??= new DiscordSocketClient(clientConfig);
 
         var config = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
@@ -179,7 +200,7 @@ internal class Program
             .AddSingleton<ReferencedMessageCommandHandler>()
             .AddSingleton<Random>()
             .AddDbContext<EFContext>()
-            .AddLogging(builder => 
+            .AddLogging(builder =>
                 builder.AddSimpleConsole(options =>
                 {
                     options.IncludeScopes = false;
@@ -187,8 +208,9 @@ internal class Program
                     options.TimestampFormat = "hh:mm:ss ";
                 })
                 .AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Warning)
+                .AddFilter("Microsoft.EntityFrameworkCore.Infrastructure", LogLevel.Warning)
             )
-            
+
             .BuildServiceProvider();
     }
 
@@ -196,7 +218,7 @@ internal class Program
     {
         var context = _services.GetRequiredService<EFContext>();
 #if DEBUG
-        Console.WriteLine($"\nYou are debugging, do you want to recreate the database? (y/n)");
+        Console.WriteLine($"You are debugging, do you want to recreate the database? (y/n)");
         if (Console.ReadKey(true).Key == ConsoleKey.Y) { Console.WriteLine("Rebuilding Database..."); await context.RecreateDB().ConfigureAwait(true); }
 #endif
 

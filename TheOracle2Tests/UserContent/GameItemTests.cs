@@ -31,6 +31,17 @@ namespace TheOracle2.UserContent.Tests
         }
 
         [TestMethod()]
+        public async Task EFRegexTest()
+        {
+            var services = TestServices.GetServices();
+            var context = services.GetRequiredService<EFContext>();
+
+            var items = context.Moves.Where(m => Regex.IsMatch(m.Name, "conn/i"));
+
+            Assert.IsTrue(items.Any());
+        }
+
+        [TestMethod()]
         public async Task OracleRollerTest()
         {
             var services = TestServices.GetServices();
