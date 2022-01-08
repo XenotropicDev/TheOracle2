@@ -31,7 +31,7 @@ public class MoveReferenceCommand : ISlashCommand
 
         if (!keepMsg && !ephemeral)
         {
-            await Task.Delay(TimeSpan.FromMinutes(15)).ConfigureAwait(false);
+            await Task.Delay(TimeSpan.FromMinutes(10)).ConfigureAwait(false);
             var msg = await SlashCommandContext.GetOriginalResponseAsync().ConfigureAwait(false);
             await msg.DeleteAsync().ConfigureAwait(false);
         }
