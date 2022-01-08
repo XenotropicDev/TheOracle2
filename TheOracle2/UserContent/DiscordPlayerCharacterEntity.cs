@@ -23,7 +23,7 @@ namespace TheOracle2.UserContent
                 .WithButton("+Mo", $"add-momentum-{Pc.Id}", row: 0, style: ButtonStyle.Success)
                 .WithButton("-Mo", $"lose-momentum-{Pc.Id}", row: 1, style: ButtonStyle.Secondary)
                 .WithButton("Burn", $"burn-momentum-{Pc.Id}", row: 0, style: ButtonStyle.Danger, emote: new Emoji("🔥"))
-                .WithButton("...", $"player-more", row: 0, style: ButtonStyle.Primary).Build();
+                .WithButton("...", $"player-more-{Pc.Id}", row: 0, style: ButtonStyle.Primary).Build();
 
         public string GetDiscordMessage()
         {
