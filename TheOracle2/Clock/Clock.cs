@@ -5,14 +5,14 @@ public abstract class Clock : IClock
   protected Clock(Embed embed)
   {
     Text = embed.Title;
-    string[] clockString = embed.Description.Split(" / ");
+    string[] clockString = embed.Description.Split("/");
     Filled = int.Parse(clockString[0]);
     Segments = int.Parse(clockString[1]);
   }
   protected Clock(EmbedField embedField)
   {
     Text = embedField.Name.Replace(ClockType + ": ", "");
-    string[] clockString = embedField.Value.Split(" / ");
+    string[] clockString = embedField.Value.Split("/");
     Filled = int.Parse(clockString[0]);
     Segments = int.Parse(clockString[1]);
   }
@@ -34,7 +34,7 @@ public abstract class Clock : IClock
   public bool IsFull => Filled >= Segments;
   public override string ToString()
   {
-    return $"{Filled} / {Segments}";
+    return $"{Filled}/{Segments}";
   }
   public virtual EmbedBuilder ToEmbed()
   {

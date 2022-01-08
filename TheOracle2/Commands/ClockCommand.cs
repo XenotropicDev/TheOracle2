@@ -6,7 +6,7 @@ namespace TheOracle2;
 [Group("clock", "Set a campaign clock, tension clock, or scene challenge (p. 230)")]
 public class ClockCommand : InteractionModuleBase
 {
-  [SlashCommand("campaign", "Set a campaign clock to resolve objectives and actions in the background of your campaign.")]
+  [SlashCommand("campaign", "Set a campaign clock to resolve objectives and actions in the background of your campaign (p. 231)")]
   public async Task BuildCampaignClock(
     [Summary(description: "A title that makes it clear what project is complete or event triggered when the clock is filled.")]
     string title,
@@ -25,7 +25,7 @@ public class ClockCommand : InteractionModuleBase
       );
   }
 
-  [SlashCommand("tension", "Set a tension clock: a smaller-scope clock to fill as you suffer setbacks or fail to act.")]
+  [SlashCommand("tension", "Set a tension clock: a smaller-scope clock to fill as you suffer setbacks or fail to act (p. 234).")]
   public async Task BuildTensionClock(
     [Summary(description: "A title for the tension clock.")]
     string title,
@@ -106,13 +106,17 @@ public class ClockComponents : InteractionModuleBase<SocketInteractionContext<So
         {
           answerEmbed.WithFooter("You rolled a match! Envision how this situation or project gains dramatic support or inertia.");
         }
-        string append = answer.IsMatch ? $"The clock advances twice to {clock.ToString()}." : $"The clock advances to {clock.ToString()}.";
-        answerEmbed.Description = answerEmbed.Description + "\n" + append;
+        string append = answer.IsMatch ? $"The clock advances **twice** to {clock.ToString()}." : $"The clock advances to {clock.ToString()}.";
+        answerEmbed.Description += "\n" + append;
         answerEmbed = answerEmbed.WithThumbnailUrl(IClock.Images[clock.Segments].ElementAt(clock.Filled));
       }
-      if (!answer.IsYes && answer.IsMatch)
+      if (!answer.IsYes)
       {
-        answerEmbed = answerEmbed.WithFooter("You rolled a match! Envision a surprising turn of events which pits new factors or forces against the clock.");
+        if (answer.IsMatch)
+        {
+          answerEmbed = answerEmbed.WithFooter("You rolled a match! Envision a surprising turn of events which pits new factors or forces against the clock.");
+        }
+        answerEmbed.Description += "\n" + $"The clock remains at {clock.ToString()}";
       }
       answerEmbed = answerEmbed.WithThumbnailUrl(IClock.Images[clock.Segments].ElementAt(clock.Filled));
       await interaction.UpdateAsync(msg =>

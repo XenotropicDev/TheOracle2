@@ -1,8 +1,7 @@
 namespace TheOracle2.GameObjects;
-
 public interface IClock
 {
-  public string ToString() { return $"{Filled} / {Segments}"; }
+  public string ToString() { return $"{Filled}/{Segments}"; }
 
   public EmbedBuilder ToEmbed();
   public EmbedFieldBuilder ToEmbedField();
