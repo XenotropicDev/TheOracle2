@@ -21,7 +21,7 @@ public class CampaignClock : Clock
   {
     SelectMenuBuilder selectMenu = new SelectMenuBuilder()
     .WithPlaceholder("Advance clock...")
-    .WithCustomId("advance-clock-menu")
+    .WithCustomId("clock-menu")
     .WithMinValues(0)
     .WithMaxValues(1)
     ;

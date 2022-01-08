@@ -57,17 +57,16 @@ public abstract class Clock : IClock
     EmbedBuilder embed = new EmbedBuilder().WithThumbnailUrl(
       IClock.Images[Segments].ElementAt(Filled))
     .WithAuthor($"{ClockType}: {Text}")
-    .WithTitle(IsFull ? "The clock fills!" : "The clock advances!");
+    .WithTitle(IsFull ? "The clock fills!" : $"The clock advances to {ToString()}");
     if (IsFull)
     {
-      embed = embed.WithFooter(FillMessage);
+      embed = embed.WithDescription(FillMessage);
     }
-
     return embed;
   }
 
   public virtual string FillMessage { get; set; }
-  public ButtonBuilder AdvanceButton(string customId = "advance-clock")
+  public ButtonBuilder AdvanceButton(string customId = "clock-advance")
   {
     return new ButtonBuilder()
     .WithLabel(IClock.AdvanceLabel)
@@ -76,17 +75,19 @@ public abstract class Clock : IClock
     .WithCustomId(customId)
     .WithEmote(new Emoji("🕦"));
   }
-  public ButtonBuilder ResetButton(string customId = "reset-clock")
+  public ButtonBuilder ResetButton(string customId = "clock-reset")
   {
     return new ButtonBuilder()
     .WithLabel("Reset Clock")
     .WithStyle(ButtonStyle.Danger)
     .WithCustomId(customId)
-    .WithDisabled(Filled != 0)
+    .WithDisabled(Filled == 0)
     .WithEmote(IClock.UxEmoji["reset"]);
   }
   public virtual ComponentBuilder MakeComponents()
   {
-    return new ComponentBuilder().WithButton(AdvanceButton()).WithButton(ResetButton());
+    return new ComponentBuilder()
+    .WithButton(AdvanceButton())
+    .WithButton(ResetButton());
   }
 }
