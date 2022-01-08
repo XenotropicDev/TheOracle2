@@ -8,8 +8,8 @@ public class ClockCommand : InteractionModuleBase
 {
   [SlashCommand("campaign", "Set a campaign clock to resolve objectives and actions in the background of your campaign.")]
   public async Task BuildCampaignClock(
-    [Summary(description: "A name that makes it clear what project is complete or event triggered when the clock is filled.")]
-    string text,
+    [Summary(description: "A title that makes it clear what project is complete or event triggered when the clock is filled.")]
+    string title,
     [Summary(description: "The number of clock segments.")]
     [Choice("4 segments", 4),
     Choice("6 segments", 6),
@@ -18,28 +18,26 @@ public class ClockCommand : InteractionModuleBase
     int segments
   )
   {
-    CampaignClock campaignClock = new((ClockSize)segments, 0, text);
+    CampaignClock campaignClock = new((ClockSize)segments, 0, title);
     await RespondAsync(
       embed: campaignClock.ToEmbed().Build(),
       components: campaignClock.MakeComponents().Build()
       );
   }
 
-
-
   [SlashCommand("tension", "Set a tension clock: a smaller-scope clock to fill as you suffer setbacks or fail to act.")]
   public async Task BuildTensionClock(
-    [Summary(description: "A name for the tension clock.")]
-    string text,
+    [Summary(description: "A title for the tension clock.")]
+    string title,
     [Summary(description: "The number of clock segments. Imminent danger or deadline: 4-6. Longer term threat: 8-10.")]
     [Choice("4 segments", 4),
     Choice("6 segments", 6),
     Choice("8 segments", 8),
     Choice("10 segments", 10)]
     int segments
-      )
+  )
   {
-    TensionClock tensionClock = new((ClockSize)segments, 0, text);
+    TensionClock tensionClock = new((ClockSize)segments, 0, title);
     await RespondAsync(
       embed: tensionClock.ToEmbed().Build(),
       components: tensionClock.MakeComponents().Build());
@@ -48,7 +46,7 @@ public class ClockCommand : InteractionModuleBase
   // [SlashCommand("scene-challenge", "Set a clock for a scene challenge")]
   // public async Task BuildSceneChallenge(
   //   [Summary(description: "The scene challenge's objective.")]
-  //   string text,
+  //   string title,
   //   [Summary(description: "The number of clock segments. Default = 6, severe disadvantage = 4, strong advantage = 8.")]
   //   [Choice("4 segments", 4),
   //   Choice("6 segments", 6),
@@ -61,9 +59,7 @@ public class ClockCommand : InteractionModuleBase
 
 public class ClockComponents : InteractionModuleBase<SocketInteractionContext<SocketMessageComponent>>
 {
-
   private readonly Random random;
-
   public ClockComponents(Random random)
   {
     this.random = random;
@@ -105,30 +101,26 @@ public class ClockComponents : InteractionModuleBase<SocketInteractionContext<So
       EmbedBuilder answerEmbed = answer.ToEmbed();
       if (answer.IsYes)
       {
+        clock.Filled += answer.IsMatch ? 2 : 1;
         if (answer.IsMatch)
         {
           answerEmbed.WithFooter("You rolled a match! Envision how this situation or project gains dramatic support or inertia.");
         }
-        await interaction.UpdateAsync(msg =>
-        {
-          clock.Filled += answer.IsMatch ? 2 : 1;
-          msg.Embed = clock.ToEmbed().Build();
-          msg.Components = clock.MakeComponents().Build();
-        });
         string append = answer.IsMatch ? $"The clock advances twice to {clock.ToString()}." : $"The clock advances to {clock.ToString()}.";
         answerEmbed.Description = answerEmbed.Description + "\n" + append;
         answerEmbed = answerEmbed.WithThumbnailUrl(IClock.Images[clock.Segments].ElementAt(clock.Filled));
-
-        await interaction.FollowupAsync(embed: answerEmbed.Build());
-        return;
       }
-      if (answer.IsMatch)
+      if (!answer.IsYes && answer.IsMatch)
       {
-        answerEmbed.WithFooter("You rolled a match! Envision a surprising turn of events which pits new factors or forces against the clock.");
+        answerEmbed = answerEmbed.WithFooter("You rolled a match! Envision a surprising turn of events which pits new factors or forces against the clock.");
       }
       answerEmbed = answerEmbed.WithThumbnailUrl(IClock.Images[clock.Segments].ElementAt(clock.Filled));
-      await interaction.RespondAsync(
-        embed: answerEmbed.Build());
+      await interaction.UpdateAsync(msg =>
+      {
+        msg.Components = clock.MakeComponents().Build();
+        msg.Embed = clock.ToEmbed().Build();
+      });
+      await interaction.FollowupAsync(embed: answerEmbed.Build());
       return;
     }
     switch (optionValue)
