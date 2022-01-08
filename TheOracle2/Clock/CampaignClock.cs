@@ -20,10 +20,6 @@ public class CampaignClock : Clock
   public SelectMenuBuilder AdvanceSelectMenu()
   {
     SelectMenuBuilder selectMenu = new SelectMenuBuilder()
-    .WithPlaceholder("Advance clock...")
-    .WithCustomId("clock-menu")
-    .WithMinValues(0)
-    .WithMaxValues(1)
     ;
     if (!IsFull)
     {
@@ -41,7 +37,11 @@ public class CampaignClock : Clock
       .WithValue("reset")
       .WithEmote(IClock.UxEmoji["reset"])
       .WithDefault(false)
-      );
+      )
+    .WithPlaceholder("Advance clock...")
+    .WithCustomId("clock-menu")
+    .WithMinValues(0)
+    .WithMaxValues(1);
   }
   public override ComponentBuilder MakeComponents()
   {
