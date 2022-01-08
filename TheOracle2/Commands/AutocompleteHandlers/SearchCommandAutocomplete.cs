@@ -9,6 +9,31 @@ namespace TheOracle2.Commands;
 
 public class SearchCommandAutocomplete : AutocompleteHandler
 {
+    private static readonly Dictionary<string, Task<AutocompletionResult>> dict = new Dictionary<string, Task<AutocompletionResult>>();
+
+    private Task<AutocompletionResult> emptyOraclesResult
+    {
+        get
+        {
+            if (dict.TryGetValue("initialOracles", out Task<AutocompletionResult> result)) return result;
+
+            var oracles = Db.Oracles.Where(o => o.Name == "Pay the Price" || o.OracleInfo.Name == "Core" || o.Name == "Space Sighting").AsEnumerable();
+            var list = oracles
+                .SelectMany(x => GetOracleAutocompleteResults(x))
+                .OrderBy(x => //Todo this is really lazy ordering, but so is the rest of this getter's code.
+                    x.Name == "Pay the Price" ? 1 :
+                    x.Name.Contains("Space Sighting") ? 3 :
+                    2)
+                .Take(SelectMenuBuilder.MaxOptionCount);
+
+            result = Task.FromResult(AutocompletionResult.FromSuccess(list));
+
+            dict.Add("initialOracles", result);
+
+            return result;
+        }
+    }
+
     public EFContext Db { get; set; }
     public ILogger<SearchCommandAutocomplete> logger { get; set; }
 
@@ -22,7 +47,14 @@ public class SearchCommandAutocomplete : AutocompleteHandler
             var value = autocompleteInteraction.Data.Current.Value as string;
 
             if (string.IsNullOrEmpty(value))
+            {
+                if (entityType == GameEntityType.Oracle)
+                {
+                    return emptyOraclesResult;
+                }
+
                 return Task.FromResult(AutocompletionResult.FromSuccess());
+            }
 
             var sw = Stopwatch.StartNew();
             switch (entityType)
@@ -62,7 +94,7 @@ public class SearchCommandAutocomplete : AutocompleteHandler
     private IEnumerable<AutocompleteResult> GetOracleAutocompleteResults(Oracle oracle)
     {
         var list = new List<AutocompleteResult>();
-        if (oracle.Tables != null)
+        if (oracle.Tables?.Count > 0)
         {
             foreach (var t in oracle.Tables)
             {
