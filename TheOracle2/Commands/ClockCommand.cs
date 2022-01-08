@@ -61,6 +61,13 @@ public class ClockCommand : InteractionModuleBase
 
 public class ClockComponents : InteractionModuleBase<SocketInteractionContext<SocketMessageComponent>>
 {
+
+  private readonly Random random;
+
+  public ClockComponents(Random random)
+  {
+    this.random = random;
+  }
   [ComponentInteraction("clock-reset")]
   public async Task ResetClock()
   {
@@ -94,7 +101,7 @@ public class ClockComponents : InteractionModuleBase<SocketInteractionContext<So
     string optionValue = values.FirstOrDefault();
     if (int.TryParse(optionValue.Replace("advance-", ""), out int odds))
     {
-      OracleAnswer answer = new(odds, $"Does the clock *{clock.Text}* advance?");
+      OracleAnswer answer = new(random, odds, $"Does the clock *{clock.Text}* advance?");
       EmbedBuilder answerEmbed = answer.ToEmbed();
       if (answer.IsYes)
       {

@@ -25,7 +25,7 @@ public class OracleAskPaths : InteractionModuleBase
         int chance,
       string question = "")
   {
-    await RespondAsync(embed: new OracleAnswer(chance, question).ToEmbed().Build()).ConfigureAwait(false);
+    await RespondAsync(embed: new OracleAnswer(random, chance, question).ToEmbed().Build()).ConfigureAwait(false);
   }
 
   [SlashCommand("with-chance", "Ask the oracle based on a percentage")]
@@ -34,7 +34,7 @@ public class OracleAskPaths : InteractionModuleBase
       [MinValue(1)] int chance,
       string question = "")
   {
-    await RespondAsync(embed: new OracleAnswer(chance, question).ToEmbed().Build()).ConfigureAwait(false);
+    await RespondAsync(embed: new OracleAnswer(random, chance, question).ToEmbed().Build()).ConfigureAwait(false);
   }
 }
 
