@@ -50,7 +50,7 @@ public class OracleAnswer : Die
 
   public EmbedBuilder ToEmbed()
   {
-    string authorString = $"Ask the Oracle: {OracleAnswer.OddsString[Odds]}";
+    string authorString = $"Ask the Oracle: {OddsString[Odds]}";
     string footerString = IsMatch ? MatchMessage : "";
     return new EmbedBuilder()
     .WithAuthor(authorString)
