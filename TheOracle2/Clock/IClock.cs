@@ -6,7 +6,6 @@ public interface IClock
   public EmbedBuilder ToEmbed();
   public EmbedFieldBuilder ToEmbedField();
   public EmbedBuilder AlertEmbed();
-
   public string FillMessage { get; set; }
   public int Segments { get; }
   public int Filled { get; set; }
@@ -27,6 +26,26 @@ public interface IClock
     { 75, new Emoji("🕘") },
     { 90, new Emoji("🕚") },
     { 100, new Emoji("🕛") }
+  };
+
+  public static readonly Dictionary<int, Color[]> ColorRamp = new()
+  {
+    {
+      4,
+      new Color[] { new Color(0x47aedd), new Color(0x5377cb), new Color(0x842a8c), new Color(0xb30065), new Color(0xc50933) }
+    },
+    {
+      6,
+      new Color[] { new Color(0x47aedd), new Color(0x428bd5), new Color(0x6661bb), new Color(0x842a8c), new Color(0xa70874), new Color(0xbd0055), new Color(0xc50933) }
+    },
+    {
+      8,
+      new Color[] { new Color(0x47aedd), new Color(0x3d94d8), new Color(0x5377cb), new Color(0x6f55b2), new Color(0x842a8c), new Color(0x9f147b), new Color(0xb30065), new Color(0xc0004d), new Color(0xc50933) }
+    },
+    {
+      10,
+      new Color[] { new Color(0x47aedd), new Color(0x3c99da), new Color(0x4883d1), new Color(0x5f6ac2), new Color(0x744eab), new Color(0x842a8c), new Color(0x9a197f), new Color(0xac006e), new Color(0xb9005c), new Color(0xc20048), new Color(0xc50933) }
+    }
   };
   public static readonly Dictionary<int, string[]> Images = new()
   {

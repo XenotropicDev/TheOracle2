@@ -43,7 +43,9 @@ public abstract class Clock : IClock
       .WithTitle(Text)
       .WithDescription(ToString())
       .WithThumbnailUrl(
-        IClock.Images[Segments].ElementAt(Filled))
+        IClock.Images[Segments][Filled])
+      .WithColor(
+        IClock.ColorRamp[Segments][Filled])
       ;
   }
   public virtual EmbedFieldBuilder ToEmbedField()
@@ -55,7 +57,8 @@ public abstract class Clock : IClock
   public EmbedBuilder AlertEmbed()
   {
     EmbedBuilder embed = new EmbedBuilder().WithThumbnailUrl(
-      IClock.Images[Segments].ElementAt(Filled))
+      IClock.Images[Segments][Filled])
+    .WithColor(IClock.ColorRamp[Segments][Filled])
     .WithAuthor($"{ClockType}: {Text}")
     .WithTitle(IsFull ? "The clock fills!" : $"The clock advances to {ToString()}");
     if (IsFull)
@@ -70,7 +73,7 @@ public abstract class Clock : IClock
   {
     return new ButtonBuilder()
     .WithLabel(IClock.AdvanceLabel)
-    .WithStyle(ButtonStyle.Primary)
+    .WithStyle(ButtonStyle.Danger)
     .WithDisabled(IsFull)
     .WithCustomId(customId)
     .WithEmote(new Emoji("🕦"));
@@ -79,7 +82,7 @@ public abstract class Clock : IClock
   {
     return new ButtonBuilder()
     .WithLabel("Reset Clock")
-    .WithStyle(ButtonStyle.Danger)
+    .WithStyle(ButtonStyle.Secondary)
     .WithCustomId(customId)
     .WithDisabled(Filled == 0)
     .WithEmote(IClock.UxEmoji["reset"]);

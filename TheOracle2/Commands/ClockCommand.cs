@@ -118,7 +118,9 @@ public class ClockComponents : InteractionModuleBase<SocketInteractionContext<So
         }
         answerEmbed.Description += "\n" + $"The clock remains at {clock.ToString()}";
       }
-      answerEmbed = answerEmbed.WithThumbnailUrl(IClock.Images[clock.Segments].ElementAt(clock.Filled));
+      answerEmbed = answerEmbed
+        .WithThumbnailUrl(IClock.Images[clock.Segments][clock.Filled])
+        .WithColor(IClock.ColorRamp[clock.Segments][clock.Filled]);
       await interaction.UpdateAsync(msg =>
       {
         msg.Components = clock.MakeComponents().Build();
