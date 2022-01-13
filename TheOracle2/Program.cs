@@ -48,12 +48,15 @@ internal class Program
         }
     }
 
-    private async Task ClientReady()
+    private Task ClientReady()
     {
-        _ = Task.Run(async () =>
+        return Task.Run(async () =>
         {
             try
             {
+                var prefixHandler = _services.GetRequiredService<PrefixCommandHandler>();
+                await prefixHandler.InstallCommandsAsync(_services).ConfigureAwait(false);
+
                 var oracleCommandHandler = _services.GetRequiredService<SlashCommandHandler>();
                 oracleCommandHandler.LoadFromAssembly(Assembly.GetEntryAssembly(), _services);
 
@@ -192,9 +195,14 @@ internal class Program
             .AddJsonFile("token.json", optional: true, reloadOnChange: true)
             .Build();
 
+        command ??= new CommandService(new CommandServiceConfig { LogLevel = LogSeverity.Info });
+
+        var prefixHandler = new PrefixCommandHandler(client, command);
+
         return new ServiceCollection()
             .AddSingleton(client)
             .AddSingleton(config)
+            .AddSingleton(prefixHandler)
             .AddSingleton(new SlashCommandHandler(client, null))
             .AddSingleton<ReferencedMessageCommandHandler>()
             .AddSingleton<Random>()
