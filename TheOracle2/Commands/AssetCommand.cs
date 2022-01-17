@@ -21,7 +21,7 @@ public class AssetCommand : InteractionModuleBase<SocketInteractionContext<Socke
   [OracleSlashCommand("asset")]
   public async Task BuildAsset()
   {
-    int Id = Convert.ToInt32(SlashCommandContext.Data.Options.FirstOrDefault().Options.FirstOrDefault().Value);
+    string Id = SlashCommandContext.Data.Options.FirstOrDefault().Options.FirstOrDefault().Value.ToString();
 
     var asset = DbContext.Assets.Find(Id);
 
@@ -39,7 +39,7 @@ public class AssetCommand : InteractionModuleBase<SocketInteractionContext<Socke
     foreach (var category in DbContext.Assets.Select(a => a.AssetType).Distinct())
     {
       var chunkedList = DbContext.Assets.ToList()
-          .Where(a => a.AssetType == category && a.Id != 0)
+          .Where(a => a.AssetType == category)
           .OrderBy(a => a.Name)
           .Chunk(SlashCommandOptionBuilder.MaxChoiceCount);
 
@@ -61,7 +61,7 @@ public class AssetCommand : InteractionModuleBase<SocketInteractionContext<Socke
             .WithName("asset-name")
             .WithDescription("The name of the asset to be generated")
             .WithRequired(true)
-            .WithType(ApplicationCommandOptionType.Integer);
+            .WithType(ApplicationCommandOptionType.String);
 
         foreach (var asset in assetGroup)
         {
@@ -81,8 +81,8 @@ public class AssetCommand : InteractionModuleBase<SocketInteractionContext<Socke
   [ComponentInteraction("asset-condition-select:*")]
   public async Task ConditionSelection(string assetId, string[] values)
   {
-    if (!int.TryParse(assetId, out var id)) throw new ArgumentException($"Unknown asset id {assetId}");
-    var asset = DbContext.Assets.Find(id);
+    // if (!int.TryParse(assetId, out var id)) throw new ArgumentException($"Unknown asset id {assetId}");
+    var asset = DbContext.Assets.Find(assetId);
 
     var embed = Context.Interaction.Message.Embeds.FirstOrDefault().ToEmbedBuilder();
     ComponentBuilder component = ComponentBuilder.FromMessage(Context.Interaction.Message);
@@ -115,7 +115,7 @@ public class AssetCommand : InteractionModuleBase<SocketInteractionContext<Socke
 
       case "asset-condition-roll":
         if (!int.TryParse(conditionField.Value.ToString(), out int value)) throw new ArgumentException();
-        var roller = new ActionRoll(Random, value, 0, text: $"{asset.ConditionMeter.Name} Roll");
+        var roller = new ActionRoll(Random, value, 0, description: $"{asset.ConditionMeter.Name} Roll");
         await RespondAsync(embed: roller.ToEmbed().Build()).ConfigureAwait(false);
         await Context.Interaction.Message.ModifyAsync(msg => msg.Components = component.Build());
         return;
@@ -139,8 +139,8 @@ public class AssetCommand : InteractionModuleBase<SocketInteractionContext<Socke
   [ComponentInteraction("asset-counter-select:*")]
   public async Task CounterSelection(string assetId, string[] values)
   {
-    if (!int.TryParse(assetId, out var id)) throw new ArgumentException($"Unknown asset id {assetId}");
-    var asset = DbContext.Assets.Find(id);
+    // if (!int.TryParse(assetId, out var id)) throw new ArgumentException($"Unknown asset id {assetId}");
+    var asset = DbContext.Assets.Find(assetId);
 
     var embed = Context.Interaction.Message.Embeds.FirstOrDefault().ToEmbedBuilder();
     ComponentBuilder component = ComponentBuilder.FromMessage(Context.Interaction.Message);
@@ -171,8 +171,8 @@ public class AssetCommand : InteractionModuleBase<SocketInteractionContext<Socke
   public async Task AbilitySelection(string idStr, string[] selections)
   {
     //await DeferAsync();
-    if (!int.TryParse(idStr, out int id)) throw new ArgumentException($"Unknown id '{idStr}'");
-    var asset = DbContext.Assets.Find(id);
+    // if (!int.TryParse(idStr, out int id)) throw new ArgumentException($"Unknown id '{idStr}'");
+    var asset = DbContext.Assets.Find(idStr);
 
     var embed = Context.Interaction.Message?.Embeds?.FirstOrDefault()?.ToEmbedBuilder();
     var component = ComponentBuilder.FromMessage(Context.Interaction.Message);
@@ -182,8 +182,9 @@ public class AssetCommand : InteractionModuleBase<SocketInteractionContext<Socke
       string desc = string.Empty;
       foreach (var v in selections)
       {
-        if (!int.TryParse(v, out var abilityId)) throw new ArgumentException($"Unknown {nameof(Ability)} with Id {v}");
-        var ability = DbContext.AssetAbilities.Find(abilityId);
+        // if (!int.TryParse(v, out var abilityId)) throw new ArgumentException($"Unknown {nameof(Ability)} with Id {v}");
+        // var ability = DbContext.AssetAbilities.Find(abilityId);
+        var ability = DbContext.AssetAbilities.Find(v);
 
         desc += $"⬢ {ability.Text}\n\n";
 

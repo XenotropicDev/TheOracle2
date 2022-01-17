@@ -22,10 +22,10 @@ public class PlayerRollCommand : InteractionModuleBase
       [Summary(description: "The character to use for the roll")][Autocomplete(typeof(CharacterAutocomplete))] string character,
       [Summary(description: "The stat value to use for the roll")] RollableStats stat,
       [Summary(description: "Any adds to the roll")][MinValue(0)] int adds,
+      [Summary(description: "Any notes, fiction, or other text you'd like to include with the roll")] string description = "",
       [Summary(description: "A preset value for the Action Die (d6) to use instead of rolling.")][MinValue(1)][MaxValue(6)] int? actionDie = null,
       [Summary(description: "A preset value for the first Challenge Die (d10) to use instead of rolling.")][MinValue(1)][MaxValue(10)] int? challengeDie1 = null,
-      [Summary(description: "A preset value for the second Challenge Die (d10) to use instead of rolling.")][MinValue(1)][MaxValue(10)] int? challengeDie2 = null,
-      [Summary(description: "Any notes, fiction, or other text you'd like to include in the post")] string text = "")
+      [Summary(description: "A preset value for the second Challenge Die (d10) to use instead of rolling.")][MinValue(1)][MaxValue(10)] int? challengeDie2 = null)
   {
     if (!int.TryParse(character, out int id))
     {
@@ -35,16 +35,15 @@ public class PlayerRollCommand : InteractionModuleBase
 
     var pc = EfContext.PlayerCharacters.Find(id);
 
-    var roll = new ActionRoll(Random, GetStatValue(stat, pc), adds, GetStatValue(RollableStats.Momentum, pc), text, actionDie, challengeDie1, challengeDie2);
+    var roll = new ActionRoll(Random, GetStatValue(stat, pc), adds, GetStatValue(RollableStats.Momentum, pc), description, actionDie, challengeDie1, challengeDie2);
 
     ComponentBuilder component = null;
-    if (roll.IsBurnable)
+    if (roll.IsBurnable && !roll.IsBurnt)
     {
       component = new ComponentBuilder()
-          .WithButton("Burn", $"burn-roll-{roll.ChallengeDie1.Value},{roll.ChallengeDie2.Value},{pc.Id}", ButtonStyle.Danger, new Emoji("🔥"));
+        .WithButton(roll.MomentumBurnButton(id));
     }
-
-    EmbedAuthorBuilder author = new EmbedAuthorBuilder().WithName($"{roll.RollTypeLabel}: +{stat}");
+    EmbedAuthorBuilder author = new EmbedAuthorBuilder().WithName($"{roll.EmbedCategory}: +{stat}");
     if (pc.MessageId > 0)
     {
       IMessageChannel channel = (pc.ChannelId == Context.Channel.Id) ? Context.Channel : await (Context.Client as DiscordSocketClient).Rest.GetChannelAsync(pc.ChannelId) as IMessageChannel;
@@ -84,7 +83,7 @@ public class PCRollComponents : InteractionModuleBase<SocketInteractionContext<S
   public Random Random { get; }
   public EFContext EfContext { get; }
 
-  [ComponentInteraction("burn-roll-*,*,*")]
+  [ComponentInteraction("burn-roll:*,*,*")]
   public async Task burnFromRoll(string Die1, string Die2, string pcId)
   {
     await DeferAsync();

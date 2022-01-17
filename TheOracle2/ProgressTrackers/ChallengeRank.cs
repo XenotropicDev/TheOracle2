@@ -5,7 +5,6 @@ public class RankData
   public RankData(ChallengeRank rank, int markTrack, int markLegacy, int? suffer = null)
   {
     Name = rank.ToString();
-    Value = (int)rank;
     MarkTrack = markTrack;
     MarkLegacy = markLegacy;
     Suffer = suffer;
@@ -23,10 +22,9 @@ public class RankData
 
 public enum ChallengeRank
 {
-  None,
-  Troublesome,
-  Dangerous,
-  Formidable,
-  Extreme,
-  Epic
+  Troublesome = 1,
+  Dangerous = 2,
+  Formidable = 3,
+  Extreme = 4,
+  Epic = 5
 }

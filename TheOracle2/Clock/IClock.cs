@@ -1,42 +1,90 @@
+using TheOracle2.UserContent;
 namespace TheOracle2.GameObjects;
-public interface IClock
+public interface IClock : ILogWidget
 {
-  public string ToString() { return $"{Filled}/{Segments}"; }
-
-  public EmbedBuilder ToEmbed();
-  public EmbedFieldBuilder ToEmbedField();
-  public EmbedBuilder AlertEmbed();
-  public string FillMessage { get; set; }
   public int Segments { get; }
   public int Filled { get; set; }
-  public string Title { get; set; }
-  public string Description { get; set; }
-  public string EmbedCategory { get; }
-  public bool IsFull => Filled >= Segments;
-  public static string AdvanceLabel => "Advance Clock";
-  public ComponentBuilder MakeComponents();
-  public static EmbedBuilder ToEmbedStub(string embedCategory, string title, int segments, int filled)
+  public bool IsFull { get; }
+  public static EmbedBuilder AlertStub(IClock clock)
   {
-    return new EmbedBuilder()
-    .WithAuthor(embedCategory)
-    .WithTitle(title)
-    .WithThumbnailUrl(
-      IClock.Images[segments][filled])
-    .WithColor(
-      IClock.ColorRamp[segments][filled]);
+    EmbedBuilder embed = AddClockTemplate(ILogWidget.AlertStub(clock), clock);
+    return embed;
   }
-  public static Tuple<int, int> Parseclock(Embed embed)
+  public static SelectMenuOptionBuilder ResetOption()
+  {
+    return new SelectMenuOptionBuilder()
+    .WithLabel("Reset clock")
+    .WithValue("clock-reset")
+    .WithEmote(Emoji["reset"]);
+  }
+  public static ButtonBuilder ResetButton()
+  {
+    return new ButtonBuilder()
+    .WithLabel("Reset Clock")
+    .WithStyle(ButtonStyle.Secondary)
+    .WithCustomId("clock-reset")
+    .WithEmote(Emoji["reset"]);
+  }
+  public static SelectMenuOptionBuilder AdvanceOption()
+  {
+    return new SelectMenuOptionBuilder()
+    .WithLabel(AdvanceLabel)
+    .WithDescription("Advance the clock without rolling Ask the Oracle.")
+    .WithValue("clock-advance")
+    .WithEmote(Emoji["advance"]);
+  }
+  public static SelectMenuOptionBuilder AdvanceAskOption(AskOption askOption)
+  {
+    int odds = (int)askOption;
+    string label = $"{AdvanceLabel} ({OracleAnswer.OddsString[odds]})";
+    IEmote emoji = OddsEmoji[odds];
+
+    return new SelectMenuOptionBuilder()
+    .WithLabel(label)
+    .WithDescription($"{odds}% chance for the clock to advance.")
+    .WithValue($"clock-advance:{odds}")
+    .WithEmote(emoji)
+    ;
+  }
+  public static ButtonBuilder AdvanceButton()
+  {
+    return new ButtonBuilder()
+      .WithLabel(AdvanceLabel)
+      .WithStyle(ButtonStyle.Danger)
+      .WithCustomId("clock-advance")
+      .WithEmote(Emoji["advance"]);
+  }
+  public static string AdvanceLabel => "Advance Clock";
+  public static EmbedFieldBuilder ClockField(IClock clock)
+  {
+    return new EmbedFieldBuilder()
+      .WithName("Clock")
+      .WithValue($"{clock.Filled}/{clock.Segments}");
+  }
+  public static EmbedBuilder AddClockTemplate(EmbedBuilder embed, IClock clock)
+  {
+    return embed
+    .WithThumbnailUrl(
+      IClock.Images[clock.Segments][clock.Filled])
+    .WithColor(
+      IClock.ColorRamp[clock.Segments][clock.Filled])
+    .AddField(
+      ClockField(clock).WithIsInline(true)
+      );
+  }
+  public static Tuple<int, int> ParseClock(Embed embed)
   {
     EmbedField clockField = embed.Fields.FirstOrDefault(field => field.Name == "Clock");
     string[] valueStrings = clockField.Value.Split("/");
-    int[] values = valueStrings.Select(value => int.Parse(value)).ToArray();
+    int[] values = valueStrings.Select<string, int>(value => int.Parse(value)).ToArray();
     return new Tuple<int, int>(values[0], values[1]);
   }
-  public static readonly Dictionary<string, Emoji> UxEmoji = new()
+  public static readonly Dictionary<string, IEmote> Emoji = new()
   {
-    { "reset", new Emoji("↩️") }
+    { "reset", new Emoji("↩️") },
+    { "advance", new Emoji("🕦") }
   };
-  public static readonly Dictionary<int, Emoji> OddsEmoji = new()
+  public static readonly Dictionary<int, IEmote> OddsEmoji = new()
   {
     { 10, new Emoji("🕐") },
     { 25, new Emoji("🕒") },
@@ -45,7 +93,6 @@ public interface IClock
     { 90, new Emoji("🕚") },
     { 100, new Emoji("🕛") }
   };
-
   public static readonly Dictionary<int, Color[]> ColorRamp = new()
   {
     {
@@ -80,53 +127,53 @@ public interface IClock
     {
       6,
       new string[]{
-      "https://i.imgur.com/rvDLRZO.png",
-      "https://i.imgur.com/EZbNNRC.png",
-      "https://i.imgur.com/RlaRzgz.png",
-      "https://i.imgur.com/OJ2WVSR.png",
-      "https://i.imgur.com/YgLlojT.png",
-      "https://i.imgur.com/ZpyIpTC.png",
-      "https://i.imgur.com/KjYg7aC.png"
+        "https://i.imgur.com/rvDLRZO.png",
+        "https://i.imgur.com/EZbNNRC.png",
+        "https://i.imgur.com/RlaRzgz.png",
+        "https://i.imgur.com/OJ2WVSR.png",
+        "https://i.imgur.com/YgLlojT.png",
+        "https://i.imgur.com/ZpyIpTC.png",
+        "https://i.imgur.com/KjYg7aC.png"
       }
     },
     {
       8,
       new string[]{
-      "https://i.imgur.com/Qi0pkYD.png",
-      "https://i.imgur.com/9wwW3Sh.png",
-      "https://i.imgur.com/sM27Mbf.png",
-      "https://i.imgur.com/GsKElZv.png",
-      "https://i.imgur.com/QvYHujk.png",
-      "https://i.imgur.com/nNEFyRr.png",
-      "https://i.imgur.com/a9Qvkin.png",
-      "https://i.imgur.com/0dclJ9Q.png",
-      "https://i.imgur.com/5Z0bQ9K.png",
-    }
+        "https://i.imgur.com/Qi0pkYD.png",
+        "https://i.imgur.com/9wwW3Sh.png",
+        "https://i.imgur.com/sM27Mbf.png",
+        "https://i.imgur.com/GsKElZv.png",
+        "https://i.imgur.com/QvYHujk.png",
+        "https://i.imgur.com/nNEFyRr.png",
+        "https://i.imgur.com/a9Qvkin.png",
+        "https://i.imgur.com/0dclJ9Q.png",
+        "https://i.imgur.com/5Z0bQ9K.png",
+      }
     },
     {
       10,
       new string[]{
-      "https://i.imgur.com/u9erdAx.png",
-      "https://i.imgur.com/0zfi1PJ.png",
-      "https://i.imgur.com/ayanbMK.png",
-      "https://i.imgur.com/OtfwmEf.png",
-      "https://i.imgur.com/uUWoyZV.png",
-      "https://i.imgur.com/eKhfGoj.png",
-      "https://i.imgur.com/cwzEkCD.png",
-      "https://i.imgur.com/GNJPzru.png",
-      "https://i.imgur.com/cMQNAZV.png",
-      "https://i.imgur.com/EaOxmdt.png",
-      "https://i.imgur.com/NRhTaBR.png",
-    }
+        "https://i.imgur.com/u9erdAx.png",
+        "https://i.imgur.com/0zfi1PJ.png",
+        "https://i.imgur.com/ayanbMK.png",
+        "https://i.imgur.com/OtfwmEf.png",
+        "https://i.imgur.com/uUWoyZV.png",
+        "https://i.imgur.com/eKhfGoj.png",
+        "https://i.imgur.com/cwzEkCD.png",
+        "https://i.imgur.com/GNJPzru.png",
+        "https://i.imgur.com/cMQNAZV.png",
+        "https://i.imgur.com/EaOxmdt.png",
+        "https://i.imgur.com/NRhTaBR.png",
+      }
     }
   };
-  public static IClock FromEmbed(Embed embed)
+  public static IClock FromEmbed(EFContext dbContext, Embed embed, int? ticks = 0)
   {
     return embed.Author.ToString() switch
     {
       "Campaign Clock" => new CampaignClock(embed),
       "Tension Clock" => new TensionClock(embed),
-      "Scene Challenge" => new SceneChallenge(embed),
+      "Scene Challenge" => new SceneChallenge(dbContext, embed),
       _ => throw new ArgumentOutOfRangeException(nameof(embed), "Embed must be a 'Campaign Clock', 'Tension Clock', or 'Scene Challenge'"),
     };
   }

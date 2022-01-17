@@ -1,6 +1,6 @@
 namespace TheOracle2.GameObjects;
 
-public class OracleAnswer : Die
+public class OracleAnswer : Die, IMatchable
 {
   public OracleAnswer(Random random, int odds, string question) : base(random, 100)
   {
