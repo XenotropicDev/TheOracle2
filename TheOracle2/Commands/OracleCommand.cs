@@ -8,200 +8,200 @@ namespace TheOracle2;
 
 public class OracleCommand : InteractionModuleBase<SocketInteractionContext<SocketMessageComponent>>, ISlashCommand
 {
-  public OracleCommand(EFContext dbContext, Random random)
-  {
-    DbContext = dbContext;
-    RollerFactory = new TableRollerFactory(dbContext, random);
-  }
-
-  private SocketSlashCommand SlashCommandContext;
-  public EFContext DbContext { get; }
-  public TableRollerFactory RollerFactory { get; }
-
-  [OracleSlashCommand("oracle")]
-  public async Task RollOracle()
-  {
-    int Id;
-    if (SlashCommandContext.Data.Options.FirstOrDefault().Type == ApplicationCommandOptionType.SubCommandGroup)
+    public OracleCommand(EFContext dbContext, Random random)
     {
-      Id = Convert.ToInt32(SlashCommandContext.Data.Options.FirstOrDefault().Options.FirstOrDefault().Options.FirstOrDefault().Value);
-    }
-    else
-    {
-      Id = Convert.ToInt32(SlashCommandContext.Data.Options.FirstOrDefault().Options.FirstOrDefault().Value);
+        DbContext = dbContext;
+        RollerFactory = new TableRollerFactory(dbContext, random);
     }
 
-    var oracle = DbContext.Oracles.Find(Id);
-    //IRollerService rollerType = RollerFactory.GetRoller(oracle);
+    private SocketSlashCommand SlashCommandContext;
+    public EFContext DbContext { get; }
+    public TableRollerFactory RollerFactory { get; }
 
-    if (oracle.Tables?.Count > 0)
+    [OracleSlashCommand("oracle")]
+    public async Task RollOracle()
     {
-      var selectMenu = new SelectMenuBuilder()
-          .WithPlaceholder($"Select the {oracle.SelectTableBy} type.")
-          .WithCustomId($"tables-oracle-{Id}");
-      foreach (var table in oracle.Tables)
-      {
-        selectMenu.AddOption(table.Name, $"{table.Id}");
-      }
+        int Id;
+        if (SlashCommandContext.Data.Options.FirstOrDefault().Type == ApplicationCommandOptionType.SubCommandGroup)
+        {
+            Id = Convert.ToInt32(SlashCommandContext.Data.Options.FirstOrDefault().Options.FirstOrDefault().Options.FirstOrDefault().Value);
+        }
+        else
+        {
+            Id = Convert.ToInt32(SlashCommandContext.Data.Options.FirstOrDefault().Options.FirstOrDefault().Value);
+        }
 
-      await SlashCommandContext.RespondAsync("Please select one", components: new ComponentBuilder().WithSelectMenu(selectMenu).Build());
-      return;
+        var oracle = DbContext.Oracles.Find(Id);
+        //IRollerService rollerType = RollerFactory.GetRoller(oracle);
+
+        if (oracle.Tables?.Count > 0)
+        {
+            var selectMenu = new SelectMenuBuilder()
+                .WithPlaceholder($"Select the {oracle.SelectTableBy} type.")
+                .WithCustomId($"tables-oracle-{Id}");
+            foreach (var table in oracle.Tables)
+            {
+                selectMenu.AddOption(table.Name, $"{table.Id}");
+            }
+
+            await SlashCommandContext.RespondAsync("Please select one", components: new ComponentBuilder().WithSelectMenu(selectMenu).Build());
+            return;
+        }
+
+        var rollResult = RollerFactory.GetRoller(oracle).Build();
+
+        var ob = new DiscordOracleBuilder(rollResult).Build();
+
+        await SlashCommandContext.RespondAsync(embed: ob.EmbedBuilder.Build(), components: ob.ComponentBuilder.Build()).ConfigureAwait(false);
     }
 
-    var rollResult = RollerFactory.GetRoller(oracle).Build();
-
-    var ob = new DiscordOracleBuilder(rollResult).Build();
-
-    await SlashCommandContext.RespondAsync(embed: ob.EmbedBuilder.Build(), components: ob.ComponentBuilder.Build()).ConfigureAwait(false);
-  }
-
-  public IList<SlashCommandBuilder> GetCommandBuilders()
-  {
-    var command = new SlashCommandBuilder()
-        .WithName("oracle")
-        .WithDescription("Rolls an oracle table");
-
-    foreach (var oracleInfo in DbContext.OracleInfo)
+    public IList<SlashCommandBuilder> GetCommandBuilders()
     {
-      var topLevelOption = new SlashCommandOptionBuilder()
-          .WithName(oracleInfo.Name.Replace(" ", "-").ToLower())
-          .WithDescription($"{oracleInfo.Name} Oracles")
-          .WithType(ApplicationCommandOptionType.SubCommand);
+        var command = new SlashCommandBuilder()
+            .WithName("oracle")
+            .WithDescription("Rolls an oracle table");
 
-      //Add the base oracles first
-      var oracleOption = new SlashCommandOptionBuilder()
-          .WithName("oracle")
-          .WithDescription($"Oracle to roll")
-          .WithRequired(true)
-          .WithType(ApplicationCommandOptionType.Integer);
+        foreach (var oracleInfo in DbContext.OracleInfo)
+        {
+            var topLevelOption = new SlashCommandOptionBuilder()
+                .WithName(oracleInfo.Name.Replace(" ", "-").ToLower())
+                .WithDescription($"{oracleInfo.Name} Oracles")
+                .WithType(ApplicationCommandOptionType.SubCommand);
 
-      foreach (var oracle in oracleInfo.Oracles)
-      {
-        oracleOption.AddChoice(oracle.Name, oracle.Id);
-      }
+            //Add the base oracles first
+            var oracleOption = new SlashCommandOptionBuilder()
+                .WithName("oracle")
+                .WithDescription($"Oracle to roll")
+                .WithRequired(true)
+                .WithType(ApplicationCommandOptionType.Integer);
 
-      //Add any subcategories and their oracles second
-      AddSubcategories(topLevelOption, oracleInfo);
+            foreach (var oracle in oracleInfo.Oracles)
+            {
+                oracleOption.AddChoice(oracle.Name, oracle.Id);
+            }
 
-      if (topLevelOption.Type == ApplicationCommandOptionType.SubCommandGroup)
-      {
-        var subcommand = new SlashCommandOptionBuilder()
-            .WithName("main")
-            .WithDescription($"Lists the main oracle rolls.")
-            .WithType(ApplicationCommandOptionType.SubCommand)
-            .AddOption(oracleOption);
+            //Add any subcategories and their oracles second
+            AddSubcategories(topLevelOption, oracleInfo);
 
-        topLevelOption.AddOption(subcommand);
-      }
-      else
-      {
-        topLevelOption.AddOption(oracleOption);
-      }
+            if (topLevelOption.Type == ApplicationCommandOptionType.SubCommandGroup)
+            {
+                var subcommand = new SlashCommandOptionBuilder()
+                    .WithName("main")
+                    .WithDescription($"Lists the main oracle rolls.")
+                    .WithType(ApplicationCommandOptionType.SubCommand)
+                    .AddOption(oracleOption);
 
-      command.AddOption(topLevelOption);
+                topLevelOption.AddOption(subcommand);
+            }
+            else
+            {
+                topLevelOption.AddOption(oracleOption);
+            }
+
+            command.AddOption(topLevelOption);
+        }
+
+        return new List<SlashCommandBuilder>() { command };
     }
 
-    return new List<SlashCommandBuilder>() { command };
-  }
-
-  private SlashCommandOptionBuilder AddSubcategories(SlashCommandOptionBuilder builder, OracleInfo oracleInfo)
-  {
-    if (oracleInfo.Subcategories == null || oracleInfo.Subcategories?.Count == 0) return builder;
-
-    builder.WithType(ApplicationCommandOptionType.SubCommandGroup);
-
-    foreach (var subcat in oracleInfo.Subcategories)
+    private SlashCommandOptionBuilder AddSubcategories(SlashCommandOptionBuilder builder, OracleInfo oracleInfo)
     {
-      var subcatOption = new SlashCommandOptionBuilder()
-          .WithName(subcat.Name.Replace(" ", "-").ToLower())
-          .WithDescription(subcat.Name)
-          .WithType(ApplicationCommandOptionType.SubCommand);
+        if (oracleInfo.Subcategories == null || oracleInfo.Subcategories?.Count == 0) return builder;
 
-      var oracleChoiceOption = new SlashCommandOptionBuilder()
-          .WithName("oracle")
-          .WithDescription($"Oracle to roll")
-          .WithRequired(true)
-          .WithType(ApplicationCommandOptionType.Integer);
+        builder.WithType(ApplicationCommandOptionType.SubCommandGroup);
 
-      foreach (var oracle in subcat.Oracles)
-      {
-        oracleChoiceOption.AddChoice(oracle.Name, oracle.Id);
-      }
+        foreach (var subcat in oracleInfo.Subcategories)
+        {
+            var subcatOption = new SlashCommandOptionBuilder()
+                .WithName(subcat.Name.Replace(" ", "-").ToLower())
+                .WithDescription(subcat.Name)
+                .WithType(ApplicationCommandOptionType.SubCommand);
 
-      subcatOption.AddOption(oracleChoiceOption);
-      builder.AddOption(subcatOption);
+            var oracleChoiceOption = new SlashCommandOptionBuilder()
+                .WithName("oracle")
+                .WithDescription($"Oracle to roll")
+                .WithRequired(true)
+                .WithType(ApplicationCommandOptionType.Integer);
+
+            foreach (var oracle in subcat.Oracles)
+            {
+                oracleChoiceOption.AddChoice(oracle.Name, oracle.Id);
+            }
+
+            subcatOption.AddOption(oracleChoiceOption);
+            builder.AddOption(subcatOption);
+        }
+
+        return builder;
     }
 
-    return builder;
-  }
-
-  //This isn't used because it makes the command too large for discord to use
-  private SlashCommandOptionBuilder GetRequiredList(IEnumerable<Oracle> oralces)
-  {
-    var require = new Dictionary<string, int>();
-
-    string desc = "options";
-    foreach (var oracle in oralces.Where(o => o.Tables != null))
+    //This isn't used because it makes the command too large for discord to use
+    private SlashCommandOptionBuilder GetRequiredList(IEnumerable<Oracle> oralces)
     {
-      desc = oracle.SelectTableBy ?? desc;
+        var require = new Dictionary<string, int>();
 
-      foreach (var table in oracle.Tables)
-      {
-        if (table == null || require.ContainsKey(table.Name)) continue;
+        string desc = "options";
+        foreach (var oracle in oralces.Where(o => o.Tables != null))
+        {
+            desc = oracle.SelectTableBy ?? desc;
 
-        require.Add(table.Name, table.Id);
-      }
+            foreach (var table in oracle.Tables)
+            {
+                if (table == null || require.ContainsKey(table.Name)) continue;
+
+                require.Add(table.Name, table.Id);
+            }
+        }
+
+        if (require.Count == 0) return null;
+
+        var builder = new SlashCommandOptionBuilder().WithType(ApplicationCommandOptionType.Integer).WithName("req").WithDescription(desc);
+
+        foreach (var item in require)
+        {
+            builder.AddChoice(item.Key, item.Value);
+        }
+
+        return builder;
     }
 
-    if (require.Count == 0) return null;
+    public void SetCommandContext(SocketSlashCommand slashCommandContext) => this.SlashCommandContext = slashCommandContext;
 
-    var builder = new SlashCommandOptionBuilder().WithType(ApplicationCommandOptionType.Integer).WithName("req").WithDescription(desc);
-
-    foreach (var item in require)
+    [ComponentInteraction("add-oracle-select")]
+    public async Task FollowUp(string[] values)
     {
-      builder.AddChoice(item.Key, item.Value);
+        var builder = Context.Interaction.Message.Embeds.FirstOrDefault().ToEmbedBuilder();
+        foreach (var value in values)
+        {
+            var roll = RollerFactory.GetRoller(value).Build();
+
+            builder = DiscordOracleBuilder.AddFieldsToBuilder(roll, builder);
+        }
+
+        await Context.Interaction.UpdateAsync(msg =>
+        {
+            msg.Embeds = new Embed[] { builder.Build() };
+        }).ConfigureAwait(false);
     }
 
-    return builder;
-  }
-
-  public void SetCommandContext(SocketSlashCommand slashCommandContext) => this.SlashCommandContext = slashCommandContext;
-
-  [ComponentInteraction("add-oracle-select")]
-  public async Task FollowUp(string[] values)
-  {
-    var builder = Context.Interaction.Message.Embeds.FirstOrDefault().ToEmbedBuilder();
-    foreach (var value in values)
+    [ComponentInteraction("tables-oracle-*")]
+    public async Task SelectedTableRoll(string oracleId, string[] values)
     {
-      var roll = RollerFactory.GetRoller(value).Build();
+        int.TryParse(values.FirstOrDefault(), out int Id);
 
-      builder = DiscordOracleBuilder.AddFieldsToBuilder(roll, builder);
+        var table = DbContext.Tables.Find(Id);
+
+        var rollResult = RollerFactory.GetRoller(table).Build();
+
+        var ob = new DiscordOracleBuilder(rollResult).Build();
+
+        await Context.Interaction.UpdateAsync(msg =>
+        {
+            msg.Embed = ob.EmbedBuilder.Build();
+            msg.Components = ob.ComponentBuilder.Build();
+            msg.Content = "";
+        }).ConfigureAwait(false);
     }
-
-    await Context.Interaction.UpdateAsync(msg =>
-    {
-      msg.Embeds = new Embed[] { builder.Build() };
-    }).ConfigureAwait(false);
-  }
-
-  [ComponentInteraction("tables-oracle-*")]
-  public async Task SelectedTableRoll(string oracleId, string[] values)
-  {
-    int.TryParse(values.FirstOrDefault(), out int Id);
-
-    var table = DbContext.Tables.Find(Id);
-
-    var rollResult = RollerFactory.GetRoller(table).Build();
-
-    var ob = new DiscordOracleBuilder(rollResult).Build();
-
-    await Context.Interaction.UpdateAsync(msg =>
-    {
-      msg.Embed = ob.EmbedBuilder.Build();
-      msg.Components = ob.ComponentBuilder.Build();
-      msg.Content = "";
-    }).ConfigureAwait(false);
-  }
 }
 
 //internal class OracleFetchFactory

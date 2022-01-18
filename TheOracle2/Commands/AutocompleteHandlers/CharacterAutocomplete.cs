@@ -17,7 +17,6 @@ public class CharacterAutocomplete : AutocompleteHandler
             var value = autocompleteInteraction.Data.Current.Value as string;
             var guildId = (context.Guild?.Id ?? autocompleteInteraction.User.Id);
 
-
             if (string.IsNullOrEmpty(value))
             {
                 var defaultChars = Db.PlayerCharacters.Where(c => c.DiscordGuildId == guildId);
