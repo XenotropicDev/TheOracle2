@@ -23,7 +23,7 @@ public static class InteractionExtensions
     {
         var components = interaction.Message.Components;
         ActionRowComponent row = components
-          .FirstOrDefault(r => r.Components.Any(c => c.CustomId == customId));
+            .FirstOrDefault(r => r.Components.Any(c => c.CustomId == customId));
         var result = row?.Components.FirstOrDefault(c => c.CustomId == customId);
         return result;
     }
@@ -133,19 +133,41 @@ public static class InteractionExtensions
 
 public static class ComponentExtenstions
 {
+    public static ActionRowBuilder GetRowContainingId(this ComponentBuilder builder, string id)
+    {
+        ActionRowBuilder row = builder.ActionRows.Find(r => r.Components.Any(c => c.CustomId == id));
+        return row;
+    }
+    public static ActionRowComponent GetRowContainingId(this IEnumerable<ActionRowComponent> components, string id)
+    {
+        ActionRowComponent row = components.FirstOrDefault(row => row.Components.Any(c => c.CustomId == id));
+        return row;
+    }
+    public static IMessageComponent GetComponentById(this IEnumerable<ActionRowComponent> components, string id)
+    {
+        ActionRowComponent row = GetRowContainingId(components, id);
+        IMessageComponent component = row.Components.FirstOrDefault(item => item.CustomId == id);
+        return component;
+    }
+    public static IMessageComponent GetComponentById(this ComponentBuilder builder, string id)
+    {
+        ActionRowBuilder row = GetRowContainingId(builder, id);
+        IMessageComponent component = row.Components.Find(c => c.CustomId == id);
+        return component;
+    }
+
     public static ComponentBuilder RemoveComponentById(this ComponentBuilder builder, string id)
     {
-        var row = builder.ActionRows.FindIndex(r => r.Components.Any(c => c.CustomId == id));
-        var item = builder.ActionRows[row].Components.Find(c => c.CustomId == id);
+        var row = GetRowContainingId(builder, id);
+        var item = GetComponentById(builder, id);
         if (item != null)
         {
-            builder.ActionRows[row].Components.Remove(item);
-            if (builder.ActionRows[row].Components.Count == 0)
+            row.Components.Remove(item);
+            if (row.Components.Count == 0)
             {
-                builder.ActionRows.Remove(builder.ActionRows[row]);
+                builder.ActionRows.Remove(row);
             }
         }
-
         return builder;
     }
 
