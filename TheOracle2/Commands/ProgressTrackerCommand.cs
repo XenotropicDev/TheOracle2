@@ -5,24 +5,28 @@ using TheOracle2.UserContent;
 namespace TheOracle2;
 
 [Group("track", "Creates an interactive progress track for vows, expeditions, combat, and scene challenges.")]
-public class ProgressTrackerCommand : InteractionModuleBase {
+public class ProgressTrackerCommand : InteractionModuleBase
+{
     public EFContext DbContext { get; set; }
-    public ProgressTrackerCommand(EFContext dbContext) {
+
+    public ProgressTrackerCommand(EFContext dbContext)
+    {
         DbContext = dbContext;
     }
 
     [SlashCommand("vow", "Create a vow progress track for the Swear an Iron Vow move.")]
     public async Task BuildVowTrack(
-     [Summary(description: "The vow's objective.")]
+    [Summary(description: "The vow's objective.")]
     string title,
-     [Summary(description: "The challenge rank of the progress track.")]
+    [Summary(description: "The challenge rank of the progress track.")]
     ChallengeRank rank,
-     [Summary(description: "An optional description.")]
+    [Summary(description: "An optional description.")]
     string description="",
-     [Summary(description: "A score to pre-set the track, if desired.")]
+    [Summary(description: "A score to pre-set the track, if desired.")]
     [MinValue(0)][MaxValue(10)]
     int score = 0
-   ) {
+    )
+    {
         VowTrack track = new(dbContext: DbContext, rank: rank, ticks: score * ITrack.BoxSize, title: title, description: description);
         await RespondAsync(embed: track.ToEmbed().Build(), components: track.MakeComponents().Build());
     }
@@ -40,9 +44,10 @@ public class ProgressTrackerCommand : InteractionModuleBase {
     [Summary(description: "An optional description.")]
     string description="",
     [Summary(description: "A score to pre-set the track, if desired.")]
-  [MinValue(0)][MaxValue(10)]
+    [MinValue(0)][MaxValue(10)]
     int score = 0
-      ) {
+      )
+    {
         ExpeditionTrack track = new(dbContext: DbContext, rank: rank, ticks: score * ITrack.BoxSize, title: title, description: description);
         await RespondAsync(embed: track.ToEmbed().Build(), components: track.MakeComponents().Build());
     }
@@ -58,36 +63,39 @@ public class ProgressTrackerCommand : InteractionModuleBase {
     [Summary(description: "A score to pre-set the track, if desired.")]
     [MinValue(0)][MaxValue(10)]
     int score = 0
-  ) {
+    )
+    {
         CombatTrack track = new(dbContext: DbContext, rank: rank, ticks: score * ITrack.BoxSize, title: title, description: description);
         await RespondAsync(embed: track.ToEmbed().Build(), components: track.MakeComponents().Build());
     }
 
     [SlashCommand("generic", "Create a generic progress track")]
     public async Task BuildProgressTrack(
-      [Summary(description: "A title for the progress track.")]
+    [Summary(description: "A title for the progress track.")]
     string title,
-      [Summary(description: "The challenge rank of the progress track.")]
+    [Summary(description: "The challenge rank of the progress track.")]
     ChallengeRank rank,
-      [Summary(description: "An optional description.")]
+    [Summary(description: "An optional description.")]
     string description="",
-      [Summary(description: "A score to pre-set the track, if desired.")][MinValue(0)][MaxValue(10)]
+    [Summary(description: "A score to pre-set the track, if desired.")][MinValue(0)][MaxValue(10)]
     int score = 0
-    ) {
+    )
+    {
         GenericTrack track = new(dbContext: DbContext, rank: rank, ticks: score * ITrack.BoxSize, title: title, description: description);
         await RespondAsync(embed: track.ToEmbed().Build(), components: track.MakeComponents().Build());
     }
 
     [SlashCommand("scene-challenge", "Create a scene challenge for extended non-combat scenes against threats or other characters (p. 235)")]
     public async Task BuildSceneChallenge(
-     [Summary(description: "The scene challenge's objective.")]
+    [Summary(description: "The scene challenge's objective.")]
     string title,
-     [Summary(description: "The number of clock segments. Default = 6, severe disadvantage = 4, strong advantage = 8.")]
+    [Summary(description: "The number of clock segments. Default = 6, severe disadvantage = 4, strong advantage = 8.")]
     SceneChallengeClockSize segments=SceneChallengeClockSize.Six,
-     [Summary(description: "An optional description.")]
+    [Summary(description: "An optional description.")]
     string description = "",
-     [Summary(description: "A score to pre-set the track, if desired.")] [MinValue(0)] [MaxValue(10)]
-    int score = 0) {
+    [Summary(description: "A score to pre-set the track, if desired.")] [MinValue(0)] [MaxValue(10)]
+    int score = 0)
+    {
         // intentionally the same as /clock scene-challenge
         // because it has both a clock and a progress track.
         SceneChallenge sceneChallenge = new(dbContext: DbContext, segments: segments, filledSegments: 0, ticks: score * ITrack.BoxSize, title: title, description: description);
