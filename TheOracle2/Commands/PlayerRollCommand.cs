@@ -83,8 +83,8 @@ public class PCRollComponents : InteractionModuleBase<SocketInteractionContext<S
     public Random Random { get; }
     public EFContext EfContext { get; }
 
-    [ComponentInteraction("burn-roll:*,*,*")]
-    public async Task burnFromRoll(string Die1, string Die2, string pcId)
+    [ComponentInteraction("burn-roll-*,*,*")]
+    public async Task BurnFromRoll(string Die1, string Die2, string pcId)
     {
         await DeferAsync();
 
