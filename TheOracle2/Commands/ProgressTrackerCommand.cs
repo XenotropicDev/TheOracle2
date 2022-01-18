@@ -5,15 +5,10 @@ using TheOracle2.UserContent;
 namespace TheOracle2;
 
 [Group("track", "Creates an interactive progress track for vows, expeditions, combat, and scene challenges.")]
-public class ProgressTrackerCommand : InteractionModuleBase
-{
+public class ProgressTrackerCommand : InteractionModuleBase {
     public EFContext DbContext { get; set; }
-    private readonly Random Random;
-
-    public ProgressTrackerCommand(EFContext dbContext, Random random)
-    {
+    public ProgressTrackerCommand(EFContext dbContext) {
         DbContext = dbContext;
-        Random = random;
     }
 
     [SlashCommand("vow", "Create a vow progress track for the Swear an Iron Vow move.")]
@@ -27,8 +22,7 @@ public class ProgressTrackerCommand : InteractionModuleBase
      [Summary(description: "A score to pre-set the track, if desired.")]
     [MinValue(0)][MaxValue(10)]
     int score = 0
-   )
-    {
+   ) {
         VowTrack track = new(dbContext: DbContext, rank: rank, ticks: score * ITrack.BoxSize, title: title, description: description);
         await RespondAsync(embed: track.ToEmbed().Build(), components: track.MakeComponents().Build());
     }
@@ -48,8 +42,7 @@ public class ProgressTrackerCommand : InteractionModuleBase
     [Summary(description: "A score to pre-set the track, if desired.")]
   [MinValue(0)][MaxValue(10)]
     int score = 0
-      )
-    {
+      ) {
         ExpeditionTrack track = new(dbContext: DbContext, rank: rank, ticks: score * ITrack.BoxSize, title: title, description: description);
         await RespondAsync(embed: track.ToEmbed().Build(), components: track.MakeComponents().Build());
     }
@@ -65,8 +58,7 @@ public class ProgressTrackerCommand : InteractionModuleBase
     [Summary(description: "A score to pre-set the track, if desired.")]
     [MinValue(0)][MaxValue(10)]
     int score = 0
-  )
-    {
+  ) {
         CombatTrack track = new(dbContext: DbContext, rank: rank, ticks: score * ITrack.BoxSize, title: title, description: description);
         await RespondAsync(embed: track.ToEmbed().Build(), components: track.MakeComponents().Build());
     }
@@ -81,8 +73,7 @@ public class ProgressTrackerCommand : InteractionModuleBase
     string description="",
       [Summary(description: "A score to pre-set the track, if desired.")][MinValue(0)][MaxValue(10)]
     int score = 0
-    )
-    {
+    ) {
         GenericTrack track = new(dbContext: DbContext, rank: rank, ticks: score * ITrack.BoxSize, title: title, description: description);
         await RespondAsync(embed: track.ToEmbed().Build(), components: track.MakeComponents().Build());
     }
@@ -96,9 +87,7 @@ public class ProgressTrackerCommand : InteractionModuleBase
      [Summary(description: "An optional description.")]
     string description = "",
      [Summary(description: "A score to pre-set the track, if desired.")] [MinValue(0)] [MaxValue(10)]
-    int score = 0)
-
-    {
+    int score = 0) {
         // intentionally the same as /clock scene-challenge
         // because it has both a clock and a progress track.
         SceneChallenge sceneChallenge = new(dbContext: DbContext, segments: segments, filledSegments: 0, ticks: score * ITrack.BoxSize, title: title, description: description);
@@ -107,7 +96,6 @@ public class ProgressTrackerCommand : InteractionModuleBase
         await RespondAsync(
           embed: embed.Build(),
           components: components.Build()
-
           );
     }
 }

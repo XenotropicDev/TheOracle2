@@ -2,28 +2,24 @@ using TheOracle2.UserContent;
 
 namespace TheOracle2.GameObjects;
 
-public interface IClock : ILogWidget
-{
+public interface IClock : ILogWidget {
     public int Segments { get; }
     public int Filled { get; set; }
     public bool IsFull { get; }
 
-    public static EmbedBuilder AlertStub(IClock clock)
-    {
+    public static EmbedBuilder AlertStub(IClock clock) {
         EmbedBuilder embed = AddClockTemplate(ILogWidget.AlertStub(clock), clock);
         return embed;
     }
 
-    public static SelectMenuOptionBuilder ResetOption()
-    {
+    public static SelectMenuOptionBuilder ResetOption() {
         return new SelectMenuOptionBuilder()
         .WithLabel("Reset clock")
         .WithValue("clock-reset")
         .WithEmote(Emoji["reset"]);
     }
 
-    public static ButtonBuilder ResetButton()
-    {
+    public static ButtonBuilder ResetButton() {
         return new ButtonBuilder()
         .WithLabel("Reset Clock")
         .WithStyle(ButtonStyle.Secondary)
@@ -31,31 +27,28 @@ public interface IClock : ILogWidget
         .WithEmote(Emoji["reset"]);
     }
 
-    public static SelectMenuOptionBuilder AdvanceOption()
-    {
+    public static SelectMenuOptionBuilder AdvanceOption() {
         return new SelectMenuOptionBuilder()
         .WithLabel(AdvanceLabel)
-        .WithDescription("Advance the clock without rolling Ask the Oracle.")
+        .WithDescription("Advance the clock by filling one segment.")
         .WithValue("clock-advance")
         .WithEmote(Emoji["advance"]);
     }
 
-    public static SelectMenuOptionBuilder AdvanceAskOption(AskOption askOption)
-    {
-        int odds = (int)askOption;
-        string label = $"{AdvanceLabel} ({OracleAnswer.OddsString[odds]})";
-        IEmote emoji = OddsEmoji[odds];
+    public static SelectMenuOptionBuilder AdvanceAskOption(AskOption askOption) {
+        int oddsPercent = (int)askOption;
+        string label = $"{AdvanceLabel} ({OracleAnswer.OddsString[askOption]})";
+        IEmote emoji = OddsEmoji[oddsPercent];
 
         return new SelectMenuOptionBuilder()
         .WithLabel(label)
-        .WithDescription($"{odds}% chance for the clock to advance.")
-        .WithValue($"clock-advance:{odds}")
+        .WithDescription($"{oddsPercent}% chance for the clock to advance.")
+        .WithValue($"clock-advance:{askOption}")
         .WithEmote(emoji)
         ;
     }
 
-    public static ButtonBuilder AdvanceButton()
-    {
+    public static ButtonBuilder AdvanceButton() {
         return new ButtonBuilder()
           .WithLabel(AdvanceLabel)
           .WithStyle(ButtonStyle.Danger)
@@ -65,15 +58,13 @@ public interface IClock : ILogWidget
 
     public static string AdvanceLabel => "Advance Clock";
 
-    public static EmbedFieldBuilder ClockField(IClock clock)
-    {
+    public static EmbedFieldBuilder ClockField(IClock clock) {
         return new EmbedFieldBuilder()
           .WithName("Clock")
           .WithValue($"{clock.Filled}/{clock.Segments}");
     }
 
-    public static EmbedBuilder AddClockTemplate(EmbedBuilder embed, IClock clock)
-    {
+    public static EmbedBuilder AddClockTemplate(EmbedBuilder embed, IClock clock) {
         return embed
         .WithThumbnailUrl(
           IClock.Images[clock.Segments][clock.Filled])
@@ -84,8 +75,7 @@ public interface IClock : ILogWidget
           );
     }
 
-    public static Tuple<int, int> ParseClock(Embed embed)
-    {
+    public static Tuple<int, int> ParseClock(Embed embed) {
         EmbedField clockField = embed.Fields.FirstOrDefault(field => field.Name == "Clock");
         string[] valueStrings = clockField.Value.Split("/");
         int[] values = valueStrings.Select<string, int>(value => int.Parse(value)).ToArray();
@@ -184,10 +174,8 @@ public interface IClock : ILogWidget
         }
     };
 
-    public static IClock FromEmbed(EFContext dbContext, Embed embed, int? ticks = 0)
-    {
-        return embed.Author.ToString() switch
-        {
+    public static IClock FromEmbed(EFContext dbContext, Embed embed, int? ticks = 0) {
+        return embed.Author.ToString() switch {
             "Campaign Clock" => new CampaignClock(embed),
             "Tension Clock" => new TensionClock(embed),
             "Scene Challenge" => new SceneChallenge(dbContext, embed),
