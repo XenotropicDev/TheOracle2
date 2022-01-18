@@ -17,9 +17,8 @@ public class CounterComponents : InteractionModuleBase<SocketInteractionContext<
     private readonly Random Random;
     public EFContext DbContext { get; set; }
 
-    [ComponentInteraction("progress-mark:*,*,*")]
-    public async Task MarkProgress(string addTicksString, string currentTicksString, string alertTitle
-    ) {
+    [ComponentInteraction("progress-mark:*,*")]
+    public async Task MarkProgress(string addTicksString, string currentTicksString) {
         SocketMessageComponent interaction = Context.Interaction as SocketMessageComponent;
 
         if (!int.TryParse(currentTicksString, out int currentTicks)) { throw new ArgumentException($"Unable to parse current ticks from {currentTicksString}"); }
@@ -28,7 +27,7 @@ public class CounterComponents : InteractionModuleBase<SocketInteractionContext<
 
         ProgressTrack progressTrack = IProgressTrack.FromEmbed(DbContext, interaction.Message.Embeds.FirstOrDefault(), currentTicks) as ProgressTrack;
 
-        EmbedBuilder alert = progressTrack.Mark(addedTicks, alertTitle);
+        EmbedBuilder alert = progressTrack.Mark(addedTicks);
 
         await interaction.UpdateAsync(msg => {
             msg.Components = progressTrack.MakeComponents().Build();
@@ -97,7 +96,7 @@ public class CounterComponents : InteractionModuleBase<SocketInteractionContext<
                 return;
 
             case "progress-mark":
-                await MarkProgress(addTicksString: arguments[0], currentTicksString: currentTicks, alertTitle: arguments[1]);
+                await MarkProgress(addTicksString: arguments[0], currentTicksString: currentTicks);
                 return;
 
             case "progress-roll":
