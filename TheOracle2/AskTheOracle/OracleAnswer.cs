@@ -22,7 +22,7 @@ public class OracleAnswer : Die, IMatchable
 
     public Color OutcomeColor() => IsYes ? new Color(0x47AEDD) : new Color(0xC50933);
 
-    private static string MatchMessage => "You rolled a match! Envision an extreme result or twist.";
+    private string MatchMessage => (IsMatch) ? "You rolled a match! Envision an extreme result or twist." : String.Empty;
 
     private string AnswerString
     {
@@ -49,7 +49,7 @@ public class OracleAnswer : Die, IMatchable
     public EmbedBuilder ToEmbed()
     {
         string authorString = $"Ask the Oracle: {OddsString[Odds]}";
-        string footerString = IsMatch ? MatchMessage : "";
+        string footerString = MatchMessage;
         return new EmbedBuilder()
         .WithAuthor(authorString)
         .WithDescription(ToString())
