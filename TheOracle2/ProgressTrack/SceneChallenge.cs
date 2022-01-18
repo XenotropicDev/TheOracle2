@@ -1,17 +1,21 @@
 namespace TheOracle2.GameObjects;
 using TheOracle2.UserContent;
-public class SceneChallenge : ProgressTrack, IClock {
-    public SceneChallenge(EFContext dbContext, Embed embed) : base(dbContext, embed) {
+public class SceneChallenge : ProgressTrack, IClock
+{
+    public SceneChallenge(EFContext dbContext, Embed embed, bool alerts = false) : base(dbContext, embed, alerts)
+    {
         Tuple<int, int> clockData = IClock.ParseClock(embed);
         Filled = clockData.Item1;
         Segments = clockData.Item2;
     }
-    public SceneChallenge(EFContext dbContext, Embed embed, int ticks) : base(dbContext, embed, ticks) {
+    public SceneChallenge(EFContext dbContext, Embed embed, int ticks, bool alerts = false) : base(dbContext, embed, ticks, alerts)
+    {
         Tuple<int, int> clockData = IClock.ParseClock(embed);
         Filled = clockData.Item1;
         Segments = clockData.Item2;
     }
-    public SceneChallenge(EFContext dbContext, SceneChallengeClockSize segments = (SceneChallengeClockSize)6, int filledSegments = 0, int ticks = 0, string title = "", string description = "", ChallengeRank rank = ChallengeRank.Formidable) : base(dbContext, rank, ticks, title, description) {
+    public SceneChallenge(EFContext dbContext, SceneChallengeClockSize segments = (SceneChallengeClockSize)6, int filledSegments = 0, int ticks = 0, string title = "", string description = "", ChallengeRank rank = ChallengeRank.Formidable, bool alerts = false) : base(dbContext, rank, ticks, title, description, alerts)
+    {
         Filled = filledSegments;
         Segments = (int)segments;
     }
@@ -24,12 +28,15 @@ public class SceneChallenge : ProgressTrack, IClock {
     public int Segments { get; }
     public int Filled { get; set; }
     public bool IsFull => Filled >= Segments;
-    public override EmbedBuilder ToEmbed() {
+    public override EmbedBuilder ToEmbed()
+    {
         return IClock.AddClockTemplate(base.ToEmbed(), this);
     }
-    public SelectMenuBuilder MakeSelectMenu() {
+    public SelectMenuBuilder MakeSelectMenu()
+    {
         SelectMenuBuilder menu = ProgressTrack.MenuStub(this, "scene-challenge-");
-        if (!IsFull) {
+        if (!IsFull)
+        {
             if (Score < ITrack.TrackSize) { menu = menu.AddOption(MarkOption()); }
             menu = menu.AddOption(IClock.AdvanceOption());
         }
@@ -38,7 +45,8 @@ public class SceneChallenge : ProgressTrack, IClock {
         if (Filled > 0) { menu = menu.AddOption(IClock.ResetOption()); }
         return menu;
     }
-    public override ComponentBuilder MakeComponents() {
+    public override ComponentBuilder MakeComponents()
+    {
         return new ComponentBuilder()
           .WithSelectMenu(MakeSelectMenu())
           ;

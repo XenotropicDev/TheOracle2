@@ -2,11 +2,11 @@ namespace TheOracle2.GameObjects;
 
 public class TensionClock : Clock
 {
-    public TensionClock(Embed embed) : base(embed)
+    public TensionClock(Embed embed, bool alerts = false) : base(embed, alerts)
     {
     }
 
-    public TensionClock(ClockSize segments, int filledSegments, string title, string description = "") : base(segments, filledSegments, title, description)
+    public TensionClock(ClockSize segments, int filledSegments, string title, string description = "", bool alerts = false) : base(segments, filledSegments, title, description, alerts)
     {
     }
 

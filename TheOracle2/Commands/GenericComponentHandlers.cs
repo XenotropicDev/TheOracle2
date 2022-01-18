@@ -2,6 +2,7 @@
 using Discord.Net;
 using Discord.WebSocket;
 using Microsoft.Extensions.Logging;
+using TheOracle2.GameObjects;
 
 namespace TheOracle2.Commands;
 
@@ -21,15 +22,15 @@ public class GenericComponentHandlers : InteractionModuleBase<SocketInteractionC
     public static ButtonBuilder CancelButton(string label = null) {
         return new ButtonBuilder(label ?? "Cancel", "delete-original-response", style: ButtonStyle.Secondary);
     }
-    [ComponentInteraction("alerts-toggle:*")]
-    public async Task ToggleAlerts(string togglesToString) {
+    [ComponentInteraction("alert-toggle:*")]
+    public async Task ToggleAlert(string togglesToString) {
         if (!bool.TryParse(togglesToString, out bool alerts)) { throw new Exception($"Unable to parse {togglesToString} to boolean"); }
         bool newBtnTarget = !alerts;
-        ButtonBuilder newBtn = ToggleAlertsButton(newBtnTarget);
+        ButtonBuilder newBtn = ILogWidget.ToggleAlertButton(newBtnTarget);
         try {
             await Context.Interaction.UpdateAsync(msg => {
                 ComponentBuilder components = ComponentBuilder.FromMessage(Context.Interaction.Message);
-                _ = components.ReplaceComponentById($"alerts-toggle:{togglesToString}", newBtn.Build());
+                _ = components.ReplaceComponentById($"alert-toggle:{togglesToString}", newBtn.Build());
                 msg.Components = components.Build();
             }).ConfigureAwait(false);
         }
@@ -39,13 +40,5 @@ public class GenericComponentHandlers : InteractionModuleBase<SocketInteractionC
             throw;
         }
     }
-    public static ButtonBuilder ToggleAlertsButton(bool togglesTo) {
-        string onOff = togglesTo ? "ON" : "OFF";
-        Emoji emoji = togglesTo ? new Emoji("✔️") : new Emoji("❌");
-        return new ButtonBuilder()
-            .WithLabel($"Alerts: {onOff}")
-            .WithCustomId($"alerts-toggle:{togglesTo}")
-            .WithEmote(emoji)
-            .WithStyle(ButtonStyle.Secondary);
-    }
+
 }

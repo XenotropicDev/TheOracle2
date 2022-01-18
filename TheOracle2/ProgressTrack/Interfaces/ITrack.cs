@@ -4,7 +4,8 @@ using System.Text.RegularExpressions;
 /// <summary>
 /// Interface inherited by all ranked and unranked tracks.
 /// </summary>
-public interface ITrack {
+public interface ITrack
+{
     /// <summary>
     /// The number of ticks per progress box.
     /// </summary>
@@ -25,7 +26,8 @@ public interface ITrack {
     /// <summary>
     /// Calculates a progress score from a given number of ticks, capped by TrackSize.
     /// </summary>
-    public static int GetScore(int ticks) {
+    public static int GetScore(int ticks)
+    {
         int rawScore = ticks / BoxSize;
         return Math.Max(0, Math.Min(rawScore, TrackSize));
     }
@@ -41,28 +43,33 @@ public interface ITrack {
     /// </summary>
     /// <param name="emojiString">The progress track string. </param>
 
-    public static int ParseTrack(string emojiString) {
+    public static int ParseTrack(string emojiString)
+    {
         var matchStrings = Regex.Matches(emojiString, MarkedBoxesPattern);
         var boxValues = matchStrings.Select(match => int.Parse(match.ToString()));
         return boxValues.Sum();
     }
-    private static string PartialBoxesPattern => "/:progress([0-3]):/";
+    private static string PartialBoxesPattern => "/:progress(0|1|2|3):/";
     private static string ProgressFieldPattern => $"Track {Regex.Escape("[")}([0-9]|{TrackSize})/{TrackSize}{Regex.Escape("]")}";
     /// <summary>
     /// Counts the ticks in an EmbedField that represents a progress track. Might be more efficient than parsing from an emoji-based track because it doesn't iterate as much.
     /// </summary>
-    public static int ParseTrack(EmbedField embedField) {
+    public static int ParseTrack(EmbedField embedField)
+    {
         // string scoreString = Regex.Match(embedField.Name, ProgressFieldPattern).Value;
         string scoreString = embedField.Name.Split('[')[1].Split('/')[0];
 
-        if (!int.TryParse(scoreString, out int score)) {
+        if (!int.TryParse(scoreString, out int score))
+        {
             throw new Exception($"Unable to parse {nameof(score)} from {scoreString}");
         }
+        int remainderTicks = 0;
 
         string remainderTicksString = Regex.Match(embedField.Value, PartialBoxesPattern).ToString();
 
-        if (!int.TryParse(remainderTicksString, out int remainderTicks)) {
-            throw new Exception($"Unable to parse {nameof(remainderTicks)} from {embedField.Value}");
+        if (int.TryParse(remainderTicksString, out int newTicks))
+        {
+            remainderTicks = newTicks;
         }
 
         int ticks = (BoxSize * score) + remainderTicks;
@@ -71,23 +78,28 @@ public interface ITrack {
     /// <summary>
     /// Counts the ticks of the first progress track in an Embed. Might be more efficient than parsing from an emoji-based track because it doesn't iterate as much.
     /// </summary>
-    public static int ParseTrack(Embed embed) {
+    public static int ParseTrack(Embed embed)
+    {
         EmbedField progressField = embed.Fields.FirstOrDefault(field => Regex.IsMatch(field.Name, ProgressFieldPattern));
         return ParseTrack(progressField);
     }
-    public static List<IEmote> TicksToEmojiList(int ticks) {
+    public static List<IEmote> TicksToEmojiList(int ticks)
+    {
         int score = ITrack.GetScore(ticks);
         List<IEmote> emojis = Enumerable.Repeat(TickEmoji[BoxSize], score).ToList();
         int remainder = ticks % BoxSize;
-        if (remainder > 0) {
+        if (remainder > 0)
+        {
             emojis.Add(TickEmoji[remainder]);
         }
         return emojis;
     }
-    public static string TicksToEmojiTrack(int ticks) {
+    public static string TicksToEmojiTrack(int ticks)
+    {
         List<IEmote> emoji = TicksToEmojiList(ticks);
         int padding = TrackSize;
-        if (emoji?.Count > 0) {
+        if (emoji?.Count > 0)
+        {
             padding -= emoji.Count;
         }
         emoji.AddRange(
@@ -115,7 +127,8 @@ public interface ITrack {
         { "reference", new Emoji("📖") }
     };
     public const string DefaultTrackName = "Track";
-    protected static EmbedFieldBuilder TrackField(int ticks = 0, string name = DefaultTrackName) {
+    protected static EmbedFieldBuilder TrackField(int ticks = 0, string name = DefaultTrackName)
+    {
         int score = ticks / BoxSize;
         return new EmbedFieldBuilder()
           .WithName($"{name} [{score}/{TrackSize}]")
@@ -125,13 +138,16 @@ public interface ITrack {
     /// <summary>
     /// Renders a text description of a progress amount, for instance: "1 box", "2 ticks", "2 boxes and 2 ticks"
     /// </summary>
-    public static string TickString(int ticks) {
+    public static string TickString(int ticks)
+    {
         string tickAutoPlural = "tick";
-        if (ticks >= 3) {
+        if (ticks >= 3)
+        {
             int boxes = ticks / BoxSize;
             int remainder = ticks % BoxSize;
             string result = boxes.ToString() + " " + (boxes > 1 ? "boxes" : "box");
-            if (remainder > 0) {
+            if (remainder > 0)
+            {
                 if (remainder > 1) { tickAutoPlural += "s"; }
                 result += $" and {remainder} {tickAutoPlural}";
             }
@@ -140,16 +156,19 @@ public interface ITrack {
         if (ticks > 1) { tickAutoPlural += "s"; }
         return $"{ticks} {tickAutoPlural}";
     }
-    public static EmbedFieldBuilder StrikeField(EmbedFieldBuilder field) {
+    public static EmbedFieldBuilder StrikeField(EmbedFieldBuilder field)
+    {
         field = StrikeFieldName(field);
         field = StrikeFieldValue(field);
         return field;
     }
-    public static EmbedFieldBuilder StrikeFieldName(EmbedFieldBuilder field) {
+    public static EmbedFieldBuilder StrikeFieldName(EmbedFieldBuilder field)
+    {
         field.Name = "~~" + field.Name + "~~";
         return field;
     }
-    public static EmbedFieldBuilder StrikeFieldValue(EmbedFieldBuilder field) {
+    public static EmbedFieldBuilder StrikeFieldValue(EmbedFieldBuilder field)
+    {
         field.Value = "~~" + field.Value + "~~";
         return field;
     }

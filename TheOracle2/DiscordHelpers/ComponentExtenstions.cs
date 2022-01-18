@@ -133,6 +133,19 @@ public static class InteractionExtensions
 
 public static class ComponentExtenstions
 {
+
+    public static bool ContainsCustomId(this ActionRowComponent components, string id)
+    {
+        if (components.Components.Count() == 0) { return false; }
+        if (components.Components.Any(item => item.CustomId == id)) { return true; }
+        return false;
+    }
+    public static bool ContainsCustomId(this IEnumerable<ActionRowComponent> components, string id)
+    {
+        if (components.Count() == 0) { return false; }
+        if (components.Any(row => row.ContainsCustomId(id))) { return true; }
+        return false;
+    }
     public static ActionRowBuilder GetRowContainingId(this ComponentBuilder builder, string id)
     {
         ActionRowBuilder row = builder.ActionRows.Find(r => r.Components.Any(c => c.CustomId == id));

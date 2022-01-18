@@ -2,16 +2,18 @@ namespace TheOracle2.GameObjects;
 
 public abstract class Clock : IClock
 {
-    protected Clock(Embed embed)
+    protected Clock(Embed embed, bool alerts = false)
     {
         var values = IClock.ParseClock(embed);
         Title = embed.Title;
         Description = embed.Description;
         Filled = values.Item1;
         Segments = values.Item2;
+        AlertOnIncrement = alerts;
+
     }
 
-    protected Clock(ClockSize segments = (ClockSize)6, int filledSegments = 0, string title = "", string description = "")
+    protected Clock(ClockSize segments = (ClockSize)6, int filledSegments = 0, string title = "", string description = "", bool alerts = false)
     {
         if (filledSegments < 0 || filledSegments > ((int)segments))
         {
@@ -21,6 +23,7 @@ public abstract class Clock : IClock
         Segments = (int)segments;
         Filled = filledSegments;
         Description = description;
+        AlertOnIncrement = alerts;
     }
 
     public int Segments { get; }
@@ -57,6 +60,10 @@ public abstract class Clock : IClock
     {
         return new ComponentBuilder()
         .WithButton(IClock.AdvanceButton().WithDisabled(IsFull))
-        .WithButton(IClock.ResetButton().WithDisabled(Filled == 0));
+        .WithButton(IClock.ResetButton().WithDisabled(Filled == 0))
+        /// alert button
+        .WithButton(ILogWidget.ToggleAlertButton(AlertOnIncrement))
+        ;
+
     }
 }
