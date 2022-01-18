@@ -3,6 +3,7 @@ using TheOracle2.DataClassesNext;
 
 namespace TheOracle2;
 
+[DontAutoRegister]
 public class OracleDumpCommand : InteractionModuleBase
 {
     public Dictionary<string, OracleNext> Oracles { get; }
