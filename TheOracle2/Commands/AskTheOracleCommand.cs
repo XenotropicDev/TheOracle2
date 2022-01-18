@@ -3,36 +3,25 @@ using TheOracle2.GameObjects;
 
 namespace TheOracle2;
 
-[Group("ask", "Ask the oracle")]
-public class OracleAskPaths : InteractionModuleBase
-{
+public class OracleAskPaths : InteractionModuleBase {
     private readonly Random random;
 
-    public OracleAskPaths(Random random)
-    {
+    public OracleAskPaths(Random random) {
         this.random = random;
     }
 
-    [SlashCommand("with-likelihood", "Ask the oracle based on the predefined likelihoods")]
-    public async Task Named(
-        [Summary(description: "Ask the oracle based on the predefined likelihoods")]
-        [Choice("Sure thing", 90),
-        Choice("Likely", 75),
-        Choice("Fifty-fifty", 50),
-        Choice("Unlikely", 25),
-        Choice("Small chance", 10)]
-        int chance,
-        string question = "")
-    {
-        await RespondAsync(embed: new OracleAnswer(random, chance, question).ToEmbed().Build()).ConfigureAwait(false);
-    }
-
-    [SlashCommand("with-chance", "Ask the oracle based on a percentage")]
-    public async Task Numeric([Summary(description: "Ask the oracle based on a given percent chance of something happening")]
-      [MaxValue(99)]
-      [MinValue(1)] int chance,
-        string question = "")
-    {
-        await RespondAsync(embed: new OracleAnswer(random, chance, question).ToEmbed().Build()).ConfigureAwait(false);
+    [SlashCommand("ask", "Ask the oracle based on the predefined likelihoods")]
+    public async Task AskTheOracle(
+        [Summary(description: "The odds of receiving a 'yes'.")]
+        [Choice("Sure thing (10 or less)", 10),
+        Choice("Likely (25 or less)", 25),
+        Choice("50/50 (50 or less)", 50),
+        Choice("Unlikely (75 or less)", 75),
+        Choice("Small chance (90 or less)", 90)]
+        AskOption odds,
+        [Summary(description: "The question to ask the oracle.")]
+        string question
+    ) {
+        await RespondAsync(embed: new OracleAnswer(random, odds, question).ToEmbed().Build()).ConfigureAwait(false);
     }
 }
