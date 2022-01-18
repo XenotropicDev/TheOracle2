@@ -18,10 +18,12 @@ public class OracleAskPaths : InteractionModuleBase {
         Choice("50/50 (50 or less)", 50),
         Choice("Unlikely (75 or less)", 75),
         Choice("Small chance (90 or less)", 90)]
-        AskOption odds,
+        int odds,
         [Summary(description: "The question to ask the oracle.")]
         string question
     ) {
-        await RespondAsync(embed: new OracleAnswer(random, odds, question).ToEmbed().Build()).ConfigureAwait(false);
+
+        /// TODO: once discord display string attributes are available for enums, this can use the AskOption enum directly
+        await RespondAsync(embed: new OracleAnswer(random, (AskOption)odds, question).ToEmbed().Build()).ConfigureAwait(false);
     }
 }
