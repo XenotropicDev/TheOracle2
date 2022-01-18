@@ -1,69 +1,29 @@
 ﻿using Discord.Interactions;
-using System.ComponentModel.DataAnnotations;
+using TheOracle2.GameObjects;
 
 namespace TheOracle2;
 
-[Group("ask", "Ask the oracle")]
-public class OracleAskPaths : InteractionModuleBase
-{
+public class OracleAskPaths : InteractionModuleBase {
     private readonly Random random;
 
-    public OracleAskPaths(Random random)
-    {
+    public OracleAskPaths(Random random) {
         this.random = random;
     }
 
-    [SlashCommand("with-likelihood", "Ask the oracle based on the predefined likelihoods")]
-    public async Task Named(
-        [Summary(description: "Ask the oracle based on the predefined likelihoods")]
-        [Choice("Sure Thing", "SureThing"), 
-        Choice("Likely", "Likely"),
-        Choice("Fifty-fifty", "FiftyFifty"), 
-        Choice("Unlikely", "Unlikely"), 
-        Choice("Small Chance", "SmallChance")] 
-        string keyword, 
-        string fluff = "")
-    {
-        if (!Enum.TryParse<AskOption>(keyword, out var value)) throw new ArgumentException($"Unknown value {keyword}");
-        var roll = random.Next(101);
-        string result = (roll <= (int)value) ? "Yes" : "No";
-        
-        var displayValue = GetAttributeOfType<DisplayAttribute>(value)?.Name ?? keyword;
-        if (fluff?.Length > 0) fluff = $"You asked: {fluff}\n";
-        await RespondAsync($"{fluff}You rolled: {roll} VS. {displayValue} ({(int)value} or less)\n**{result}**.").ConfigureAwait(false);
-    }
+    [SlashCommand("ask", "Ask the oracle based on the predefined likelihoods")]
+    public async Task AskTheOracle(
+        [Summary(description: "The odds of receiving a 'yes'.")]
+        [Choice("Sure thing (10 or less)", 10),
+        Choice("Likely (25 or less)", 25),
+        Choice("50/50 (50 or less)", 50),
+        Choice("Unlikely (75 or less)", 75),
+        Choice("Small chance (90 or less)", 90)]
+        int odds,
+        [Summary(description: "The question to ask the oracle.")]
+        string question
+    ) {
 
-    [SlashCommand("with-chance", "Ask the oracle based on a percentage")]
-    public async Task Numeric([Summary(description: "Ask the oracle based on a given percent chance of something happening")]
-                                [MaxValue(99)]
-                                [MinValue(1)] int number,
-        string fluff = null)
-    {
-        var roll = random.Next(101);
-        string result = (roll <= number) ? "Yes" : "No";
-
-        if (fluff?.Length > 0) fluff += "\n";
-        await RespondAsync($"{fluff}You rolled {roll} VS. {number} or less\n**{result}**.").ConfigureAwait(false);
-    }
-
-    public static T GetAttributeOfType<T>(Enum enumVal) where T : Attribute
-    {
-        var type = enumVal.GetType();
-        var memInfo = type.GetMember(enumVal.ToString());
-        var attributes = memInfo[0].GetCustomAttributes(typeof(T), false);
-        return (attributes.Length > 0) ? (T)attributes[0] : null;
+        /// TODO: once discord display string attributes are available for enums, this can use the AskOption enum directly
+        await RespondAsync(embed: new OracleAnswer(random, (AskOption)odds, question).ToEmbed().Build()).ConfigureAwait(false);
     }
 }
-
-public enum AskOption
-{
-    [Display(Name = "Sure thing")]
-    SureThing = 90, 
-    Likely = 75,
-    [Display(Name = "Fifty-fifty")]
-    FiftyFifty = 50,
-    Unlikely = 25,
-    [Display(Name = "Small Chance")]
-    SmallChance = 10
-}
-

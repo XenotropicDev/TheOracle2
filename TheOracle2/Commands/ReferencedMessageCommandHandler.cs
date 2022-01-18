@@ -91,7 +91,6 @@ public class MovePostModule : ModuleBase
             return;
         }
 
-
         if (mentionedChannel == Context.Channel) return;
         if (mentionedChannel is not ITextChannel)
         {
@@ -111,7 +110,8 @@ public class MovePostModule : ModuleBase
 
         var newMsg = await (mentionedChannel as IMessageChannel).SendMessageAsync(message.Content, embed: message.Embeds.FirstOrDefault().ToEmbedBuilder().Build(), components: components.Build());
 
-        await Task.Run(async () => {
+        await Task.Run(async () =>
+        {
             var fetchedMessage = await Context.Channel.GetMessageAsync(message.Id); //This is to get around a bug in discord.net
             var reactionsToAdd = fetchedMessage.Reactions.Where(item => item.Value.IsMe).Select(item => item.Key);
             foreach (var reaction in reactionsToAdd)

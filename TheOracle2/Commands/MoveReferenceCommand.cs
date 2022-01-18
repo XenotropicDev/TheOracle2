@@ -19,12 +19,12 @@ public class MoveReferenceCommand : ISlashCommand
     [OracleSlashCommand("reference")]
     public async Task GetReferenceMessage()
     {
-        int Id = Convert.ToInt32(SlashCommandContext.Data.Options.FirstOrDefault().Options.FirstOrDefault().Value);
+        string Id = SlashCommandContext.Data.Options.FirstOrDefault().Options.FirstOrDefault().Value.ToString();
 
         var ephemeral = (SlashCommandContext.Data.Options.FirstOrDefault().Options.FirstOrDefault(o => o.Name == "ephemeral")?.Value as bool?) == true;
         var keepMsg = (SlashCommandContext.Data.Options.FirstOrDefault().Options.FirstOrDefault(o => o.Name == "keep-message")?.Value as bool?) == true;
         var move = DbContext.Moves.Find(Id);
-        
+
         var moveItems = new DiscordMoveEntity(move, ephemeral);
 
         await SlashCommandContext.RespondAsync(embeds: moveItems.GetEmbeds(), ephemeral: ephemeral).ConfigureAwait(false);
@@ -46,21 +46,21 @@ public class MoveReferenceCommand : ISlashCommand
         foreach (var category in DbContext.Moves.Select(a => a.Category).Distinct())
         {
             var chunkedList = DbContext.Moves.ToList()
-                .Where(a => a.Category == category && a.Id != 0)
+                .Where(a => a.Category == category)
                 .OrderBy(a => a.Name)
                 .Chunk(SlashCommandOptionBuilder.MaxChoiceCount);
 
             foreach (var moveGroup in chunkedList)
             {
-                string name = category.Replace(" ", "-");
+                string name = category.Replace(" Moves", "").Replace(" ", "-");
                 if (chunkedList.Count() > 1)
                 {
-                    name += $"-{moveGroup.First().Name.Substring(0, 1)}-{moveGroup.Last().Name.Substring(0, 1)}";
+                    name += $"_{moveGroup.First().Name.Substring(0, 1)}_{moveGroup.Last().Name.Substring(0, 1)}";
                 }
 
                 var subCommand = new SlashCommandOptionBuilder()
                     .WithName(name.ToLower())
-                    .WithDescription($"{category} moves")
+                    .WithDescription($"Reference a move from the {category} category.")
                     .WithType(ApplicationCommandOptionType.SubCommand)
                     ;
 
@@ -68,7 +68,7 @@ public class MoveReferenceCommand : ISlashCommand
                     .WithName("move-name")
                     .WithDescription("The name of the move to be posted")
                     .WithRequired(true)
-                    .WithType(ApplicationCommandOptionType.Integer);
+                    .WithType(ApplicationCommandOptionType.String);
 
                 foreach (var move in moveGroup)
                 {

@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
 using TheOracle2.UserContent;
+using System.Diagnostics;
 
 namespace TheOracle2;
 

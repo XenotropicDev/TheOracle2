@@ -1,172 +1,101 @@
 ﻿using Discord.Interactions;
-using Discord.WebSocket;
+using TheOracle2.GameObjects;
+using TheOracle2.UserContent;
 
-namespace TheOracle2.Commands;
+namespace TheOracle2;
 
-public class ProgressTrackerCommand : InteractionModuleBase
-{
-    public const int dangerousTicks = 8;
-    public const int epicTicks = 1;
-    public const int extremeTicks = 2;
-    public const int formidableTicks = 4;
-    public const int totalTicks = 40;
-    public const int troublesomeTicks = 12;
-    private readonly Random random;
-
-    public ProgressTrackerCommand(Random random)
-    {
-        this.random = random;
+[Group("track", "Creates an interactive progress track for vows, expeditions, combat, and scene challenges.")]
+public class ProgressTrackerCommand : InteractionModuleBase {
+    public EFContext DbContext { get; set; }
+    public ProgressTrackerCommand(EFContext dbContext) {
+        DbContext = dbContext;
     }
 
-    [SlashCommand("track", "Creates a generic tracker for things like vows, expeditions, and combat")]
-    public async Task PostTracker(string Description, ChallengeRank Rank)
-    {
-        var embed = new EmbedBuilder()
-            .WithTitle("Progress Tracker")
-            .WithDescription(Description)
-            .WithFields(new EmbedFieldBuilder()
-            {
-                Name = "Difficulty",
-                Value = Rank.ToString(),
-                IsInline = true
-            })
-            .WithFields(new EmbedFieldBuilder()
-            {
-                Name = "Progress Bar",
-                Value = GetProgressGraphic(0),
-                IsInline = true
-            })
-            .WithFields(new EmbedFieldBuilder()
-            {
-                Name = "Progress Amount",
-                Value = BuildProgressAmount(0),
-                IsInline = true
-            })
-            .WithFooter($"Ticks: 0")
-            .Build();
-
-        var compBuilder = new ComponentBuilder()
-            .WithButton("-", "lose-progress", row: 0, style: ButtonStyle.Danger)
-            .WithButton("+", "add-progress", row: 0, style: ButtonStyle.Success)
-            .WithButton("#", "add-full-progress", row: 0, style: ButtonStyle.Secondary)
-            .WithButton(customId: "roll-progress", row: 0, style: ButtonStyle.Secondary, emote: new Emoji("🎲"))
-            ;
-
-        await RespondAsync(embed: embed, components: compBuilder.Build()).ConfigureAwait(false);
+    [SlashCommand("vow", "Create a vow progress track for the Swear an Iron Vow move.")]
+    public async Task BuildVowTrack(
+     [Summary(description: "The vow's objective.")]
+    string title,
+     [Summary(description: "The challenge rank of the progress track.")]
+    ChallengeRank rank,
+     [Summary(description: "An optional description.")]
+    string description="",
+     [Summary(description: "A score to pre-set the track, if desired.")]
+    [MinValue(0)][MaxValue(10)]
+    int score = 0
+   ) {
+        VowTrack track = new(dbContext: DbContext, rank: rank, ticks: score * ITrack.BoxSize, title: title, description: description);
+        await RespondAsync(embed: track.ToEmbed().Build(), components: track.MakeComponents().Build());
     }
 
-    public virtual string GetProgressGraphic(int Ticks)
-    {
-        //Use standard characters as stand-ins so that we can do easy string math
-        string fill = new string('#', (int)Math.Floor(Ticks / 4d));
-        string finalTickMark = ((Ticks % 4) == 1) ? "-" : ((Ticks % 4) == 2) ? "+" : ((Ticks % 4) == 3) ? "*" : string.Empty;
-        fill = (fill + finalTickMark).PadRight(10, '·');
-        fill += "\u200C"; //special hidden character for mobile formatting small emojis
+    // [SlashCommand("connection", "Create a connection progress track for an NPC.")]
 
-        fill = String.Join(' ', fill.ToCharArray()); //Add spaces between each character
+    // TODO: revisit this once there's a good system for NPC embeds
 
-        //Replace all the stand-in characters with emojis
-        fill = fill.Replace("·", "<:progress0:880599822468534374>");
-        fill = fill.Replace("-", "<:progress1:880599822736965702>");
-        fill = fill.Replace("+", "<:progress2:880599822724390922>");
-        fill = fill.Replace("*", "<:progress3:880599822736957470>");
-        fill = fill.Replace("#", "<:progress4:880599822820864060>");
-
-        return fill;
+    [SlashCommand("expedition", "Create an expedition progress track for the Undertake an Expedition move.")]
+    public async Task BuildExpeditionTrack(
+    [Summary(description: "The expedition's name.")]
+    string title,
+    [Summary(description: "The challenge rank of the progress track.")]
+    ChallengeRank rank,
+    [Summary(description: "An optional description.")]
+    string description="",
+    [Summary(description: "A score to pre-set the track, if desired.")]
+  [MinValue(0)][MaxValue(10)]
+    int score = 0
+      ) {
+        ExpeditionTrack track = new(dbContext: DbContext, rank: rank, ticks: score * ITrack.BoxSize, title: title, description: description);
+        await RespondAsync(embed: track.ToEmbed().Build(), components: track.MakeComponents().Build());
     }
 
-    public virtual string BuildProgressAmount(int ticks)
-    {
-        return $"{(int)(ticks / 4)}/10";
+    [SlashCommand("combat", "Create a combat progress track when you Enter the Fray.")]
+    public async Task BuildCombatTrack(
+    [Summary(description: "The combat objective.")]
+    string title,
+    [Summary(description: "The challenge rank of the progress track.")]
+    ChallengeRank rank,
+    [Summary(description: "An optional description.")]
+    string description="",
+    [Summary(description: "A score to pre-set the track, if desired.")]
+    [MinValue(0)][MaxValue(10)]
+    int score = 0
+  ) {
+        CombatTrack track = new(dbContext: DbContext, rank: rank, ticks: score * ITrack.BoxSize, title: title, description: description);
+        await RespondAsync(embed: track.ToEmbed().Build(), components: track.MakeComponents().Build());
     }
 
-    [ComponentInteraction("add-progress")]
-    public async Task AddProgress()
-    {
-        var interaction = Context.Interaction as SocketMessageComponent;
-
-        await interaction.UpdateAsync(msg =>
-        {
-            var embed = interaction.Message.Embeds.FirstOrDefault().ToEmbedBuilder();
-            msg.Embeds = ChangeProgress(embed);
-        }).ConfigureAwait(false);
+    [SlashCommand("generic", "Create a generic progress track")]
+    public async Task BuildProgressTrack(
+      [Summary(description: "A title for the progress track.")]
+    string title,
+      [Summary(description: "The challenge rank of the progress track.")]
+    ChallengeRank rank,
+      [Summary(description: "An optional description.")]
+    string description="",
+      [Summary(description: "A score to pre-set the track, if desired.")][MinValue(0)][MaxValue(10)]
+    int score = 0
+    ) {
+        GenericTrack track = new(dbContext: DbContext, rank: rank, ticks: score * ITrack.BoxSize, title: title, description: description);
+        await RespondAsync(embed: track.ToEmbed().Build(), components: track.MakeComponents().Build());
     }
 
-    [ComponentInteraction("lose-progress")]
-    public async Task LoseProgress()
-    {
-        var interaction = Context.Interaction as SocketMessageComponent;
-
-        await interaction.UpdateAsync(msg =>
-        {
-            var embed = interaction.Message.Embeds.FirstOrDefault().ToEmbedBuilder();
-            msg.Embeds = ChangeProgress(embed, -1);
-        }).ConfigureAwait(false);
-    }
-
-    [ComponentInteraction("add-full-progress")]
-    public async Task AddFullProgress()
-    {
-        var interaction = Context.Interaction as SocketMessageComponent;
-
-        await interaction.UpdateAsync(msg =>
-        {
-            var embed = interaction.Message.Embeds.FirstOrDefault().ToEmbedBuilder();
-            msg.Embeds = ChangeProgress(embed, exactAmount: 4);
-        }).ConfigureAwait(false);
-    }
-
-    [ComponentInteraction("roll-progress")]
-    public async Task RollProgress()
-    {
-        var interaction = Context.Interaction as SocketMessageComponent;
-        if (!int.TryParse(interaction.Message.Embeds.FirstOrDefault().Footer?.Text?.Replace("Ticks: ", ""), out int ticks))
-        {
-            await RespondAsync("Unknown progress type");
-        }
-        var roll = new ProgressRoll(random, ticks / 4, interaction.Message.Embeds.FirstOrDefault().Description);
-
-        await interaction.RespondAsync(embed: roll.ToEmbed().WithAuthor($"Progress Roll").Build()).ConfigureAwait(false);
-    }
-
-    private Embed[] ChangeProgress(EmbedBuilder embed, int delta = 1, int? exactAmount = null)
-    {
-        if (!int.TryParse(embed.Footer.Text.Replace("Ticks: ", ""), out int ticks)) return new Embed[] { embed.Build() };
-        if (!Enum.TryParse<ChallengeRank>(embed.Fields.Find(f => f.Name == "Difficulty")?.Value.ToString(), out var rank)) return new Embed[] { embed.Build() };
-
-        ticks += (exactAmount == null) ? TicksToAdd(rank) * delta : exactAmount.Value;
-        embed.WithFooter($"Ticks: {ticks}");
-
-        int amountIndex = embed.Fields.FindIndex(f => f.Name == "Progress Amount");
-        embed.Fields[amountIndex].Value = BuildProgressAmount(ticks);
-
-        int barIndex = embed.Fields.FindIndex(f => f.Name == "Progress Bar");
-        embed.Fields[barIndex].Value = GetProgressGraphic(ticks);
-
-        return new Embed[] { embed.Build() };
-    }
-
-    public virtual int TicksToAdd(ChallengeRank rank)
-    {
-        switch (rank)
-        {
-            case ChallengeRank.Troublesome:
-                return troublesomeTicks;
-
-            case ChallengeRank.Dangerous:
-                return dangerousTicks;
-
-            case ChallengeRank.Formidable:
-                return formidableTicks;
-
-            case ChallengeRank.Extreme:
-                return extremeTicks;
-
-            case ChallengeRank.Epic:
-                return epicTicks;
-
-            default:
-                return 0;
-        }
+    [SlashCommand("scene-challenge", "Create a scene challenge for extended non-combat scenes against threats or other characters (p. 235)")]
+    public async Task BuildSceneChallenge(
+     [Summary(description: "The scene challenge's objective.")]
+    string title,
+     [Summary(description: "The number of clock segments. Default = 6, severe disadvantage = 4, strong advantage = 8.")]
+    SceneChallengeClockSize segments=SceneChallengeClockSize.Six,
+     [Summary(description: "An optional description.")]
+    string description = "",
+     [Summary(description: "A score to pre-set the track, if desired.")] [MinValue(0)] [MaxValue(10)]
+    int score = 0) {
+        // intentionally the same as /clock scene-challenge
+        // because it has both a clock and a progress track.
+        SceneChallenge sceneChallenge = new(dbContext: DbContext, segments: segments, filledSegments: 0, ticks: score * ITrack.BoxSize, title: title, description: description);
+        EmbedBuilder embed = sceneChallenge.ToEmbed();
+        ComponentBuilder components = sceneChallenge.MakeComponents();
+        await RespondAsync(
+          embed: embed.Build(),
+          components: components.Build()
+          );
     }
 }

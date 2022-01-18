@@ -371,5 +371,8 @@ omnisharp.json
 
 # local configuration
 debugGuilds.json
-GameContent.db
 token.json
+
+# gamecontent db
+GameContent.db
+GameContent.db*
