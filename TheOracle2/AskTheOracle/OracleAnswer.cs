@@ -12,8 +12,8 @@ public class OracleAnswer : Die, IMatchable
     public string Question { get; set; }
     public int Odds { get; }
     public bool IsYes => Value <= Odds;
-    public bool IsMatch => MatchResults.Contains(Value);
-    private static readonly List<int> MatchResults = new() { 11, 22, 33, 44, 55, 66, 77, 88, 99, 100 };
+
+    public bool IsMatch => Value == 100 || Value % 11 == 0;
 
     public override string ToString()
     {
