@@ -167,10 +167,10 @@ public abstract class ProgressTrack : IProgressTrack, IMoveRef {
     }
     /// <inheritdoc/>
     public EmbedBuilder Mark(int addTicks) {
-        return Mark(addTicks);
+        return Mark(addTicks, MarkAlertTitle);
     }
     /// <inheritdoc/>
     public EmbedBuilder Mark() {
-        return Mark(RankData.MarkTrack);
+        return Mark(RankData.MarkTrack, MarkAlertTitle);
     }
 }
