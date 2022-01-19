@@ -1,6 +1,7 @@
 ﻿using Discord.Interactions;
 using Discord.WebSocket;
 using Microsoft.EntityFrameworkCore;
+using TheOracle2.UserContent;
 
 namespace TheOracle2.GameObjects;
 
@@ -79,7 +80,7 @@ public class PlayerCharacter
     public ulong DiscordGuildId { get; set; }
     public ulong MessageId { get; set; }
     public ulong ChannelId { get; set; }
-    public string Name { get; set;  }
+    public string Name { get; set; }
     public int Edge { get => edge; set => edge = (value >= 4) ? 4 : (value <= 1) ? 1 : value; }
     public int Heart { get => heart; set => heart = (value >= 4) ? 4 : (value <= 1) ? 1 : value; }
     public int Iron { get => iron; set => iron = (value >= 4) ? 4 : (value <= 1) ? 1 : value; }
@@ -99,5 +100,9 @@ public class PlayerCharacter
     internal void BurnMomentum()
     {
         Momentum = Math.Max(2 - Impacts.Count, 0);
+    }
+    public GuildPlayer GetLastGuildPlayer(EFContext dbContext)
+    {
+        return dbContext.GuildPlayers.FirstOrDefault(guildPlayer => guildPlayer.LastUsedPcId == Id);
     }
 }
