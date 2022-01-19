@@ -78,4 +78,12 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <EditorConfigFiles Remove="C:\Users\Dom\source\repos\TheOracle2\TheOracle2\.editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="C:\Users\Dom\source\repos\TheOracle2\TheOracle2\.editorconfig" />
+  </ItemGroup>
+
 </Project>
