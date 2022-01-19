@@ -21,11 +21,26 @@ public class PlayerCardCommand : InteractionModuleBase<SocketInteractionContext>
         await DeferAsync();
         var pc = new PlayerCharacter(Context, name, edge, heart, iron, shadow, wits);
         DbContext.PlayerCharacters.Add(pc);
+        var userId = Context.Interaction.User.Id;
+        var guildId = Context.Guild?.Id ?? userId;
+        var guildPlayer = DbContext.GuildPlayers.Find(userId, guildId);
+        if (guildPlayer == null)
+        {
+            guildPlayer = new GuildPlayer(Context);
+            DbContext.GuildPlayers.Add(guildPlayer);
+        }
+
         await DbContext.SaveChangesAsync();
 
-        var entity = new PlayerCharacterEntity(pc);
-
-        await FollowupAsync(embeds: entity.GetEmbeds(), components: entity.GetComponents());
+        if (guildPlayer.LastUsedPcId != pc.Id)
+        {
+            guildPlayer.LastUsedPcId = pc.Id;
+            await DbContext.SaveChangesAsync();
+        }
+        // for debugging without having to alt tab. can be safely removed once this draft PR is finalized
+        // string json = "```" + JsonConvert.SerializeObject(guildPlayer, Formatting.Indented) + "```";
+        // var entity = new PlayerCharacterEntity(pc);
+        // await FollowupAsync(text: json, embeds: entity.GetEmbeds(), components: entity.GetComponents());
     }
 }
 
@@ -158,7 +173,18 @@ public class PlayerCardComponents : InteractionModuleBase<SocketInteractionConte
     {
         if (!int.TryParse(pcId, out var Id)) return;
         var pc = DbContext.PlayerCharacters.Find(Id);
-
+        var userId = Context.User.Id;
+        var guildId = Context.Guild?.Id ?? Context.User.Id;
+        var guildPlayer = DbContext.GuildPlayers.Find(userId, guildId);
+        if (guildPlayer != null)
+        {
+            guildPlayer.LastUsedPcId = Id;
+        }
+        if (guildPlayer == null)
+        {
+            guildPlayer = new GuildPlayer(userId, guildId, Id);
+            DbContext.GuildPlayers.Add(guildPlayer);
+        }
         if (pc.MessageId != Context.Interaction.Message.Id)
         {
             pc.MessageId = Context.Interaction.Message.Id;
@@ -173,5 +199,8 @@ public class PlayerCardComponents : InteractionModuleBase<SocketInteractionConte
         {
             msg.Embeds = entity.GetEmbeds();
         }).ConfigureAwait(false);
+        // for debugging without having to alt tab. can be safely removed once this draft PR is finalized
+        // string json = "```" + JsonConvert.SerializeObject(guildPlayer, Formatting.Indented) + "```";
+        // await Context.Interaction.FollowupAsync(json);
     }
 }
