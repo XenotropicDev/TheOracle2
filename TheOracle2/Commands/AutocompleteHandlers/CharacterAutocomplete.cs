@@ -12,22 +12,26 @@ public class CharacterAutocomplete : AutocompleteHandler
     {
         try
         {
+
             IEnumerable<AutocompleteResult> successList = new List<AutocompleteResult>();
 
-            var value = autocompleteInteraction.Data.Current.Value as string;
+            var userText = autocompleteInteraction.Data.Current.Value as string;
+            var userId = autocompleteInteraction.User.Id;
             var guildId = (context.Guild?.Id ?? autocompleteInteraction.User.Id);
-
-            if (string.IsNullOrEmpty(value))
+            var guildPlayer = Db.GuildPlayers.Find(userId, guildId);
+            var lastUsedPcId = guildPlayer?.LastUsedPcId ?? 0;
+            IEnumerable<GameObjects.PlayerCharacter> characterList = new List<GameObjects.PlayerCharacter>();
+            characterList = string.IsNullOrEmpty(userText) switch
             {
-                var defaultChars = Db.PlayerCharacters.Where(c => c.DiscordGuildId == guildId);
-                if (defaultChars.Count() > 10) defaultChars = defaultChars.Where(c => c.UserId == context.User.Id);
-                successList = defaultChars.Select(x => new AutocompleteResult(x.Name, x.Id.ToString())).Take(SelectMenuBuilder.MaxOptionCount);
-                return Task.FromResult(AutocompletionResult.FromSuccess(successList));
+                true => Db.PlayerCharacters.Where(c => c.DiscordGuildId == guildId),
+                false => Db.PlayerCharacters.Where(c => c.DiscordGuildId == guildId && EF.Functions.Like(c.Name, $"{userText}%"))
+            };
+            if (characterList.Count() > 10)
+            {
+                characterList = characterList.Where(c => c.UserId == context.User.Id);
             }
+            successList = characterList.Select(x => new AutocompleteResult(x.Name, x.Id.ToString())).OrderBy(result => result.Value.ToString() != lastUsedPcId.ToString()).Take(SelectMenuBuilder.MaxOptionCount);
 
-            var characters = Db.PlayerCharacters.Where(c => c.DiscordGuildId == guildId && EF.Functions.Like(c.Name, $"{value}%"));
-            if (characters.Count() > 10) characters = characters.Where(c => c.UserId == context.User.Id);
-            successList = characters.Select(x => new AutocompleteResult(x.Name, x.Id.ToString())).Take(SelectMenuBuilder.MaxOptionCount);
             return Task.FromResult(AutocompletionResult.FromSuccess(successList));
         }
         catch (Exception ex)
