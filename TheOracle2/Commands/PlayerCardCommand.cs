@@ -15,32 +15,25 @@ public class PlayerCardCommand : InteractionModuleBase<SocketInteractionContext>
 
     public EFContext DbContext { get; }
 
+    public GuildPlayer GuildPlayer => GuildPlayer.AddIfMissing(Context, DbContext);
+
+    public override void AfterExecute(ICommandInfo command)
+    {
+        DbContext.SaveChanges();
+    }
+
     [SlashCommand("player", "Generates a post to keep track of a player character's stats")]
     public async Task BuildPlayerCard(string name, [MaxValue(4)][MinValue(1)] int edge, [MaxValue(4)][MinValue(1)] int heart, [MaxValue(4)][MinValue(1)] int iron, [MaxValue(4)][MinValue(1)] int shadow, [MaxValue(4)][MinValue(1)] int wits)
     {
         await DeferAsync();
         var pc = new PlayerCharacter(Context, name, edge, heart, iron, shadow, wits);
         DbContext.PlayerCharacters.Add(pc);
-        var userId = Context.Interaction.User.Id;
-        var guildId = Context.Guild?.Id ?? userId;
-        var guildPlayer = DbContext.GuildPlayers.Find(userId, guildId);
-        if (guildPlayer == null)
-        {
-            guildPlayer = new GuildPlayer(Context);
-            DbContext.GuildPlayers.Add(guildPlayer);
-        }
-
         await DbContext.SaveChangesAsync();
-
-        if (guildPlayer.LastUsedPcId != pc.Id)
+        // AfterExecute does SaveChanges, but the PC has to be saved to the DB to get an Id.
+        if (GuildPlayer.LastUsedPcId != pc.Id)
         {
-            guildPlayer.LastUsedPcId = pc.Id;
-            await DbContext.SaveChangesAsync();
+            GuildPlayer.LastUsedPcId = pc.Id;
         }
-        // for debugging without having to alt tab. can be safely removed once this draft PR is finalized
-        // string json = "```" + JsonConvert.SerializeObject(guildPlayer, Formatting.Indented) + "```";
-        // var entity = new PlayerCharacterEntity(pc);
-        // await FollowupAsync(text: json, embeds: entity.GetEmbeds(), components: entity.GetComponents());
     }
 }
 
@@ -50,9 +43,12 @@ public class PlayerCardComponents : InteractionModuleBase<SocketInteractionConte
     {
         DbContext = dbContext;
     }
-
+    public GuildPlayer GuildPlayer => GuildPlayer.AddIfMissing(Context, DbContext);
     public EFContext DbContext { get; }
-
+    public override void AfterExecute(ICommandInfo command)
+    {
+        DbContext.SaveChanges();
+    }
     [ComponentInteraction("add-momentum-*")]
     public async Task AddMomentum(string pcId)
     {
@@ -172,35 +168,22 @@ public class PlayerCardComponents : InteractionModuleBase<SocketInteractionConte
     private async Task UpdatePCValue(string pcId, Action<PlayerCharacter> change)
     {
         if (!int.TryParse(pcId, out var Id)) return;
-        var pc = DbContext.PlayerCharacters.Find(Id);
-        var userId = Context.User.Id;
-        var guildId = Context.Guild?.Id ?? Context.User.Id;
-        var guildPlayer = DbContext.GuildPlayers.Find(userId, guildId);
-        if (guildPlayer != null)
-        {
-            guildPlayer.LastUsedPcId = Id;
-        }
-        if (guildPlayer == null)
-        {
-            guildPlayer = new GuildPlayer(userId, guildId, Id);
-            DbContext.GuildPlayers.Add(guildPlayer);
-        }
+
+        var pc = await DbContext.PlayerCharacters.FindAsync(Id);
         if (pc.MessageId != Context.Interaction.Message.Id)
         {
             pc.MessageId = Context.Interaction.Message.Id;
             pc.ChannelId = Context.Interaction.Channel.Id;
         }
-
         change(pc);
-        await DbContext.SaveChangesAsync();
+        GuildPlayer.LastUsedPcId = Id;
+        // await DbContext.SaveChangesAsync();
+        // TODO: commenting out the above to see what breaks.
 
         var entity = new PlayerCharacterEntity(pc);
         await Context.Interaction.UpdateAsync(msg =>
         {
             msg.Embeds = entity.GetEmbeds();
         }).ConfigureAwait(false);
-        // for debugging without having to alt tab. can be safely removed once this draft PR is finalized
-        // string json = "```" + JsonConvert.SerializeObject(guildPlayer, Formatting.Indented) + "```";
-        // await Context.Interaction.FollowupAsync(json);
     }
 }

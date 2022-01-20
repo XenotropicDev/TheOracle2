@@ -16,6 +16,14 @@ public class PlayerRollCommand : InteractionModuleBase
 
     public Random Random { get; }
     public EFContext EfContext { get; }
+    public GuildPlayer GuildPlayer => GuildPlayer.AddIfMissing(Context, EfContext);
+
+    public override async Task AfterExecuteAsync(ICommandInfo command)
+    {
+        await EfContext.SaveChangesAsync().ConfigureAwait(false);
+        // string json = JsonConvert.SerializeObject(GuildPlayer, Formatting.Indented);
+        // Console.WriteLine(json);
+    }
 
     [SlashCommand("action-pc-roll", "Performs an Ironsworn action roll using a player character's stats.")]
     public async Task ActionRoll(
@@ -50,7 +58,7 @@ public class PlayerRollCommand : InteractionModuleBase
             var msg = await channel.GetMessageAsync(pc.MessageId);
             author.WithUrl(msg.GetJumpUrl());
         }
-
+        GuildPlayer.LastUsedPcId = pc.Id;
         await RespondAsync(embed: roll.ToEmbed().WithAuthor(author).Build(), components: component?.Build()).ConfigureAwait(false);
     }
 
@@ -79,7 +87,7 @@ public class PCRollComponents : InteractionModuleBase<SocketInteractionContext<S
         EfContext = efContext;
         Random = random;
     }
-
+    public GuildPlayer GuildPlayer => GuildPlayer.AddIfMissing(Context, EfContext);
     public Random Random { get; }
     public EFContext EfContext { get; }
 
@@ -101,6 +109,7 @@ public class PCRollComponents : InteractionModuleBase<SocketInteractionContext<S
         roll.ActionDie = new Die(Random, 10, pc.Momentum);
 
         pc.BurnMomentum();
+        GuildPlayer.LastUsedPcId = pc.Id;
         await EfContext.SaveChangesAsync();
 
         if (pc.ChannelId == 0 || pc.MessageId == 0)
