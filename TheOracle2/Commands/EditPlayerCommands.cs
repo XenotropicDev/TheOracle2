@@ -15,16 +15,22 @@ public class EditPlayerPaths : InteractionModuleBase
     {
         DbContext = dbContext;
     }
+    public override async Task AfterExecuteAsync(ICommandInfo command)
+    {
+        var pcIdString = command.Parameters.FirstOrDefault(item => item.Name is "character" or "pcId")?.ToString();
+        if (int.TryParse(pcIdString, out var pcId))
+        {
+            GuildPlayer.AddIfMissing(Context, DbContext, pcId);
+        }
+        await DbContext.SaveChangesAsync().ConfigureAwait(false);
+    }
 
     [SlashCommand("add-impact", "Changes the impacts on a character")]
     public async Task SetImpacts([Autocomplete(typeof(CharacterAutocomplete))] string character, string impact)
     {
         if (!int.TryParse(character, out var id)) return;
         var pc = await DbContext.PlayerCharacters.FindAsync(id);
-
         pc.Impacts.Add(impact);
-        await DbContext.SaveChangesAsync();
-
         await RespondAsync($"Impacts will update next time you trigger an interaction on that character card", ephemeral: true);
 
         //await pc.RedrawCard(Context.Client);
@@ -46,6 +52,7 @@ public class EditPlayerPaths : InteractionModuleBase
         {
             await RespondAsync($"You are not allowed to delete this player character.", ephemeral: true);
         }
+        // TODO: if PC is removed, what happens to GuildPlayers that have it as LastUsedPcId? should it be deleted from all GuildPlayer here, or hooked into something else? maybe it's something the PC autocomplete could handle - if the GuildPlayer has an invalid LastUsedPcId, it's set to 0.
 
         await RespondAsync($"Are you sure you want to delete {pc.Name}?\nMomentum: {pc.Momentum}, xp: {pc.XpGained}\nPlayer id: {pc.Id}, last known message id: {pc.MessageId}",
             components: new ComponentBuilder()
@@ -91,7 +98,6 @@ public class EditPlayerComponents : InteractionModuleBase<SocketInteractionConte
         try
         {
             EfContext.PlayerCharacters.Remove(pc);
-            await EfContext.SaveChangesAsync();
         }
         catch (Exception ex)
         {
