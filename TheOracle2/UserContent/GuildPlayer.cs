@@ -34,4 +34,54 @@ public class GuildPlayer
     /// The id of the PlayerCharacter last touched by the GuildPlayer.
     /// </summary>
     public int LastUsedPcId { get; set; }
+
+    /// <summary>
+    /// Finds a GuildPlayer by their user id and guild id; if they don't exist, creates a new GuildPlayer for those ids. Returns the GuildPlayer.
+    /// </summary>
+    /// <param name="DbContext"></param>
+    /// <param name="userId"></param>
+    /// <param name="guildId"></param>
+    /// <param name="pcId">Optional, a value to set LastUsedPcId.</param>
+    public static GuildPlayer AddIfMissing(EFContext DbContext, ulong userId, ulong guildId, int pcId = 0)
+    {
+        var guildPlayer = DbContext.GuildPlayers.Find(userId, guildId);
+        if (guildPlayer == null)
+        {
+            guildPlayer = new GuildPlayer(userId, guildId);
+            DbContext.GuildPlayers.Add(guildPlayer);
+        }
+        if (pcId != 0)
+        {
+            guildPlayer.LastUsedPcId = pcId;
+        }
+        return guildPlayer;
+    }
+    /// <summary>
+    /// Finds a GuildPlayer by their user id and guild id; if they don't exist, creates a new GuildPlayer for those ids. Returns the GuildPlayer.
+    /// </summary>
+    /// <param name="Context"></param>
+    /// <param name="DbContext"></param>
+    /// <param name="pcId">Optional, a value to set LastUsedPcId.</param>
+    public static GuildPlayer AddIfMissing(IInteractionContext Context, EFContext DbContext, int pcId = 0)
+    {
+        var userId = Context.Interaction.User.Id;
+        var guildId = Context.Guild?.Id ?? userId;
+        return AddIfMissing(DbContext, userId, guildId, pcId);
+    }
+    public PlayerCharacter LastUsedPc(EFContext DbContext)
+    {
+        if (LastUsedPcId == 0)
+        {
+            return null;
+        }
+        return DbContext.PlayerCharacters.Find(LastUsedPcId);
+    }
+    public void CleanupLastUsedPc(EFContext DbContext)
+    {
+        if (LastUsedPc(DbContext) == null && this.LastUsedPcId != 0)
+        {
+            this.LastUsedPcId = 0;
+        }
+        return;
+    }
 }
