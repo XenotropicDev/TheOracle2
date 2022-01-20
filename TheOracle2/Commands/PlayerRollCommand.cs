@@ -27,21 +27,22 @@ public class PlayerRollCommand : InteractionModuleBase
 
     [SlashCommand("action-pc-roll", "Performs an Ironsworn action roll using a player character's stats.")]
     public async Task ActionRoll(
-        [Summary(description: "The character to use for the roll")][Autocomplete(typeof(CharacterAutocomplete))] string character,
         [Summary(description: "The stat value to use for the roll")] RollableStats stat,
         [Summary(description: "Any adds to the roll")][MinValue(0)] int adds,
+        [Summary(description: "The character to use for the roll")][Autocomplete(typeof(CharacterAutocomplete))] string character = "last",
         [Summary(description: "Any notes, fiction, or other text you'd like to include with the roll")] string description = "",
         [Summary(description: "A preset value for the Action Die (d6) to use instead of rolling.")][MinValue(1)][MaxValue(6)] int? actionDie = null,
         [Summary(description: "A preset value for the first Challenge Die (d10) to use instead of rolling.")][MinValue(1)][MaxValue(10)] int? challengeDie1 = null,
         [Summary(description: "A preset value for the second Challenge Die (d10) to use instead of rolling.")][MinValue(1)][MaxValue(10)] int? challengeDie2 = null)
     {
-        if (!int.TryParse(character, out int id))
+        var id = 0;
+        if (character != "last" && !int.TryParse(character, out id))
         {
             await RespondAsync($"Unknown character", ephemeral: true);
             return;
         }
 
-        var pc = EfContext.PlayerCharacters.Find(id);
+        var pc = character == "last" ? GuildPlayer.LastUsedPc(EfContext) : EfContext.PlayerCharacters.Find(id);
 
         var roll = new ActionRoll(Random, GetStatValue(stat, pc), adds, GetStatValue(RollableStats.Momentum, pc), description, actionDie, challengeDie1, challengeDie2);
 
