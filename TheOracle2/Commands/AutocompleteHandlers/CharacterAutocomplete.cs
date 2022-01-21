@@ -30,7 +30,7 @@ public class CharacterAutocomplete : AutocompleteHandler
             {
                 characterList = characterList.Where(c => c.UserId == context.User.Id);
             }
-            successList = characterList.Select(x => new AutocompleteResult(x.Name, x.Id.ToString())).OrderBy(result => result.Value.ToString() != lastUsedPcId.ToString()).Take(SelectMenuBuilder.MaxOptionCount);
+            successList = characterList.Select(x => new AutocompleteResult(x.Name, x.Id.ToString())).Take(SelectMenuBuilder.MaxOptionCount);
 
             return Task.FromResult(AutocompletionResult.FromSuccess(successList));
         }
