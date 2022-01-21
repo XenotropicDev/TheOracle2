@@ -1,4 +1,5 @@
-﻿using Discord.Interactions;
+﻿using System.Text.RegularExpressions;
+using Discord.Interactions;
 using Discord.WebSocket;
 using TheOracle2.DiscordHelpers;
 using TheOracle2.GameObjects;
@@ -21,63 +22,85 @@ public class PlayerRollCommand : InteractionModuleBase
     public override async Task AfterExecuteAsync(ICommandInfo command)
     {
         await EfContext.SaveChangesAsync().ConfigureAwait(false);
-        // string json = JsonConvert.SerializeObject(GuildPlayer, Formatting.Indented);
-        // Console.WriteLine(json);
     }
 
     [SlashCommand("action-pc-roll", "Performs an Ironsworn action roll using a player character's stats.")]
     public async Task ActionRoll(
         [Summary(description: "The stat value to use for the roll")] RollableStats stat,
         [Summary(description: "Any adds to the roll")][MinValue(0)] int adds,
-        [Summary(description: "The character to use for the roll")][Autocomplete(typeof(CharacterAutocomplete))] string character = "last",
+        [Summary(description: "The character to use for the roll. Leave this blank to use the last PC you interacted with.")][Autocomplete(typeof(CharacterAutocomplete))] string character = "last",
         [Summary(description: "Any notes, fiction, or other text you'd like to include with the roll")] string description = "",
         [Summary(description: "A preset value for the Action Die (d6) to use instead of rolling.")][MinValue(1)][MaxValue(6)] int? actionDie = null,
         [Summary(description: "A preset value for the first Challenge Die (d10) to use instead of rolling.")][MinValue(1)][MaxValue(10)] int? challengeDie1 = null,
         [Summary(description: "A preset value for the second Challenge Die (d10) to use instead of rolling.")][MinValue(1)][MaxValue(10)] int? challengeDie2 = null)
     {
         var id = 0;
-        if (character != "last" && !int.TryParse(character, out id))
+        PlayerCharacter pcData = null;
+
+        if (character == "last")
         {
-            await RespondAsync($"Unknown character", ephemeral: true);
+            pcData = GuildPlayer.LastUsedPc(EfContext);
+        }
+        if (int.TryParse(character, out id))
+        {
+            pcData = EfContext.PlayerCharacters.Find(id);
+        }
+        if (pcData == null)
+        {
+            string errorMessage = character == "last" ? "I couldn't find a recently used player character for you on this server." : $"I couldn't find a character with an Id of {id} on this server.";
+
+            errorMessage += "If you want to create a character, use the `/player` command.";
+
+            var fallbackPcs = GuildPlayer.GetPcs(EfContext);
+            ComponentBuilder components = null;
+            if (fallbackPcs.Any())
+            {
+                components = new ComponentBuilder();
+                errorMessage += $"\n\nOr select from one of your characters below to roll +{stat}";
+                if (!string.IsNullOrEmpty(description))
+                {
+                    errorMessage += $" ({description})";
+                }
+                errorMessage += ":";
+                if (fallbackPcs.Count() <= 5)
+                {
+                    foreach (PlayerCharacter fallbackPc in fallbackPcs)
+                    {
+                        components.WithButton(fallbackPc.Name, $"finish-action-roll:{fallbackPc.Id},{stat},{adds},{actionDie},{challengeDie1},{challengeDie2}");
+                    }
+                }
+
+                if (fallbackPcs.Count() > 5)
+                {
+                    if (fallbackPcs.Count() > 25) { fallbackPcs = fallbackPcs.Take(25); }
+
+                    var menu = new SelectMenuBuilder()
+                    .WithCustomId($"finish-action-roll-menu:{stat},{adds},{actionDie},{challengeDie1},{challengeDie2}")
+
+                    .WithOptions(
+                        fallbackPcs.Select(fallbackPc => new SelectMenuOptionBuilder(
+                            fallbackPc.Name,
+                            fallbackPc.Id.ToString()
+                        )).ToList()
+                    )
+                    ;
+
+                }
+            }
+            await RespondAsync(errorMessage, components: components?.Build(), ephemeral: true).ConfigureAwait(false);
             return;
         }
 
-        var pc = character == "last" ? GuildPlayer.LastUsedPc(EfContext) : EfContext.PlayerCharacters.Find(id);
-
-        var roll = new ActionRoll(Random, GetStatValue(stat, pc), adds, GetStatValue(RollableStats.Momentum, pc), description, actionDie, challengeDie1, challengeDie2);
-
-        ComponentBuilder component = null;
-        if (roll.IsBurnable && !roll.IsBurnt)
+        var pc = new PlayerCharacterEntity(pcData);
+        var roll = pc.RollAction(this.Random, stat, adds, description, actionDie, challengeDie1, challengeDie2);
+        var embed = roll.ToEmbed();
+        if (pcData.MessageId > 0)
         {
-            component = new ComponentBuilder()
-              .WithButton(roll.MomentumBurnButton(id));
+            var characterSheet = await Task.Run(() => pc.GetDiscordMessage(Context));
+            embed.Author.Url = characterSheet.GetJumpUrl();
         }
-        EmbedAuthorBuilder author = new EmbedAuthorBuilder().WithName($"{roll.EmbedCategory}: +{stat}");
-        if (pc.MessageId > 0)
-        {
-            IMessageChannel channel = (pc.ChannelId == Context.Channel.Id) ? Context.Channel : await (Context.Client as DiscordSocketClient).Rest.GetChannelAsync(pc.ChannelId) as IMessageChannel;
-            var msg = await channel.GetMessageAsync(pc.MessageId);
-            author.WithUrl(msg.GetJumpUrl());
-        }
-        GuildPlayer.LastUsedPcId = pc.Id;
-        await RespondAsync(embed: roll.ToEmbed().WithAuthor(author).Build(), components: component?.Build()).ConfigureAwait(false);
-    }
-
-    private int GetStatValue(RollableStats stat, PlayerCharacter pc)
-    {
-        return stat switch
-        {
-            RollableStats.Edge => pc.Edge,
-            RollableStats.Heart => pc.Heart,
-            RollableStats.Iron => pc.Iron,
-            RollableStats.Shadow => pc.Shadow,
-            RollableStats.Wits => pc.Wits,
-            RollableStats.Health => pc.Health,
-            RollableStats.Spirit => pc.Spirit,
-            RollableStats.Supply => pc.Supply,
-            RollableStats.Momentum => pc.Momentum,
-            _ => throw new NotImplementedException(),
-        };
+        GuildPlayer.LastUsedPcId = pcData.Id;
+        await RespondAsync(embed: roll.ToEmbed().Build(), components: roll.MakeComponents()?.Build()).ConfigureAwait(false);
     }
 }
 
@@ -91,7 +114,57 @@ public class PCRollComponents : InteractionModuleBase<SocketInteractionContext<S
     public GuildPlayer GuildPlayer => GuildPlayer.AddIfMissing(Context, EfContext);
     public Random Random { get; }
     public EFContext EfContext { get; }
+    public override async Task AfterExecuteAsync(ICommandInfo command)
+    {
+        await EfContext.SaveChangesAsync().ConfigureAwait(false);
+    }
+    /// <summary>
+    /// Provides fallback options when the player character action roll command receives an invalid id.
+    /// </summary>
+    [ComponentInteraction("finish-action-roll:*,*,*,*,*,*")]
+    public async Task FinishActionRoll
+        (string pcIdString, string statString, string addsString, string actionDieString, string challengeDie1String, string challengeDie2String)
+    {
 
+        await DeferAsync();
+        if (!int.TryParse(pcIdString, out var pcId))
+        {
+            throw new Exception($"Unable to parse entity ID from {Context.Interaction.Data.CustomId}");
+        }
+        var pcData = await EfContext.PlayerCharacters.FindAsync(pcId);
+        var pcEntity = new PlayerCharacterEntity(pcData);
+
+        var description = Context.Interaction.Message.Content;
+        description = Regex.Match(description, @"\((.*)\):$")?.Groups[1].Value ?? "";
+        var stat = Enum.Parse<RollableStats>(statString);
+        var adds = int.Parse(addsString);
+
+        int? actionDie = !string.IsNullOrEmpty(actionDieString) ? int.Parse(actionDieString) : null;
+        int? challengeDie1 = !string.IsNullOrEmpty(challengeDie1String) ? int.Parse(challengeDie1String) : null;
+        int? challengeDie2 = !string.IsNullOrEmpty(challengeDie2String) ? int.Parse(challengeDie2String) : null;
+
+
+        var roll = pcEntity.RollAction(this.Random, stat, adds, description, actionDie, challengeDie1, challengeDie2);
+
+        var embed = roll.ToEmbed();
+        var characterSheet = await Task.Run(() => pcEntity.GetDiscordMessage(Context));
+
+        embed.Author.Url = characterSheet.GetJumpUrl();
+
+        GuildPlayer.LastUsedPcId = pcEntity.Pc.Id;
+
+        await FollowupAsync(embed: roll.ToEmbed().Build(), components: roll.MakeComponents().Build()).ConfigureAwait(false);
+        return;
+    }
+    /// <summary>
+    /// Provides fallback options when the player character action roll command receives an invalid id.
+    /// </summary>
+    [ComponentInteraction("finish-action-roll-menu:*,*,*,*,*")]
+    public async Task FinishActionRoll(string statString, string addsString, string actionDieString, string challengeDie1String, string challengeDie2String)
+    {
+        var selectedValue = Context.Interaction.Data.Values.FirstOrDefault();
+        await FinishActionRoll(selectedValue, statString, addsString, actionDieString, challengeDie1String, challengeDie2String);
+    }
     [ComponentInteraction("burn-roll-*,*,*")]
     public async Task BurnFromRoll(string Die1, string Die2, string pcId)
     {
