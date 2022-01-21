@@ -76,6 +76,27 @@ public class GuildPlayer
         }
         return DbContext.PlayerCharacters.Find(LastUsedPcId);
     }
+    /// <summary>
+    /// Get all PCs owned by this GuildPlayer.
+    /// </summary>
+    /// <param name="DbContext"></param>
+    public IEnumerable<PlayerCharacter> GetPcs(EFContext DbContext)
+    {
+        return GetUserPcs(DbContext, DiscordGuildId);
+    }
+    /// <summary>
+    /// Get all PCs owned by the User of this GuildPlayer, regardless of server.
+    /// </summary>
+    /// <param name="DbContext"></param>
+    /// <param name="guildId">Optional guildId to search within a specific guild.</param>
+    public IEnumerable<PlayerCharacter> GetUserPcs(EFContext DbContext, ulong? guildId = null)
+    {
+        if (guildId == null)
+        {
+            return DbContext.PlayerCharacters.Where(pc => pc.UserId == UserId);
+        }
+        return DbContext.PlayerCharacters.Where(pc => pc.UserId == UserId && pc.DiscordGuildId == guildId);
+    }
     public void CleanupLastUsedPc(EFContext DbContext)
     {
         if (LastUsedPc(DbContext) == null && this.LastUsedPcId != 0)
