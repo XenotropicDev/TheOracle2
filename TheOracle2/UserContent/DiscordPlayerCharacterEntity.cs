@@ -1,4 +1,8 @@
-﻿using TheOracle2.GameObjects;
+﻿using Discord.Interactions;
+using Discord.WebSocket;
+using TheOracle2.DiscordHelpers;
+using TheOracle2.GameObjects;
+using TheOracle2.UserContent;
 
 namespace TheOracle2.UserContent
 {
@@ -24,12 +28,11 @@ namespace TheOracle2.UserContent
                 .WithButton("-Mo", $"lose-momentum-{Pc.Id}", row: 1, style: ButtonStyle.Secondary)
                 .WithButton("Burn", $"burn-momentum-{Pc.Id}", row: 0, style: ButtonStyle.Danger, emote: new Emoji("🔥"))
                 .WithButton("...", $"player-more-{Pc.Id}", row: 0, style: ButtonStyle.Primary).Build();
-
-        public string GetDiscordMessage()
+        public async Task<IMessage> GetDiscordMessage(IInteractionContext context)
         {
-            return null;
+            var channel = (Pc.ChannelId == context.Channel.Id) ? context.Channel : await (context.Client as DiscordSocketClient)?.Rest.GetChannelAsync(Pc.ChannelId) as IMessageChannel;
+            return await channel.GetMessageAsync(Pc.MessageId);
         }
-
         public Embed[] GetEmbeds()
         {
             var builder = new EmbedBuilder()
@@ -47,6 +50,41 @@ namespace TheOracle2.UserContent
                 builder.AddField("Impacts", String.Join(", ", Pc.Impacts));
 
             return new Embed[] { builder.Build() };
+        }
+        /// <summary>
+        /// Make an action roll using one of this PC's stats.
+        /// </summary>
+        public ActionRoll RollAction(Random random, RollableStats stat, int adds, string description = "", int? actionDie = null, int? challengeDie1 = null, int? challengeDie2 = null, string moveName = "")
+        {
+            ActionRoll roll = new ActionRoll(random: random,
+                stat: GetStatValue(stat),
+                adds: adds,
+                momentum: GetStatValue(RollableStats.Momentum),
+                description: description,
+                actionDie: actionDie,
+                challengeDie1: challengeDie1,
+                challengeDie2: challengeDie2,
+                moveName: moveName,
+                pcName: Pc.Name,
+                statName: stat.ToString()
+                );
+            return roll;
+        }
+        private int GetStatValue(RollableStats stat)
+        {
+            return stat switch
+            {
+                RollableStats.Edge => Pc.Edge,
+                RollableStats.Heart => Pc.Heart,
+                RollableStats.Iron => Pc.Iron,
+                RollableStats.Shadow => Pc.Shadow,
+                RollableStats.Wits => Pc.Wits,
+                RollableStats.Health => Pc.Health,
+                RollableStats.Spirit => Pc.Spirit,
+                RollableStats.Supply => Pc.Supply,
+                RollableStats.Momentum => Pc.Momentum,
+                _ => throw new NotImplementedException(),
+            };
         }
     }
 }

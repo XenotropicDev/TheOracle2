@@ -1,9 +1,9 @@
-﻿using OracleData;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OracleData;
 
 namespace TheOracle2.UserContent
 {
@@ -96,11 +96,9 @@ namespace TheOracle2.UserContent
     public MessageComponent GetComponents() => compBuilder.Build();
 
     public bool IsEphemeral { get; set; } = false;
-
-    public string GetDiscordMessage()
+    public async Task<IMessage> GetDiscordMessage(IInteractionContext context)
     {
-      return null;
+        return null;
     }
-
   }
 }
