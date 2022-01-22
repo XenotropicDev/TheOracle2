@@ -3,13 +3,14 @@ using TheOracle2.UserContent;
 
 namespace TheOracle2.Commands;
 
+[DontAutoRegister]
 public class SearchCommand : InteractionModuleBase<SocketInteractionContext>
 {
     public EFContext Db { get; set; }
     public Random Random { get; set; }
 
     [SlashCommand("search", "Get an item from the database")]
-    public async Task GetDbItem(GameEntityType searchType, [Autocomplete(typeof(SearchCommandAutocomplete))] string query)
+    public async Task GetDbItem(GameEntityType searchType, string query)
     {
         IDiscordEntity entityItem = null;
         switch (searchType)
