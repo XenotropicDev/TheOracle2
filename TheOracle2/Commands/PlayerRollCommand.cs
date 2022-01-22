@@ -35,7 +35,7 @@ public class PlayerRollCommand : InteractionModuleBase
 
         var pc = EfContext.PlayerCharacters.Find(id);
 
-        var roll = new ActionRoll(Random, GetStatValue(stat, pc), adds, GetStatValue(RollableStats.Momentum, pc), description, actionDie, challengeDie1, challengeDie2);
+        var roll = new ActionRoll(Random, GetStatValue(stat, pc), adds, pc.Momentum, description, actionDie, challengeDie1, challengeDie2);
 
         ComponentBuilder component = null;
         if (roll.IsBurnable && !roll.IsBurnt)
@@ -66,7 +66,6 @@ public class PlayerRollCommand : InteractionModuleBase
             RollableStats.Health => pc.Health,
             RollableStats.Spirit => pc.Spirit,
             RollableStats.Supply => pc.Supply,
-            RollableStats.Momentum => pc.Momentum,
             _ => throw new NotImplementedException(),
         };
     }
@@ -136,6 +135,5 @@ public enum RollableStats
     Wits,
     Health,
     Spirit,
-    Supply,
-    Momentum,
+    Supply
 }
