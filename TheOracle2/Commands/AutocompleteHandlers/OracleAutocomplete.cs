@@ -7,7 +7,7 @@ using TheOracle2.UserContent;
 
 namespace TheOracle2.Commands;
 
-public class SearchCommandAutocomplete : AutocompleteHandler
+public class OracleAutocomplete : AutocompleteHandler
 {
     private static readonly Dictionary<string, Task<AutocompletionResult>> dict = new Dictionary<string, Task<AutocompletionResult>>();
 
@@ -35,54 +35,26 @@ public class SearchCommandAutocomplete : AutocompleteHandler
     }
 
     public EFContext Db { get; set; }
-    public ILogger<SearchCommandAutocomplete> logger { get; set; }
+    public ILogger<OracleAutocomplete> logger { get; set; }
 
     public override Task<AutocompletionResult> GenerateSuggestionsAsync(IInteractionContext context, IAutocompleteInteraction autocompleteInteraction, IParameterInfo parameter, IServiceProvider services)
     {
         try
         {
-            Enum.TryParse<GameEntityType>(autocompleteInteraction.Data.Options.FirstOrDefault().Value.ToString(), out var entityType);
             IEnumerable<AutocompleteResult> successList = new List<AutocompleteResult>();
 
             var value = autocompleteInteraction.Data.Current.Value as string;
 
             if (string.IsNullOrEmpty(value))
             {
-                if (entityType == GameEntityType.Oracle)
-                {
-                    return emptyOraclesResult;
-                }
-
-                return Task.FromResult(AutocompletionResult.FromSuccess());
+                return emptyOraclesResult;
             }
 
-            var sw = Stopwatch.StartNew();
-            switch (entityType)
-            {
-                case GameEntityType.Oracle:
-                    var oracles = Db.Oracles.Where(x => Regex.IsMatch(x.Name, $@"\b(?i){value}") || Regex.IsMatch(x.OracleInfo.Name, $@"\b(?i){value}")).AsEnumerable();
-                    successList = oracles
-                        .SelectMany(x => GetOracleAutocompleteResults(x))
-                        .Take(SelectMenuBuilder.MaxOptionCount);
-                    break;
+            var oracles = Db.Oracles.Where(x => Regex.IsMatch(x.Name, $@"\b(?i){value}") || Regex.IsMatch(x.OracleInfo.Name, $@"\b(?i){value}")).AsEnumerable();
+            successList = oracles
+                .SelectMany(x => GetOracleAutocompleteResults(x))
+                .Take(SelectMenuBuilder.MaxOptionCount);
 
-                case GameEntityType.Reference:
-                    var references = Db.Moves.Where(x => Regex.IsMatch(x.Name, $@"\b(?i){value}"));
-                    successList = references.Select(x => new AutocompleteResult(x.Name, x.Id.ToString())).Take(SelectMenuBuilder.MaxOptionCount);
-                    break;
-
-                case GameEntityType.Asset:
-                    var assets = Db.Assets.Where(x => Regex.IsMatch(x.Name, $@"\b(?i){value}"));
-                    successList = assets.Select(x => new AutocompleteResult(x.Name, x.Id.ToString())).Take(SelectMenuBuilder.MaxOptionCount);
-                    break;
-
-                default:
-                    break;
-            }
-
-            _ = successList.ToList();
-            sw.Stop();
-            logger.LogInformation($"{nameof(GenerateSuggestionsAsync)} took {sw.ElapsedMilliseconds}ms for '{value}'");
             return Task.FromResult(AutocompletionResult.FromSuccess(successList));
         }
         catch (Exception ex)

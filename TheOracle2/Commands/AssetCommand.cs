@@ -1,12 +1,12 @@
 ﻿using Discord.Interactions;
 using Discord.WebSocket;
+using TheOracle2.Commands;
 using TheOracle2.DiscordHelpers;
 using TheOracle2.UserContent;
-using TheOracle2.DiscordHelpers;
 
 namespace TheOracle2;
 
-public class AssetCommand : InteractionModuleBase<SocketInteractionContext<SocketMessageComponent>>, ISlashCommand
+public class AssetCommand : InteractionModuleBase
 {
     public AssetCommand(EFContext dbContext, Random random)
     {
@@ -14,70 +14,29 @@ public class AssetCommand : InteractionModuleBase<SocketInteractionContext<Socke
         Random = random;
     }
 
-    private SocketSlashCommand SlashCommandContext;
-    private readonly Random Random;
+    public EFContext DbContext { get; }
+    public Random Random { get; }
+
+    [SlashCommand("asset", "Generates an asset")]
+    public async Task PostAsset([Autocomplete(typeof(AssetAutocomplete))] string asset)
+    {
+        var assetData = DbContext.Assets.Find(asset);
+        var entityItem = new DiscordAssetEntity(assetData);
+
+        await RespondAsync(entityItem.GetDiscordMessage(), embeds: entityItem.GetEmbeds(), ephemeral: entityItem.IsEphemeral, components: entityItem.GetComponents());
+    }
+}
+
+public class AssetComponents : InteractionModuleBase<SocketInteractionContext<SocketMessageComponent>>
+{
+    public AssetComponents(EFContext dbContext, Random random)
+    {
+        DbContext = dbContext;
+        Random = random;
+    }
 
     public EFContext DbContext { get; }
-
-    [OracleSlashCommand("asset")]
-    public async Task BuildAsset()
-    {
-        string Id = SlashCommandContext.Data.Options.FirstOrDefault().Options.FirstOrDefault().Value.ToString();
-
-        var asset = DbContext.Assets.Find(Id);
-
-        var discordItems = new DiscordAssetEntity(asset);
-
-        await SlashCommandContext.RespondAsync(embeds: discordItems.GetEmbeds(), components: discordItems.GetComponents()).ConfigureAwait(false);
-    }
-
-    public IList<SlashCommandBuilder> GetCommandBuilders()
-    {
-        var command = new SlashCommandBuilder()
-            .WithName("asset")
-            .WithDescription("Generates an asset");
-
-        foreach (var category in DbContext.Assets.Select(a => a.AssetType).Distinct())
-        {
-            var chunkedList = DbContext.Assets.ToList()
-                .Where(a => a.AssetType == category)
-                .OrderBy(a => a.Name)
-                .Chunk(SlashCommandOptionBuilder.MaxChoiceCount);
-
-            foreach (var assetGroup in chunkedList)
-            {
-                string name = category.Replace(" ", "-");
-                if (chunkedList.Count() > 1)
-                {
-                    name += $"-{assetGroup.First().Name.Substring(0, 1)}-{assetGroup.Last().Name.Substring(0, 1)}";
-                }
-
-                var option = new SlashCommandOptionBuilder()
-                    .WithName(name.ToLower())
-                    .WithDescription($"{category} assets")
-                    .WithType(ApplicationCommandOptionType.SubCommand)
-                    ;
-
-                var subChoicesOption = new SlashCommandOptionBuilder()
-                    .WithName("asset-name")
-                    .WithDescription("The name of the asset to be generated")
-                    .WithRequired(true)
-                    .WithType(ApplicationCommandOptionType.String);
-
-                foreach (var asset in assetGroup)
-                {
-                    subChoicesOption.AddChoice(asset.Name, asset.Id);
-                }
-                option.AddOption(subChoicesOption);
-
-                command.AddOption(option);
-            }
-        }
-
-        return new List<SlashCommandBuilder>() { command };
-    }
-
-    public void SetCommandContext(SocketSlashCommand slashCommandContext) => this.SlashCommandContext = slashCommandContext;
+    public Random Random { get; }
 
     [ComponentInteraction("asset-condition-select:*")]
     public async Task ConditionSelection(string assetId, string[] values)
