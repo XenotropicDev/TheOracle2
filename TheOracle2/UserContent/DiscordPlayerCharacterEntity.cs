@@ -59,7 +59,7 @@ namespace TheOracle2.UserContent
             ActionRoll roll = new ActionRoll(random: random,
                 stat: GetStatValue(stat),
                 adds: adds,
-                momentum: GetStatValue(RollableStats.Momentum),
+                momentum: Pc.Momentum,
                 description: description,
                 actionDie: actionDie,
                 challengeDie1: challengeDie1,
@@ -82,7 +82,6 @@ namespace TheOracle2.UserContent
                 RollableStats.Health => Pc.Health,
                 RollableStats.Spirit => Pc.Spirit,
                 RollableStats.Supply => Pc.Supply,
-                RollableStats.Momentum => Pc.Momentum,
                 _ => throw new NotImplementedException(),
             };
         }
