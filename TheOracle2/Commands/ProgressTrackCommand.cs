@@ -4,17 +4,47 @@ using TheOracle2.UserContent;
 
 namespace TheOracle2;
 
-[Group("track", "Creates an interactive progress track for vows, expeditions, combat, and scene challenges.")]
-public class ProgressTrackerCommand : InteractionModuleBase
+// same as ProgressTrackCommandGroup, but as a single command with progress type set via a parameter. only one should be enabled at a time.
+
+// [DontAutoRegister]
+public class ProgressTrackCommand : InteractionModuleBase
 {
     public EFContext DbContext { get; set; }
-
-    public ProgressTrackerCommand(EFContext dbContext)
+    public ProgressTrackCommand(EFContext dbContext)
     {
         DbContext = dbContext;
     }
-
-    [SlashCommand("vow", "Create a vow progress track for the Swear an Iron Vow move.")]
+    [SlashCommand("progress-track", "Create a progress track. For simple progress rolls, use '/roll'. For scene challenges, use '/clock'")]
+    public async Task BuildProgressTrack(
+    [Summary(description: "A typed progress track includes shortcuts for referencing related moves; generic tracks omit them.")]
+    ProgressTrackType trackType,
+    [Summary(description: "The track's objective.")]
+    string title,
+    [Summary(description: "The challenge rank for the progress track.")]
+    ChallengeRank rank,
+    [Summary(description: "An optional description.")]
+    string description="",
+    [Summary(description: "A score to pre-set the track, if desired.")]
+    [MinValue(0)][MaxValue(10)]
+    int score = 0
+    )
+    {
+        switch (trackType)
+        {
+            case ProgressTrackType.Vow:
+                await BuildVowTrack(title, rank, description, score);
+                break;
+            case ProgressTrackType.Expedition:
+                await BuildExpeditionTrack(title, rank, description, score);
+                break;
+            case ProgressTrackType.Combat:
+                await BuildCombatTrack(title, rank, description, score);
+                break;
+            case ProgressTrackType.Generic:
+                await BuildGenericTrack(title, rank, description, score);
+                break;
+        }
+    }
     public async Task BuildVowTrack(
     [Summary(description: "The vow's objective.")]
     string title,
@@ -30,12 +60,6 @@ public class ProgressTrackerCommand : InteractionModuleBase
         VowTrack track = new(dbContext: DbContext, rank: rank, ticks: score * ITrack.BoxSize, title: title, description: description);
         await RespondAsync(embed: track.ToEmbed().Build(), components: track.MakeComponents().Build());
     }
-
-    // [SlashCommand("connection", "Create a connection progress track for an NPC.")]
-
-    // TODO: revisit this once there's a good system for NPC embeds
-
-    [SlashCommand("expedition", "Create an expedition progress track for the Undertake an Expedition move.")]
     public async Task BuildExpeditionTrack(
     [Summary(description: "The expedition's name.")]
     string title,
@@ -51,8 +75,6 @@ public class ProgressTrackerCommand : InteractionModuleBase
         ExpeditionTrack track = new(dbContext: DbContext, rank: rank, ticks: score * ITrack.BoxSize, title: title, description: description);
         await RespondAsync(embed: track.ToEmbed().Build(), components: track.MakeComponents().Build());
     }
-
-    [SlashCommand("combat", "Create a combat progress track when you Enter the Fray.")]
     public async Task BuildCombatTrack(
     [Summary(description: "The combat objective.")]
     string title,
@@ -68,9 +90,7 @@ public class ProgressTrackerCommand : InteractionModuleBase
         CombatTrack track = new(dbContext: DbContext, rank: rank, ticks: score * ITrack.BoxSize, title: title, description: description);
         await RespondAsync(embed: track.ToEmbed().Build(), components: track.MakeComponents().Build());
     }
-
-    [SlashCommand("generic", "Create a generic progress track")]
-    public async Task BuildProgressTrack(
+    public async Task BuildGenericTrack(
     [Summary(description: "A title for the progress track.")]
     string title,
     [Summary(description: "The challenge rank of the progress track.")]
@@ -84,26 +104,13 @@ public class ProgressTrackerCommand : InteractionModuleBase
         GenericTrack track = new(dbContext: DbContext, rank: rank, ticks: score * ITrack.BoxSize, title: title, description: description);
         await RespondAsync(embed: track.ToEmbed().Build(), components: track.MakeComponents().Build());
     }
+}
 
-    [SlashCommand("scene-challenge", "Create a scene challenge for extended non-combat scenes against threats or other characters (p. 235)")]
-    public async Task BuildSceneChallenge(
-    [Summary(description: "The scene challenge's objective.")]
-    string title,
-    [Summary(description: "The number of clock segments. Default = 6, severe disadvantage = 4, strong advantage = 8.")]
-    SceneChallengeClockSize segments=SceneChallengeClockSize.Six,
-    [Summary(description: "An optional description.")]
-    string description = "",
-    [Summary(description: "A score to pre-set the track, if desired.")] [MinValue(0)] [MaxValue(10)]
-    int score = 0)
-    {
-        // intentionally the same as /clock scene-challenge
-        // because it has both a clock and a progress track.
-        SceneChallenge sceneChallenge = new(dbContext: DbContext, segments: segments, filledSegments: 0, ticks: score * ITrack.BoxSize, title: title, description: description);
-        EmbedBuilder embed = sceneChallenge.ToEmbed();
-        ComponentBuilder components = sceneChallenge.MakeComponents();
-        await RespondAsync(
-          embed: embed.Build(),
-          components: components.Build()
-          );
-    }
+public enum ProgressTrackType
+{
+    Vow,
+    Expedition,
+    Combat,
+    // Connection,
+    Generic
 }
