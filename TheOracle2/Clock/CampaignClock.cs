@@ -8,11 +8,10 @@ public class CampaignClock : Clock
 
     public CampaignClock(ClockSize segments, int filledSegments, string title, string description = "", bool alerts = false) : base(segments, filledSegments, title, description, alerts)
     {
+
     }
-
     public override string EmbedCategory => "Campaign Clock";
-    public override string LogMessage => "The event is triggered or the project is complete. Envision the outcome and the impact on your setting.";
-
+    public override string ClockFillMessage => "The event is triggered or the project is complete. Envision the outcome and the impact on your setting.";
     public override ComponentBuilder MakeComponents()
     {
         SelectMenuBuilder menu = new SelectMenuBuilder()
@@ -32,6 +31,7 @@ public class CampaignClock : Clock
         }
         return new ComponentBuilder()
             .WithSelectMenu(menu)
-            .WithButton(ILogWidget.ToggleAlertButton(AlertOnIncrement));
+            // .WithButton(ILogWidget.ToggleAlertButton(AlertOnIncrement))
+            ;
     }
 }

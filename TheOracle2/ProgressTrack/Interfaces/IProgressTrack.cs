@@ -117,6 +117,7 @@ public interface IProgressTrack : ITrack, ILogWidget, IRanked
           .WithValue($"progress-clear:{subtractTicks}")
           ;
     }
+
     public static SelectMenuOptionBuilder RecommitOption(ProgressTrack track)
     {
         SelectMenuOptionBuilder option = new SelectMenuOptionBuilder()
