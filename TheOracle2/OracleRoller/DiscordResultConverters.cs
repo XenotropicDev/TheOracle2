@@ -29,7 +29,7 @@ public class DiscordOracleBuilder
     {
         var builder = new EmbedBuilder();
 
-        builder.WithAuthor(result.Category)
+        builder.WithAuthor(result.TableResult.Category)
             .WithTitle("Oracle Result");
 
         AddFieldsToBuilder(result, builder);
@@ -39,9 +39,10 @@ public class DiscordOracleBuilder
 
     public static EmbedBuilder AddFieldsToBuilder(OracleRollerResult node, EmbedBuilder builder)
     {
-        builder.AddField($"{node.Name} [{node.Roll}]", node.Result.Description, true);
+        string rollString = (node.Roll != null) ? $" [{node.Roll}]" : string.Empty;
+        builder.AddField($"{node.TableResult.Name}{rollString}", node.TableResult.Description, true);
 
-        if (node.Result.Image != null) builder.WithThumbnailUrl(node.Result.Image);
+        if (node.TableResult.Image != null) builder.WithThumbnailUrl(node.TableResult.Image);
 
         foreach (var child in node.ChildResults)
         {
@@ -83,9 +84,9 @@ public class DiscordOracleBuilder
             }
         }
 
-        if (root != null && node.Result.Oracle?.UseWith != null)
+        if (root != null && node.TableResult is ChanceTable ct && ct.Oracle?.UseWith != null)
         {
-            foreach (var useWith in node.Result.Oracle.UseWith)
+            foreach (var useWith in ct.Oracle.UseWith)
             {
                 if (IsInResultSet(root, useWith.Oracle)) continue;
 
@@ -103,7 +104,7 @@ public class DiscordOracleBuilder
 
     private bool IsInResultSet(OracleRollerResult result, Oracle oracle)
     {
-        if (result.Result.Oracle == oracle) return true;
+        if (result.TableResult is ChanceTable ct && ct.Oracle == oracle) return true;
 
         foreach (var child in result.ChildResults)
         {

@@ -46,7 +46,7 @@ public partial class Attributes
     public IList<string> Type { get; set; }
 }
 
-public partial class ChanceTable
+public partial class ChanceTable : ITableResult
 {
     [JsonIgnore]
     public int Id { get; set; }
@@ -87,6 +87,11 @@ public partial class ChanceTable
     [JsonProperty("Thumbnail")]
     public string Image { get; set; }
     public int Value { get; set; }
+    
+    [JsonIgnore]
+    string ITableResult.Name { get => Oracle?.Name ?? Tables?.Displayname; }
+    [JsonIgnore]
+    string ITableResult.Category { get => Oracle?.Category; }
 }
 
 public class OracleStub

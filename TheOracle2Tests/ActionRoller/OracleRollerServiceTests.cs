@@ -20,7 +20,6 @@ public class OracleRollerServiceTests
         //Assert.IsNotNull(result.ChildResults.FirstOrDefault()?.Result.Oracle?.OracleInfo);
         Assert.AreEqual(1, result.ChildResults.Count);
         Assert.AreEqual(4, result.FollowUpTables.Count);
-        Assert.IsTrue(result.Result.Description.Length > 0);
     }
 
     [TestMethod()]
@@ -42,9 +41,9 @@ public class OracleRollerServiceTests
         var rollResult2 = RollerFactory.GetRoller("subcat:16").Build();
         var rollResult3 = RollerFactory.GetRoller("16").Build();
 
-        Assert.AreEqual("Planetside Peril - Lifeless", rollResult?.Name);
-        Assert.AreEqual("Desert World", rollResult2?.Name);
-        Assert.AreEqual("Theme", rollResult3?.Name);
+        Assert.AreEqual("Planetside Peril - Lifeless", rollResult?.TableResult.Name);
+        Assert.AreEqual("Desert World", rollResult2?.TableResult.Name);
+        Assert.AreEqual("Theme", rollResult3?.TableResult.Name);
     }
 
     [TestMethod()]

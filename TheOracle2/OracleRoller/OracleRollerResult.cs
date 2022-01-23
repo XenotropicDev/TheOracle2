@@ -10,16 +10,12 @@ public class OracleRollerResult
         FollowUpTables = new List<Oracle>();
     }
 
-    public string Name { get => Result.Oracle?.Name ?? Result.Tables?.Displayname; }
-    public string Category { get => Result.Oracle?.Category; }
+    public ITableResult TableResult { get; private set; }
+    public int? Roll { get; private set; }
 
-    //todo: does this also need the roll value?
-    public ChanceTable Result { get; private set; }
-    public int Roll { get; private set; }
-
-    public OracleRollerResult SetRollResult(int roll, ChanceTable chanceTable)
+    public OracleRollerResult SetRollResult(int? roll, ITableResult chanceTable)
     {
-        Result = chanceTable;
+        TableResult = chanceTable;
         Roll = roll;
 
         return this;

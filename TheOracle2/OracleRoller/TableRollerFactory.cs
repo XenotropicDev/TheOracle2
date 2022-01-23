@@ -1,4 +1,5 @@
 ﻿using TheOracle2.DataClasses;
+using TheOracle2;
 using TheOracle2.UserContent;
 
 namespace TheOracle2.ActionRoller
@@ -33,6 +34,12 @@ namespace TheOracle2.ActionRoller
             {
                 var table = Context.Tables.Find(id);
                 return new OracleRoller(Random, Context, table.Oracle).WithTable(table.Id);
+            }
+
+            if (value.StartsWith("subcat:"))
+            {
+                var subcat = Context.Subcategory.Find(id);
+                return new SubcategoryRoller(Random, Context, subcat);
             }
 
             var oracle = Context.Oracles.Find(id);
