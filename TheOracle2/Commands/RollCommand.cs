@@ -7,14 +7,15 @@ using TheOracle2.UserContent;
 
 namespace TheOracle2;
 
-public class PlayerRollCommand : InteractionModuleBase
+[Group("roll", "Make an action roll (p. 28) or progress roll (p. 39). For oracle tables, use '/oracle'")]
+
+public class RollCommand : InteractionModuleBase
 {
-    public PlayerRollCommand(Random random, EFContext efContext)
+    public RollCommand(Random random, EFContext efContext)
     {
         Random = random;
         EfContext = efContext;
     }
-
     public Random Random { get; }
     public EFContext EfContext { get; }
     public GuildPlayer GuildPlayer => GuildPlayer.AddIfMissing(Context, EfContext);
@@ -24,8 +25,8 @@ public class PlayerRollCommand : InteractionModuleBase
         await EfContext.SaveChangesAsync().ConfigureAwait(false);
     }
 
-    [SlashCommand("action-pc-roll", "Performs an Ironsworn action roll using a player character's stats.")]
-    public async Task ActionRoll(
+    [SlashCommand("action-pc", "Make an Ironsworn action roll (p. 28) for a player character.")]
+    public async Task RollPcAction(
         [Summary(description: "The stat value to use for the roll")] RollableStats stat,
         [Summary(description: "Any adds to the roll")][MinValue(0)] int adds,
         [Summary(description: "The character to use for the roll. Leave this blank to use the last PC you interacted with.")]
@@ -36,12 +37,12 @@ public class PlayerRollCommand : InteractionModuleBase
         [Summary(description: "A preset value for the first Challenge Die (d10) to use instead of rolling.")][MinValue(1)][MaxValue(10)] int? challengeDie1 = null,
         [Summary(description: "A preset value for the second Challenge Die (d10) to use instead of rolling.")][MinValue(1)][MaxValue(10)] int? challengeDie2 = null)
     {
-        var id = 0;
         PlayerCharacter pcData = null;
 
-        if (!int.TryParse(character, out id))
+        if (!int.TryParse(character, out var id))
         {
-            throw new Exception();
+            await RespondAsync("Unknown character ID", ephemeral: true);
+            return;
         }
         pcData = id == -1 ? GuildPlayer.LastUsedPc(EfContext) : EfContext.PlayerCharacters.Find(id);
         if (pcData == null)
@@ -112,7 +113,32 @@ public class PlayerRollCommand : InteractionModuleBase
             _ => throw new NotImplementedException(),
         };
     }
+
+    [SlashCommand("action", "Make an action roll (p. 28) by setting a stat value.")]
+    public async Task RollAction(
+        [Summary(description: "The stat value to use for the roll")] int stat,
+        [Summary(description: "Any adds to the roll")][MinValue(0)] int adds,
+        [Summary(description: "The player character's momentum.")][MinValue(-6)][MaxValue(10)] int momentum,
+        [Summary(description: "Any notes, fiction, or other text you'd like to include with the roll")] string description = "",
+        [Summary(description: "A preset value for the Action Die (d6) to use instead of rolling.")][MinValue(1)][MaxValue(6)] int? actionDie = null,
+        [Summary(description: "A preset value for the first Challenge Die (d10) to use instead of rolling.")][MinValue(1)][MaxValue(10)] int? challengeDie1 = null,
+        [Summary(description: "A preset value for the second Challenge Die (d10) to use instead of rolling.")][MinValue(1)][MaxValue(10)] int? challengeDie2 = null)
+    {
+        var roll = new ActionRoll(Random, stat, adds, momentum, description, actionDie, challengeDie1, challengeDie2);
+        await RespondAsync(embed: roll.ToEmbed().Build()).ConfigureAwait(false);
+    }
+    [SlashCommand("progress", "Roll with a set progress score (p. 39). For an interactive progress tracker, use /progress-track")]
+    public async Task RollProgress(
+        [Summary(description: "The progress score.")] int progressScore,
+        [Summary(description: "A preset value for the first Challenge Die to use instead of rolling.")][MinValue(1)][MaxValue(10)] int? challengeDie1 = null,
+        [Summary(description: "A preset value for the second Challenge Die to use instead of rolling")][MinValue(1)][MaxValue(10)] int? challengeDie2 = null,
+        [Summary(description: "Notes, fiction, or other text to include with the roll.")] string description = "")
+    {
+        var roll = new ProgressRoll(Random, progressScore, description, challengeDie1, challengeDie2);
+        await RespondAsync(embed: roll.ToEmbed().Build()).ConfigureAwait(false);
+    }
 }
+
 
 public class PCRollComponents : InteractionModuleBase<SocketInteractionContext<SocketMessageComponent>>
 {
@@ -196,8 +222,10 @@ public class PCRollComponents : InteractionModuleBase<SocketInteractionContext<S
 
         var pc = EfContext.PlayerCharacters.Find(Id);
 
-        var roll = new ActionRoll(Random, 0, 0, 0, $"{embed.Description}\n{pc.Name} burned {pc.Momentum} momentum to change this roll result", 1, die1Val, die2Val);
-        roll.ActionDie = new Die(Random, 10, pc.Momentum);
+        var roll = new ActionRoll(Random, 0, 0, 0, $"{embed.Description}\n{pc.Name} burned {pc.Momentum} momentum to change this roll result", 1, die1Val, die2Val)
+        {
+            ActionDie = new Die(Random, 10, pc.Momentum)
+        };
 
         pc.BurnMomentum();
         GuildPlayer.LastUsedPcId = pc.Id;
