@@ -18,10 +18,10 @@ public class ClockCommand : InteractionModuleBase
 
     [SlashCommand("clock", "Set a campaign clock, tension clock, or scene challenge (p. 230).")]
     public async Task BuildClock(
-        [Summary(description: "The type of clock to create.")]
-        [Choice("Campaign clock (p. 231)","campaign-clock"),
-        Choice("Tension clock (p. 234)", "tension-clock"),
-        Choice("Scene challenge (p. 235)", "scene-challenge")]
+        [Summary(description: "The type of clock: campaign clock (p. 231), tension clock (p. 234), or scene challenge (p. 235).")]
+        [Choice("Campaign clock","campaign-clock"),
+        Choice("Tension clock", "tension-clock"),
+        Choice("Scene challenge", "scene-challenge")]
         string clockType,
         [Summary(description: "A title that makes it clear what project is complete or event triggered when the clock is filled.")]
         string title,
