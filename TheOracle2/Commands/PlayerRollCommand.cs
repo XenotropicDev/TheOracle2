@@ -28,7 +28,9 @@ public class PlayerRollCommand : InteractionModuleBase
     public async Task ActionRoll(
         [Summary(description: "The stat value to use for the roll")] RollableStats stat,
         [Summary(description: "Any adds to the roll")][MinValue(0)] int adds,
-        [Summary(description: "The character to use for the roll. Leave this blank to use the last PC you interacted with.")][Autocomplete(typeof(CharacterAutocomplete))] string character = "last",
+        [Summary(description: "The character to use for the roll. Leave this blank to use the last PC you interacted with.")]
+        // -1 is used to represent "last used character"
+        [Autocomplete(typeof(CharacterAutocomplete))] string character = (-1).toString(),
         [Summary(description: "Any notes, fiction, or other text you'd like to include with the roll")] string description = "",
         [Summary(description: "A preset value for the Action Die (d6) to use instead of rolling.")][MinValue(1)][MaxValue(6)] int? actionDie = null,
         [Summary(description: "A preset value for the first Challenge Die (d10) to use instead of rolling.")][MinValue(1)][MaxValue(10)] int? challengeDie1 = null,
@@ -37,17 +39,14 @@ public class PlayerRollCommand : InteractionModuleBase
         var id = 0;
         PlayerCharacter pcData = null;
 
-        if (character == "last")
+        if (!int.TryParse(character, out id))
         {
-            pcData = GuildPlayer.LastUsedPc(EfContext);
+            throw new Exception();
         }
-        if (int.TryParse(character, out id))
-        {
-            pcData = EfContext.PlayerCharacters.Find(id);
-        }
+        pcData = id == -1 ? GuildPlayer.LastUsedPc(EfContext) : EfContext.PlayerCharacters.Find(id);
         if (pcData == null)
         {
-            string errorMessage = character == "last" ? "I couldn't find a recently used player character for you on this server." : $"I couldn't find a character with an Id of {id} on this server.";
+            string errorMessage = id == -1 ? "I couldn't find a recently used player character for you on this server." : $"I couldn't find a character with an Id of {id} on this server.";
 
             errorMessage += "If you want to create a character, use the `/player` command.";
 
@@ -69,22 +68,17 @@ public class PlayerRollCommand : InteractionModuleBase
                         components.WithButton(fallbackPc.Name, $"finish-action-roll:{fallbackPc.Id},{stat},{adds},{actionDie},{challengeDie1},{challengeDie2}");
                     }
                 }
-
                 if (fallbackPcs.Count() > 5)
                 {
-                    if (fallbackPcs.Count() > 25) { fallbackPcs = fallbackPcs.Take(25); }
-
                     var menu = new SelectMenuBuilder()
                     .WithCustomId($"finish-action-roll-menu:{stat},{adds},{actionDie},{challengeDie1},{challengeDie2}")
-
                     .WithOptions(
-                        fallbackPcs.Select(fallbackPc => new SelectMenuOptionBuilder(
+                        fallbackPcs.Take(25).Select(fallbackPc => new SelectMenuOptionBuilder(
                             fallbackPc.Name,
                             fallbackPc.Id.ToString()
                         )).ToList()
                     )
                     ;
-
                 }
             }
             await RespondAsync(errorMessage, components: components?.Build(), ephemeral: true).ConfigureAwait(false);
