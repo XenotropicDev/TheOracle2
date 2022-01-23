@@ -30,6 +30,8 @@ public class CampaignClock : Clock
         {
             menu.AddOption(IClock.ResetOption());
         }
-        return new ComponentBuilder().WithSelectMenu(menu);
+        return new ComponentBuilder()
+            .WithSelectMenu(menu)
+            .WithButton(ILogWidget.ToggleAlertButton(AlertOnIncrement));
     }
 }
