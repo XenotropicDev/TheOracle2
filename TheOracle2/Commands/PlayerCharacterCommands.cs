@@ -41,7 +41,7 @@ public class EditPlayerPaths : InteractionModuleBase
         await FollowupAsync(embeds: pc.GetEmbeds(), components: pc.GetComponents()).ConfigureAwait(false);
         return;
     }
-    [SlashCommand("impacts", "Manage a player character's Impacts (p. 46)")]
+    [SlashCommand("impacts", "Manage a player character's Impacts (p. 46).")]
     public async Task SetImpacts([Autocomplete(typeof(CharacterAutocomplete))] string character, string impact)
     {
         if (!int.TryParse(character, out var id)) return;
