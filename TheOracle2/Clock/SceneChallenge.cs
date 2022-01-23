@@ -33,6 +33,7 @@ public class SceneChallenge : ProgressTrack, IClock
     public int Segments { get; }
     public int Filled { get; set; }
     public bool IsFull => Filled >= Segments;
+    public string ClockFillMessage => "Time is up. You must resolve the encounter by making a progress roll.";
     public override EmbedBuilder ToEmbed()
     {
         return IClock.AddClockTemplate(base.ToEmbed(), this);
@@ -52,9 +53,21 @@ public class SceneChallenge : ProgressTrack, IClock
     }
     public override ComponentBuilder MakeComponents()
     {
-        return new ComponentBuilder()
-          .WithSelectMenu(MakeSelectMenu())
-          ;
+        var embed = new ComponentBuilder()
+            .WithSelectMenu(MakeSelectMenu())
+            // .WithButton(ILogWidget.ToggleAlertButton(LogOnIncrement))
+            ;
+
+        return embed;
+    }
+
+    public override EmbedBuilder AlertEmbed()
+    {
+        var embed = IClock.AlertStub(this);
+        if (IsFull)
+        { embed.WithDescription(ClockFillMessage); }
+
+        return embed;
     }
 
     // TODO: this should probably return the scene challenge specific versions of the FS and SaA moves, meaning rsek needs to include them in Dataforged. while no formal move exists for progress resolution, its rules ought to be included in some way as well.

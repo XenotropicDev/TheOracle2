@@ -16,32 +16,36 @@ public class CounterComponents : InteractionModuleBase<SocketInteractionContext<
         DbContext = dbContext;
     }
 
+    public string ParentUrl => Interaction.Message.GetJumpUrl();
+    public SocketMessageComponent Interaction => Context.Interaction as SocketMessageComponent;
+
+    public Embed PrimaryEmbed => Interaction.Message.Embeds.FirstOrDefault();
+    public bool SendAlerts => ILogWidget.ParseAlertStatus(Context.Interaction.Message.Components);
+
     private readonly Random Random;
     public EFContext DbContext { get; set; }
 
     [ComponentInteraction("progress-mark:*,*")]
     public async Task MarkProgress(string addTicksString, string currentTicksString)
     {
-        SocketMessageComponent interaction = Context.Interaction as SocketMessageComponent;
-
         if (!int.TryParse(currentTicksString, out int currentTicks)) { throw new ArgumentException($"Unable to parse current ticks from {currentTicksString}"); }
 
         if (!int.TryParse(addTicksString, out int addedTicks)) { throw new ArgumentException($"Unable to parse added ticks from {addedTicks}"); }
-        var alerts = ILogWidget.ParseAlertStatus(interaction.Message.Components);
-        ProgressTrack progressTrack = IProgressTrack.FromEmbed(DbContext, interaction.Message.Embeds.FirstOrDefault(), currentTicks, alerts: alerts) as ProgressTrack;
+        ProgressTrack progressTrack = IProgressTrack.FromEmbed(DbContext, PrimaryEmbed, currentTicks, alerts: SendAlerts) as ProgressTrack;
 
-        EmbedBuilder alert = progressTrack.Mark(addedTicks);
+        // EmbedBuilder alert = progressTrack.Mark(addedTicks);
+        progressTrack.Mark(addedTicks);
 
-        await interaction.UpdateAsync(msg =>
+        await Interaction.UpdateAsync(msg =>
         {
             msg.Components = progressTrack.MakeComponents().Build();
             msg.Embed = progressTrack.ToEmbed().Build();
-        });
+        }).ConfigureAwait(false);
 
-        if (ILogWidget.ParseAlertStatus(interaction.Message.Components))
-        {
-            await interaction.FollowupAsync(embed: alert.Build()).ConfigureAwait(false);
-        }
+        // if (SendAlerts)
+        // {
+        //     await Interaction.FollowupAsync(embed: alert.Build()).ConfigureAwait(false);
+        // }
     }
 
     [ComponentInteraction("progress-clear:*,*")]
@@ -57,10 +61,8 @@ public class CounterComponents : InteractionModuleBase<SocketInteractionContext<
             throw new Exception($"Unable to parse {nameof(currentTicks)} from {currentTicksString}");
         }
         var ticksNew = currentTicks - subtractTicks;
-        var interaction = Context.Interaction as SocketMessageComponent;
-        var alerts = ILogWidget.ParseAlertStatus(interaction.Message.Components);
-        var progressTrack = IProgressTrack.FromEmbed(DbContext, interaction.Message.Embeds.FirstOrDefault(), ticksNew, alerts: alerts);
-        await interaction.UpdateAsync(msg =>
+        var progressTrack = IProgressTrack.FromEmbed(DbContext, PrimaryEmbed, ticksNew, alerts: SendAlerts);
+        await Interaction.UpdateAsync(msg =>
         {
             msg.Components = progressTrack.MakeComponents().Build();
             msg.Embed = progressTrack.ToEmbed().Build();
@@ -70,37 +72,35 @@ public class CounterComponents : InteractionModuleBase<SocketInteractionContext<
     [ComponentInteraction("progress-recommit:*,*")]
     public async Task RecommitProgress(string rankString, string currentTicksString)
     {
-        SocketMessageComponent interaction = Context.Interaction as SocketMessageComponent;
         if (!int.TryParse(currentTicksString, out int currentTicks))
         {
             throw new Exception($"Unable to parse {nameof(currentTicks)} from {currentTicksString}");
         }
-        var alerts = ILogWidget.ParseAlertStatus(interaction.Message.Components);
         ChallengeRank rank = Enum.Parse<ChallengeRank>(rankString);
-        ProgressTrack progressTrack = IProgressTrack.FromEmbed(DbContext, interaction.Message.Embeds.FirstOrDefault(), currentTicks, alerts: alerts) as ProgressTrack;
-        EmbedBuilder recommitAlert = progressTrack.Recommit(Random);
-        await interaction.UpdateAsync(msg =>
+        ProgressTrack progressTrack = IProgressTrack.FromEmbed(DbContext, PrimaryEmbed, currentTicks, alerts: SendAlerts) as ProgressTrack;
+        EmbedBuilder recommitAlert = progressTrack.Recommit(Random).WithUrl(ParentUrl);
+        await Interaction.UpdateAsync(msg =>
         {
             msg.Embed = progressTrack.ToEmbed().Build();
             msg.Components = progressTrack.MakeComponents().Build();
         }).ConfigureAwait(false);
-        // this receives an alert even if alerts are turned off because it involves displaying a roll result
-        await interaction.FollowupAsync(embed: recommitAlert.Build()).ConfigureAwait(false);
+        // this sends an alert even if alerts are turned off because it involves displaying a roll result
+        await Interaction.FollowupAsync(embed: recommitAlert.Build()).ConfigureAwait(false);
     }
 
-    [ComponentInteraction("progress-roll:*")]
+    [ComponentInteraction("progress-roll:*,*")]
     public async Task RollProgress(string ticksString, string moveName)
     {
         if (!int.TryParse(ticksString, out int ticks))
         {
-            throw new Exception($"Unable to parse {nameof(ticks)} from {ticksString}");
+            throw new Exception($"Unable to parse {nameof(ticks)} from {ticksString}.");
         }
         var score = ITrack.GetScore(ticks);
-        var interaction = Context.Interaction as SocketMessageComponent;
-        var embed = interaction.Message.Embeds.FirstOrDefault();
-        var roll = new ProgressRoll(Random, score, embed.Title, moveName: moveName);
+        var roll = new ProgressRoll(Random, score, PrimaryEmbed.Title, moveName: moveName);
+        var embed = roll.ToEmbed();
+        embed.WithUrl(ParentUrl);
         await ReplyAsync(
-          embed: roll.ToEmbed().Build(),
+          embed: embed.Build(),
           components: roll.MakeComponents().Build()
         ).ConfigureAwait(false);
     }
@@ -109,25 +109,37 @@ public class CounterComponents : InteractionModuleBase<SocketInteractionContext<
     public async Task ProgressMenu(string rankString, string currentTicks, string[] values)
     {
         string option = values.FirstOrDefault();
+        var optionLabel = Interaction.GetFirstSelectMenuLabel();
         string operation = option.Split(":")[0];
-        string[] arguments = option.Split(":").Length > 1 ? option.Split(":")[1].Split(",") : Array.Empty<string>();
+        string[] arguments = option.Split(":").Count() > 1 ? option.Split(":")[1].Split(",") : Array.Empty<string>();
         switch (operation)
         {
             case "progress-clear":
-                await ClearProgress(subtractedTickString: arguments[0], currentTicksString: currentTicks);
-                return;
+                await ClearProgress(
+                    subtractedTickString: arguments[0],
+                    currentTicksString: currentTicks).ConfigureAwait(false);
+                break;
 
             case "progress-mark":
-                await MarkProgress(addTicksString: arguments[0], currentTicksString: currentTicks);
-                return;
+                await MarkProgress(
+                    addTicksString: arguments[0],
+                    currentTicksString: currentTicks)
+                .ConfigureAwait(false);
+                break;
 
             case "progress-roll":
-                await RollProgress(currentTicks, arguments[0]);
-                return;
+                await RollProgress(
+                    ticksString: currentTicks,
+                    moveName: optionLabel)
+                    .ConfigureAwait(false);
+                break;
 
             case "progress-recommit":
-                await RecommitProgress(rankString: rankString, currentTicksString: currentTicks);
-                return;
+                await RecommitProgress(
+                    rankString: rankString,
+                    currentTicksString: currentTicks)
+                    .ConfigureAwait(false);
+                break;
         }
         return;
     }
@@ -135,10 +147,8 @@ public class CounterComponents : InteractionModuleBase<SocketInteractionContext<
     [ComponentInteraction("clock-reset")]
     public async Task ResetClock()
     {
-        var interaction = Context.Interaction as SocketMessageComponent;
-        var alerts = ILogWidget.ParseAlertStatus(interaction.Message.Components);
-        var clock = IClock.FromEmbed(DbContext, interaction.Message.Embeds.FirstOrDefault(), alerts: alerts);
-        await interaction.UpdateAsync(msg =>
+        var clock = IClock.FromEmbed(DbContext, PrimaryEmbed, alerts: SendAlerts);
+        await Interaction.UpdateAsync(msg =>
         {
             clock.Filled = 0;
             msg.Components = clock.MakeComponents().Build();
@@ -149,19 +159,17 @@ public class CounterComponents : InteractionModuleBase<SocketInteractionContext<
     [ComponentInteraction("clock-advance")]
     public async Task AdvanceClock()
     {
-        var interaction = Context.Interaction as SocketMessageComponent;
-        var alerts = ILogWidget.ParseAlertStatus(interaction.Message.Components);
-        var clock = IClock.FromEmbed(DbContext, interaction.Message.Embeds.FirstOrDefault(), alerts: alerts);
-        await interaction.UpdateAsync(msg =>
+        var clock = IClock.FromEmbed(DbContext, PrimaryEmbed, alerts: SendAlerts);
+        await Interaction.UpdateAsync(msg =>
         {
             clock.Filled++;
             msg.Components = clock.MakeComponents().Build();
             msg.Embed = clock.ToEmbed().Build();
         }).ConfigureAwait(false);
-        if (ILogWidget.ParseAlertStatus(interaction.Message.Components))
-        {
-            await interaction.FollowupAsync(embed: clock.AlertEmbed().Build()).ConfigureAwait(false);
-        }
+        // if (SendAlerts)
+        // {
+        //     await Interaction.FollowupAsync(embed: clock.AlertEmbed().Build()).ConfigureAwait(false);
+        // }
     }
 
     [ComponentInteraction("clock-advance:*")]
@@ -171,9 +179,7 @@ public class CounterComponents : InteractionModuleBase<SocketInteractionContext<
         {
             throw new Exception($"Unable to parse odds from {oddsString}");
         }
-        var interaction = Context.Interaction as SocketMessageComponent;
-        var alerts = ILogWidget.ParseAlertStatus(interaction.Message.Components);
-        var clock = IClock.FromEmbed(DbContext, interaction.Message.Embeds.FirstOrDefault(), alerts: alerts);
+        var clock = IClock.FromEmbed(DbContext, PrimaryEmbed, alerts: SendAlerts);
 
         OracleAnswer answer = new(Random, odds, $"Does the clock *{clock.Title}* advance?");
         EmbedBuilder answerEmbed = answer.ToEmbed();
@@ -198,15 +204,16 @@ public class CounterComponents : InteractionModuleBase<SocketInteractionContext<
         }
         answerEmbed.AddField("Result", resultString);
         answerEmbed = answerEmbed
-          .WithThumbnailUrl(IClock.Images[clock.Segments][clock.Filled])
-          .WithColor(IClock.ColorRamp[clock.Segments][clock.Filled]);
-        await interaction.UpdateAsync(msg =>
+            .WithUrl(ParentUrl)
+            .WithThumbnailUrl(IClock.Images[clock.Segments][clock.Filled])
+            .WithColor(IClock.ColorRamp[clock.Segments][clock.Filled]);
+        await Interaction.UpdateAsync(msg =>
         {
             msg.Components = clock.MakeComponents().Build();
             msg.Embed = clock.ToEmbed().Build();
         }).ConfigureAwait(false);
-        // this is intentionally left insensitive to IWidget.ParseAlertStatus, because it's an oracle answer, not simply an increment alert
-        await interaction.FollowupAsync(embed: answerEmbed.Build()).ConfigureAwait(false);
+
+        await Interaction.FollowupAsync(embed: answerEmbed.Build()).ConfigureAwait(false);
     }
 
     // TODO: refactor in same style as progress menu
@@ -217,16 +224,16 @@ public class CounterComponents : InteractionModuleBase<SocketInteractionContext<
         if (optionValue.StartsWith("clock-advance:"))
         {
             var oddsString = optionValue.Split(":")[1];
-            await AdvanceClock(oddsString);
+            await AdvanceClock(oddsString).ConfigureAwait(false);
             return;
         }
         switch (optionValue)
         {
             case "clock-reset":
-                await ResetClock();
+                await ResetClock().ConfigureAwait(false);
                 return;
             case "clock-advance":
-                await AdvanceClock();
+                await AdvanceClock().ConfigureAwait(false);
                 return;
         }
     }
@@ -237,12 +244,12 @@ public class CounterComponents : InteractionModuleBase<SocketInteractionContext<
         string optionValue = values.FirstOrDefault();
         if (optionValue.StartsWith("progress"))
         {
-            await ProgressMenu(rankString, ticksString, values);
+            await ProgressMenu(rankString, ticksString, values).ConfigureAwait(false);
             return;
         }
         if (optionValue.StartsWith("clock"))
         {
-            await ClockMenu(values);
+            await ClockMenu(values).ConfigureAwait(false);
             return;
         }
     }

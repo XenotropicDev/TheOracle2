@@ -33,7 +33,7 @@ public abstract class Clock : IClock
     public string Footer { get; set; }
     public abstract string EmbedCategory { get; }
     public string AlertFooter { get; }
-    public bool AlertOnIncrement { get; } = false;
+    public bool AlertOnIncrement { get; }
     public bool AlertOnDecrement { get; }
     public bool LogOnIncrement { get; } = true;
     public bool LogOnDecrement { get; } = true;
@@ -49,12 +49,18 @@ public abstract class Clock : IClock
         return IClock.AddClockTemplate(embed, this);
     }
 
-    public EmbedBuilder AlertEmbed()
+    public virtual EmbedBuilder AlertEmbed()
     {
-        return IClock.AlertStub(this);
+        var embed = IClock.AlertStub(this);
+        if (IsFull)
+        { embed.WithDescription(ClockFillMessage); }
+
+        return embed;
     }
 
-    public virtual string LogMessage => Filled == Segments ? "The clock fills!" : $"The clock advances to {Filled}/{Segments}";
+    public virtual string LogMessage => IsFull ? "The clock fills!" : "The clock advances!";
+
+    public abstract string ClockFillMessage { get; }
 
     public virtual ComponentBuilder MakeComponents()
     {
@@ -62,7 +68,7 @@ public abstract class Clock : IClock
         .WithButton(IClock.AdvanceButton().WithDisabled(IsFull))
         .WithButton(IClock.ResetButton().WithDisabled(Filled == 0))
         /// alert button
-        .WithButton(ILogWidget.ToggleAlertButton(AlertOnIncrement))
+        // .WithButton(ILogWidget.ToggleAlertButton(AlertOnIncrement))
         ;
     }
 }
