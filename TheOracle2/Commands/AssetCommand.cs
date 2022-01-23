@@ -17,7 +17,7 @@ public class AssetCommand : InteractionModuleBase
     public EFContext DbContext { get; }
     public Random Random { get; }
 
-    [SlashCommand("asset", "Generates an asset")]
+    [SlashCommand("asset", "Display an interactive asset card (p. 50)")]
     public async Task PostAsset([Autocomplete(typeof(AssetAutocomplete))] string asset)
     {
         var assetData = DbContext.Assets.Find(asset);
