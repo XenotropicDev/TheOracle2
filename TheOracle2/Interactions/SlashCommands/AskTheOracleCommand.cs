@@ -18,11 +18,11 @@ public class OracleAskPaths : InteractionModuleBase
         [Summary(description: "The question to ask the oracle.")]
         string question,
         [Summary(description: "The odds of receiving a 'yes' answer.")]
-        [Choice("Sure thing (10 or less)", 10),
-        Choice("Likely (25 or less)", 25),
+        [Choice("Small chance (10 or less)", 10),
+        Choice("Unlikely (25 or less)", 25),
         Choice("50/50 (50 or less)", 50),
-        Choice("Unlikely (75 or less)", 75),
-        Choice("Small chance (90 or less)", 90)]
+        Choice("Likely (75 or less)", 75),
+        Choice("Sure thing (90 or less)", 90)]
         int odds
     )
     {
