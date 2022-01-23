@@ -14,7 +14,7 @@ public class ProgressTrackCommand : InteractionModuleBase
     {
         DbContext = dbContext;
     }
-    [SlashCommand("progress-track", "Create a progress track. For simple progress rolls, use '/roll'. For scene challenges, use '/clock'")]
+    [SlashCommand("progress-track", "Create a progress track. For simple progress rolls, use /roll. For scene challenges, use /clock.")]
     public async Task BuildProgressTrack(
     [Summary(description: "A typed progress track includes shortcuts for referencing related moves; generic tracks omit them.")]
     ProgressTrackType trackType,

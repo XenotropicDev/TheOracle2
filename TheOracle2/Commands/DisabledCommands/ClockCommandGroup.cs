@@ -18,7 +18,7 @@ public class ClockCommandGroup : InteractionModuleBase
         DbContext = dbContext;
     }
 
-    [SlashCommand("campaign", "Set a campaign clock to resolve objectives and actions in the background of your campaign (p. 231)")]
+    [SlashCommand("campaign", "Set a campaign clock to resolve objectives and actions in the background of your campaign (p. 231).")]
     public async Task BuildCampaignClock(
       [Summary(description: "A title that makes it clear what project is complete or event triggered when the clock is filled.")]
     string title,
@@ -51,7 +51,7 @@ public class ClockCommandGroup : InteractionModuleBase
           components: tensionClock.MakeComponents().Build());
     }
 
-    [SlashCommand("scene-challenge", "Create a scene challenge for extended non-combat scenes against threats or other characters (p. 235)")]
+    [SlashCommand("scene-challenge", "Create a scene challenge for extended non-combat scenes against threats or other characters (p. 235).")]
     public async Task BuildSceneChallenge(
       [Summary(description: "The scene challenge's objective.")]
     string title,

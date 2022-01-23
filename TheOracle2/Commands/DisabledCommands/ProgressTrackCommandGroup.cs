@@ -73,7 +73,7 @@ public class ProgressTrackCommandGroup : InteractionModuleBase
         await RespondAsync(embed: track.ToEmbed().Build(), components: track.MakeComponents().Build());
     }
 
-    [SlashCommand("generic", "Create a generic progress track")]
+    [SlashCommand("generic", "Create a generic progress track.")]
     public async Task BuildProgressTrack(
     [Summary(description: "A title for the progress track.")]
     string title,
