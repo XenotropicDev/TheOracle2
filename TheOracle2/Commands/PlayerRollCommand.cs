@@ -30,7 +30,7 @@ public class PlayerRollCommand : InteractionModuleBase
         [Summary(description: "Any adds to the roll")][MinValue(0)] int adds,
         [Summary(description: "The character to use for the roll. Leave this blank to use the last PC you interacted with.")]
         // -1 is used to represent "last used character"
-        [Autocomplete(typeof(CharacterAutocomplete))] string character = (-1).toString(),
+        [Autocomplete(typeof(CharacterAutocomplete))] string character = "-1",
         [Summary(description: "Any notes, fiction, or other text you'd like to include with the roll")] string description = "",
         [Summary(description: "A preset value for the Action Die (d6) to use instead of rolling.")][MinValue(1)][MaxValue(6)] int? actionDie = null,
         [Summary(description: "A preset value for the first Challenge Die (d10) to use instead of rolling.")][MinValue(1)][MaxValue(10)] int? challengeDie1 = null,
@@ -94,7 +94,7 @@ public class PlayerRollCommand : InteractionModuleBase
             embed.Author.Url = characterSheet.GetJumpUrl();
         }
         GuildPlayer.LastUsedPcId = pcData.Id;
-        await RespondAsync(embed: roll.ToEmbed().Build(), components: roll.MakeComponents()?.Build()).ConfigureAwait(false);
+        await RespondAsync(embed: roll.ToEmbed().Build(), components: roll.MakeComponents(pcData.Id)?.Build()).ConfigureAwait(false);
     }
 
     private int GetStatValue(RollableStats stat, PlayerCharacter pc)
@@ -175,7 +175,14 @@ public class PCRollComponents : InteractionModuleBase<SocketInteractionContext<S
         var selectedValue = Context.Interaction.Data.Values.FirstOrDefault();
         await FinishActionRoll(selectedValue, statString, addsString, actionDieString, challengeDie1String, challengeDie2String);
     }
+    // TODO: for compatibility with earlier alpha buttons. remove by first release.
     [ComponentInteraction("burn-roll-*,*,*")]
+    public async Task BurnFromRollLegacy(string Die1, string Die2, string pcId)
+    {
+        await BurnFromRoll(Die1, Die2, pcId);
+    }
+
+    [ComponentInteraction("burn-roll:*,*,*")]
     public async Task BurnFromRoll(string Die1, string Die2, string pcId)
     {
         await DeferAsync();
