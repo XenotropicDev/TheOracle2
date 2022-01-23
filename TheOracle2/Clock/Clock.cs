@@ -33,7 +33,7 @@ public abstract class Clock : IClock
     public string Footer { get; set; }
     public abstract string EmbedCategory { get; }
     public string AlertFooter { get; }
-    public bool AlertOnIncrement { get; } = true;
+    public bool AlertOnIncrement { get; } = false;
     public bool AlertOnDecrement { get; }
     public bool LogOnIncrement { get; } = true;
     public bool LogOnDecrement { get; } = true;
@@ -64,6 +64,5 @@ public abstract class Clock : IClock
         /// alert button
         .WithButton(ILogWidget.ToggleAlertButton(AlertOnIncrement))
         ;
-
     }
 }

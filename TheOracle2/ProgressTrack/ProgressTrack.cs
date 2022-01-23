@@ -155,7 +155,9 @@ public abstract class ProgressTrack : IProgressTrack, IMoveRef
             components.WithSelectMenu(MoveRefMenu());
         }
         /// alert button
-        components.WithButton(ILogWidget.ToggleAlertButton(true));
+        components.WithButton(ILogWidget.ToggleAlertButton(
+            AlertOnIncrement
+        ));
         return components;
     }
     /// <summary>
