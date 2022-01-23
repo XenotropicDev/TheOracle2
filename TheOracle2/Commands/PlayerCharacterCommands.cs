@@ -55,13 +55,13 @@ public class EditPlayerPaths : InteractionModuleBase
         //await pc.RedrawCard(Context.Client);
     }
 
-    [SlashCommand("earned-xp", "Changes the earned xp on a character")]
+    [SlashCommand("earned-xp", "Set a player character's earned xp.")]
     public async Task SetEarnedXp([Autocomplete(typeof(CharacterAutocomplete))] string character,
                                 [Summary(description: "The total amount of Xp this character has earned")][MinValue(0)] int earnedXp)
     {
     }
 
-    [SlashCommand("delete", "Removes the character from the character search results")]
+    [SlashCommand("delete", "Delete a player character, removing them from the database and search results.")]
     public async Task DeleteCharacter([Autocomplete(typeof(CharacterAutocomplete))] string character)
     {
         if (!int.TryParse(character, out var id)) return;

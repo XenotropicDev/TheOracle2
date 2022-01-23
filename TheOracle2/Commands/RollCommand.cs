@@ -25,7 +25,7 @@ public class RollCommand : InteractionModuleBase
         await EfContext.SaveChangesAsync().ConfigureAwait(false);
     }
 
-    [SlashCommand("action-pc", "Make an Ironsworn action roll (p. 28) for a player character.")]
+    [SlashCommand("action-pc", "Make an action roll (p. 28) for a player character.")]
     public async Task RollPcAction(
         [Summary(description: "The stat value to use for the roll")] RollableStats stat,
         [Summary(description: "Any adds to the roll")][MinValue(0)] int adds,
