@@ -23,7 +23,7 @@ public class AssetCommand : InteractionModuleBase
         var assetData = DbContext.Assets.Find(asset);
         var entityItem = new DiscordAssetEntity(assetData);
 
-        await RespondAsync(entityItem.GetDiscordMessage(), embeds: entityItem.GetEmbeds(), ephemeral: entityItem.IsEphemeral, components: entityItem.GetComponents());
+        await RespondAsync(embeds: entityItem.GetEmbeds(), ephemeral: entityItem.IsEphemeral, components: entityItem.GetComponents());
     }
 }
 

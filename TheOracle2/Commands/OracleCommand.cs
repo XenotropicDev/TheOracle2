@@ -22,7 +22,7 @@ public class OracleCommand : InteractionModuleBase
     {
         var entityItem = new DiscordOracleEntity(oracle, DbContext, Random);
 
-        await RespondAsync(entityItem.GetDiscordMessage(), embeds: entityItem.GetEmbeds(), ephemeral: entityItem.IsEphemeral, components: entityItem.GetComponents());
+        await RespondAsync(embeds: entityItem.GetEmbeds(), ephemeral: entityItem.IsEphemeral, components: entityItem.GetComponents());
     }
 }
 
