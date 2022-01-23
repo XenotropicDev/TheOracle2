@@ -102,6 +102,22 @@ public class PlayerRollCommand : InteractionModuleBase
         GuildPlayer.LastUsedPcId = pcData.Id;
         await RespondAsync(embed: roll.ToEmbed().Build(), components: roll.MakeComponents()?.Build()).ConfigureAwait(false);
     }
+
+    private int GetStatValue(RollableStats stat, PlayerCharacter pc)
+    {
+        return stat switch
+        {
+            RollableStats.Edge => pc.Edge,
+            RollableStats.Heart => pc.Heart,
+            RollableStats.Iron => pc.Iron,
+            RollableStats.Shadow => pc.Shadow,
+            RollableStats.Wits => pc.Wits,
+            RollableStats.Health => pc.Health,
+            RollableStats.Spirit => pc.Spirit,
+            RollableStats.Supply => pc.Supply,
+            _ => throw new NotImplementedException(),
+        };
+    }
 }
 
 public class PCRollComponents : InteractionModuleBase<SocketInteractionContext<SocketMessageComponent>>
@@ -219,6 +235,5 @@ public enum RollableStats
     Wits,
     Health,
     Spirit,
-    Supply,
-    Momentum,
+    Supply
 }

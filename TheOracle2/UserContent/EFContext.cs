@@ -25,6 +25,7 @@ public class EFContext : DbContext
     public DbSet<Ability> AssetAbilities { get; set; }
     public DbSet<Tables> Tables { get; set; }
     public DbSet<OracleStub> OracleStubs { get; set; }
+    public DbSet<Subcategory> Subcategory { get; set; }
     public DbSet<ChanceTable> ChanceTables { get; set; }
     public DbSet<PlayerCharacter> PlayerCharacters { get; set; }
 

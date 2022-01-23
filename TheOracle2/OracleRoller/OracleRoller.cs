@@ -76,9 +76,6 @@ public class OracleRoller : ITableRoller
         if (oracle != null)
             parent.ChildResults.Add(MakeChild().WithOracle(oracle).Build());
 
-        //todo remove this (maybe I was trying to get the thumbnail here?)
-        var test = Context.OracleInfo.FirstOrDefault(oi => oi.Name == stub.Category);
-
         var tables = oracleInfo?.Subcategories?.FirstOrDefault(sub => sub.Name == stub.Name)?.Oracles;
         if (tables != null)
         {
@@ -110,7 +107,6 @@ public class OracleRoller : ITableRoller
 
             var table = reqMatch.Table.OrderBy(t => t.Chance).FirstOrDefault(t => t.Chance >= roll);
             return new SingleRoll(roll, table);
-
         }
 
         return null;
