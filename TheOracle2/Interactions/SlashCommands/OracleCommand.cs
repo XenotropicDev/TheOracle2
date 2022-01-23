@@ -17,7 +17,7 @@ public class OracleCommand : InteractionModuleBase
     public EFContext DbContext { get; }
     public Random Random { get; }
 
-    [SlashCommand("oracle", "Roll on an oracle table.")]
+    [SlashCommand("oracle", "Roll on an oracle table. To ask a yes/no question, use /ask.")]
     public async Task RollOracle([Autocomplete(typeof(OracleAutocomplete))] string oracle)
     {
         var entityItem = new DiscordOracleEntity(oracle, DbContext, Random);
