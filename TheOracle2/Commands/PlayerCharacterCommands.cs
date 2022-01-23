@@ -74,7 +74,7 @@ public class EditPlayerPaths : InteractionModuleBase
 
         await RespondAsync($"Are you sure you want to delete {pc.Name}?\nMomentum: {pc.Momentum}, xp: {pc.XpGained}\nPlayer id: {pc.Id}, last known message id: {pc.MessageId}",
             components: new ComponentBuilder()
-            .WithButton(GenericComponentHandlers.CancelButton())
+            .WithButton(GenericComponents.CancelButton())
             .WithButton("Delete", $"delete-player-{pc.Id}", style: ButtonStyle.Danger)
             .Build());
     }
