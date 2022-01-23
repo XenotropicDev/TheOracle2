@@ -52,5 +52,13 @@ public class GenericComponents : InteractionModuleBase<SocketInteractionContext<
             throw;
         }
     }
-
+    [ComponentInteraction("ephemeral-reveal")]
+    public async Task RevealEphemeral()
+    {
+        SocketMessageComponent interaction = Context.Interaction as SocketMessageComponent;
+        SocketUserMessage message = interaction.Message;
+        ComponentBuilder components = ComponentBuilder.FromComponents(message.Components);
+        components.RemoveComponentById("ephemeral-reveal");
+        await RespondAsync(ephemeral: false, embeds: message.Embeds as Embed[], components: components.Build());
+    }
 }
