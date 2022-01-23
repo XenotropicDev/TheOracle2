@@ -41,7 +41,7 @@ public class OracleAutocomplete : AutocompleteHandler
     {
         try
         {
-            IEnumerable<AutocompleteResult> successList = new List<AutocompleteResult>();
+            List<AutocompleteResult> successList = new List<AutocompleteResult>();
 
             var value = autocompleteInteraction.Data.Current.Value as string;
 
@@ -51,11 +51,12 @@ public class OracleAutocomplete : AutocompleteHandler
             }
 
             var oracles = Db.Oracles.Where(x => Regex.IsMatch(x.Name, $@"\b(?i){value}") || Regex.IsMatch(x.OracleInfo.Name, $@"\b(?i){value}")).AsEnumerable();
-            successList = oracles
-                .SelectMany(x => GetOracleAutocompleteResults(x))
-                .Take(SelectMenuBuilder.MaxOptionCount);
+            successList = oracles.SelectMany(x => GetOracleAutocompleteResults(x)).ToList();
 
-            return Task.FromResult(AutocompletionResult.FromSuccess(successList));
+            var subcategories = Db.Subcategory.Where(x => Regex.IsMatch(x.Name, $@"\b(?i){value}"));
+            successList.AddRange(subcategories.Select(x => new AutocompleteResult(x.Name, $"subcat:{x.Id}")));
+
+            return Task.FromResult(AutocompletionResult.FromSuccess(successList.Take(SelectMenuBuilder.MaxOptionCount)));
         }
         catch (Exception ex)
         {
