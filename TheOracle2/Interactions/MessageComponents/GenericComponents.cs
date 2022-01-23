@@ -4,7 +4,7 @@ using Discord.WebSocket;
 using Microsoft.Extensions.Logging;
 using TheOracle2.GameObjects;
 
-namespace TheOracle2.Commands;
+namespace TheOracle2;
 
 /// <summary>
 /// General-purpose components for managing messages.

@@ -3,9 +3,9 @@ using TheOracle2.UserContent;
 
 namespace TheOracle2.Commands;
 
-public class RightClickCommands : InteractionModuleBase<SocketInteractionContext>
+public class RecreateMessageCommand : InteractionModuleBase<SocketInteractionContext>
 {
-    public RightClickCommands(EFContext dbContext)
+    public RecreateMessageCommand(EFContext dbContext)
     {
         DbContext = dbContext;
     }
