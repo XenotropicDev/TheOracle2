@@ -190,7 +190,7 @@ public class CounterComponents : InteractionModuleBase<SocketInteractionContext<
         }
         if (!answer.IsYes)
         {
-            resultString = $"The clock remains at {clock.Filled}/{clock.Segments}";
+            resultString = $"The clock remains at {clock.Filled}/{clock.Segments}.";
             if (answer.IsMatch)
             {
                 answerEmbed = answerEmbed.WithFooter("You rolled a match! Envision a surprising turn of events which pits new factors or forces against the clock.");

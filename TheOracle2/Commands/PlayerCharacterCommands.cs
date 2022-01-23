@@ -41,7 +41,7 @@ public class EditPlayerPaths : InteractionModuleBase
         pcData.MessageId = characterSheet.Id;
         return;
     }
-    [SlashCommand("impacts", "Manage a player character's Impacts (p. 46)")]
+    [SlashCommand("impacts", "Manage a player character's Impacts (p. 46).")]
     public async Task SetImpacts([Autocomplete(typeof(CharacterAutocomplete))] string character, string impact)
     {
         if (!int.TryParse(character, out var id)) return;
