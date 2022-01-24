@@ -41,8 +41,8 @@ public class EditPlayerPaths : InteractionModuleBase
         await FollowupAsync(embeds: pcEntity.GetEmbeds(), components: pcEntity.GetComponents()).ConfigureAwait(false);
         return;
     }
-    [SlashCommand("impacts", "Manage a player character's Impacts (p. 46).")]
-    public async Task SetImpacts(
+    [SlashCommand("impacts", "Add or remove a player character's Impacts (p. 46).")]
+    public async Task SetImpact(
         [Autocomplete(typeof(CharacterAutocomplete))]
         string character,
         AddRemoveOptions action,
@@ -79,6 +79,7 @@ public class EditPlayerPaths : InteractionModuleBase
                 }
                 break;
         }
+        if (pc.Momentum > pc.MomentumMax) { pc.Momentum = pc.MomentumMax; }
         var impactListString = (pc.ImpactCount > 0 ? string.Join(", ", pc.Impacts) : "*none*") + ".";
         response += $"{pc.Name}'s current impacts: {impactListString} (Momentum Max {pc.MomentumMax}, Momentum Reset {pc.MomentumReset})\n\n";
         response += "Impacts will update next time you trigger an interaction on that character card.";
