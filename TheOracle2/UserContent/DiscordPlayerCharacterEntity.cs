@@ -33,6 +33,11 @@ namespace TheOracle2.UserContent
             var channel = (Pc.ChannelId == context.Channel.Id) ? context.Channel : await (context.Client as DiscordSocketClient)?.Rest.GetChannelAsync(Pc.ChannelId) as IMessageChannel;
             return await channel.GetMessageAsync(Pc.MessageId);
         }
+        public async Task<string> GetJumpUrl(IInteractionContext context)
+        {
+            var msg = await GetDiscordMessage(context);
+            return msg?.GetJumpUrl();
+        }
         public Embed[] GetEmbeds()
         {
             var builder = new EmbedBuilder()
@@ -69,6 +74,15 @@ namespace TheOracle2.UserContent
                 statName: stat.ToString()
                 );
             return roll;
+        }
+        public async Task<ButtonBuilder> GetJumpButton(IInteractionContext context)
+        {
+            return new ButtonBuilder()
+                .WithLabel(Pc.Name)
+                .WithStyle(ButtonStyle.Link)
+                .WithUrl(await GetJumpUrl(context))
+                .WithEmote(new Emoji("👤"))
+                ;
         }
         private int GetStatValue(RollableStats stat)
         {
