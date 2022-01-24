@@ -17,6 +17,23 @@ namespace TheOracle2.UserContent
 
         public PlayerCharacter Pc { get; }
 
+        /// <summary>
+        /// Sets an EmbedBuilder's author link to the PC's embed, and the author icon to the PC's image.
+        /// </summary>
+        public async Task<EmbedBuilder> AddPcAuthorTemplate(EmbedBuilder embed, IInteractionContext context)
+        {
+            if (Pc.MessageId > 0)
+            {
+                embed.Author.WithUrl(await GetJumpUrl(context));
+            }
+            if (!string.IsNullOrEmpty(Pc.Image))
+            {
+                embed.Author.WithIconUrl(Pc.Image);
+            }
+            return embed;
+
+        }
+
         public MessageComponent GetComponents() => new ComponentBuilder()
                 .WithButton("+Hp", $"add-health-{Pc.Id}", row: 0, style: ButtonStyle.Success)
                 .WithButton("-Hp", $"lose-health-{Pc.Id}", row: 1, style: ButtonStyle.Secondary)
@@ -57,10 +74,11 @@ namespace TheOracle2.UserContent
             return new Embed[] { builder.Build() };
         }
         /// <summary>
-        /// Make an action roll using one of this PC's stats.
+        /// Make an action roll using one of this PC's stats, and style the Author field to reflect their image and embed url.
         /// </summary>
-        public ActionRoll RollAction(Random random, RollableStats stat, int adds, string description = "", int? actionDie = null, int? challengeDie1 = null, int? challengeDie2 = null, string moveName = "")
+        public async Task<ActionRoll> RollAction(IInteractionContext context, Random random, RollableStats stat, int adds, string description = "", int? actionDie = null, int? challengeDie1 = null, int? challengeDie2 = null, string moveName = "")
         {
+            var jumpUrl = await GetJumpUrl(context);
             ActionRoll roll = new ActionRoll(random: random,
                 stat: GetStatValue(stat),
                 adds: adds,
@@ -72,7 +90,11 @@ namespace TheOracle2.UserContent
                 moveName: moveName,
                 pcName: Pc.Name,
                 statName: stat.ToString()
-                );
+                )
+            {
+                AuthorUrl = jumpUrl,
+                AuthorIcon = Pc.Image
+            };
             return roll;
         }
         public async Task<ButtonBuilder> GetJumpButton(IInteractionContext context)
