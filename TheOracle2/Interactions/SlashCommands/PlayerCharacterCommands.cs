@@ -48,7 +48,6 @@ public class EditPlayerPaths : InteractionModuleBase
         var pc = await DbContext.PlayerCharacters.FindAsync(id);
 
         pc.Impacts.Add(impact);
-        await DbContext.SaveChangesAsync();
 
         await RespondAsync($"Impacts will update next time you trigger an interaction on that character card", ephemeral: true);
 
@@ -62,7 +61,6 @@ public class EditPlayerPaths : InteractionModuleBase
         if (!int.TryParse(character, out var Id)) return;
         var pc = DbContext.PlayerCharacters.Find(Id);
         pc.XpGained = earnedXp;
-        await DbContext.SaveChangesAsync();
         await RespondAsync($"{pc.Name}'s XP was set to **{earnedXp}**. Their card will be updated the next time you click a button on the card.", ephemeral: true).ConfigureAwait(false);
         return;
     }
