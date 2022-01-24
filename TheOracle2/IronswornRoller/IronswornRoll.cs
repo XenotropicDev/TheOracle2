@@ -126,7 +126,7 @@ public abstract class IronswornRoll : IWidget, IMatchable
         IronswornRollOutcome.StrongHit => IronswornRollResources.StrongHitImageURL,
         _ => IronswornRollResources.MissImageURL,
     };
-    public EmbedBuilder ToEmbed()
+    public virtual EmbedBuilder ToEmbed()
     {
         return IWidget.EmbedStub(this)
           .WithColor(OutcomeColor())
