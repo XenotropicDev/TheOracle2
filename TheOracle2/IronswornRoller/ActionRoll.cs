@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using TheOracle2.DiscordHelpers;
 using TheOracle2.GameObjects;
 using TheOracle2.IronswornRoller;
 
@@ -77,7 +78,7 @@ public class ActionRoll : IronswornRoll
         }
         if (IsBurnt)
         {
-            return $"You burned momentum to improve this roll to a {momentumResultString}";
+            return $"You burned +{Momentum} momentum to improve this roll to a {momentumResultString}";
         }
         return "";
     }
@@ -87,14 +88,28 @@ public class ActionRoll : IronswornRoll
     public override string EmbedCategory { get; set; } = "Action Roll";
     private string ActionDieString => IsActionDieCanceled ? $"~~{ActionDie}~~" : $"{ActionDie}";
     /// <inheritdoc/>
+
+    public EmbedFieldBuilder MomentumBurnScoreField()
+    {
+        return new EmbedFieldBuilder().WithName("Action Score").WithValue($"**{Momentum}**");
+    }
+    private string MomentumOldScoreTotalString => $"**{Math.Min(10, Stat + Adds + ActionDie.Value)}**";
     public override string ToScoreString()
     {
         string arithmetic = $"{ActionDieString} + {Stat} + {Adds}";
         if (IsBurnt)
         {
-            return $"~~{arithmetic}~~ {Momentum} = {base.ToScoreString()}";
+            return $"{arithmetic} = {MomentumOldScoreTotalString}";
         }
         return $"{arithmetic} = {base.ToScoreString()}";
+    }
+    public override EmbedFieldBuilder ScoreField()
+    {
+        if (IsBurnt)
+        {
+            return base.ScoreField().Strike();
+        }
+        return base.ScoreField();
     }
     /// <inheritdoc/>
     public override int RawScore
@@ -152,4 +167,30 @@ public class ActionRoll : IronswornRoll
         return components;
     }
     public static readonly Dictionary<string, IEmote> ActionRollEmoji = new() { { "burn", new Emoji("🔥") } };
+    /// <summary>
+    /// Attempts to burn the  momentum on this ActionRoll; sets momentum on the PlayerCharacter if it succeeds, and returns the PlayerCharacter.
+    /// </summary>
+    public PlayerCharacter BurnMomentum(PlayerCharacter pc)
+    {
+        Momentum = pc.Momentum;
+        if (!IsBurnable)
+        {
+            throw new Exception($"Unable to burn {Momentum} momentum because it does not beat any challenge dice values ({ChallengeDice})");
+        }
+        // this shouldn't happen normally, but if something goes wrong it might make it easier to diagnose where the math is incorrect.
+        if (!pc.ResetMomentum())
+        {
+            throw new Exception($"Unable to burn {Momentum} momentum. Momentum of less than {PlayerCharacter.MinMomentumToBurn} can't cancel any challenge die result.");
+        }
+        IsBurnt = true;
+        return pc;
+    }
+    public override EmbedBuilder ToEmbed()
+    {
+        if (IsBurnt)
+        {
+            base.ToEmbed().AddField(MomentumBurnScoreField());
+        }
+        return base.ToEmbed();
+    }
 }
