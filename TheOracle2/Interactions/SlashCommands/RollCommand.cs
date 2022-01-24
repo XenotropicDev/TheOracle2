@@ -86,15 +86,11 @@ public class RollCommand : InteractionModuleBase
             return;
         }
 
-        var pc = new PlayerCharacterEntity(pcData);
-        var roll = pc.RollAction(this.Random, stat, adds, description, actionDie, challengeDie1, challengeDie2);
-        var embed = roll.ToEmbed();
-        if (pcData.MessageId > 0)
-        {
-            var characterSheet = await Task.Run(() => pc.GetDiscordMessage(Context));
-            embed.Author.Url = characterSheet.GetJumpUrl();
-        }
+        var pcEntity = new PlayerCharacterEntity(pcData);
+        var roll = await pcEntity.RollAction(Context, this.Random, stat, adds, description, actionDie, challengeDie1, challengeDie2);
+
         GuildPlayer.LastUsedPcId = pcData.Id;
+
         await RespondAsync(embed: roll.ToEmbed().Build(), components: roll.MakeComponents(pcData.Id)?.Build()).ConfigureAwait(false);
     }
 
@@ -179,13 +175,7 @@ public class PCRollComponents : InteractionModuleBase<SocketInteractionContext<S
         int? challengeDie1 = !string.IsNullOrEmpty(challengeDie1String) ? int.Parse(challengeDie1String) : null;
         int? challengeDie2 = !string.IsNullOrEmpty(challengeDie2String) ? int.Parse(challengeDie2String) : null;
 
-
-        var roll = pcEntity.RollAction(this.Random, stat, adds, description, actionDie, challengeDie1, challengeDie2);
-
-        var embed = roll.ToEmbed();
-        var characterSheet = await Task.Run(() => pcEntity.GetDiscordMessage(Context));
-
-        embed.Author.Url = characterSheet.GetJumpUrl();
+        var roll = await pcEntity.RollAction(Context, this.Random, stat, adds, description, actionDie, challengeDie1, challengeDie2);
 
         GuildPlayer.LastUsedPcId = pcEntity.Pc.Id;
 
@@ -246,10 +236,12 @@ public class PCRollComponents : InteractionModuleBase<SocketInteractionContext<S
         IMessageChannel channel = (pc.ChannelId == Context.Channel.Id) ? Context.Channel : await Context.Client.Rest.GetChannelAsync(pc.ChannelId) as IMessageChannel;
         await channel.ModifyMessageAsync(pc.MessageId, msg => msg.Embeds = entity.GetEmbeds());
 
-        await FollowupAsync(
-            embed: roll.ToEmbed().WithAuthor(embed.Author?.ToEmbedAuthorBuilder()).Build(),
-            components: new ComponentBuilder().Build()
-        );
+        await Context.Interaction.ModifyOriginalResponseAsync(msg =>
+        {
+            msg.Embed = roll.ToEmbed()
+                .WithAuthor(embed.Author?.ToEmbedAuthorBuilder()).Build();
+            msg.Components = roll.MakeComponents().Build();
+        });
     }
 }
 

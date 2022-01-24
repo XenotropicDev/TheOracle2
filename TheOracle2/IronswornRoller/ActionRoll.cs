@@ -28,12 +28,12 @@ public class ActionRoll : IronswornRoll
     }
     public ActionRoll(Random random, Embed embed, int? momentum = null) : base(random, embed)
     {
-        if (!embed.Author.ToString().StartsWith("Action Roll") ||
-        !embed.Author.ToString().Contains("rolls +")
-        )
-        {
-            throw new Exception("Embed is not an Action Roll.");
-        }
+        // if (!embed.Author.ToString().StartsWith("Action Roll") ||
+        // !embed.Author.ToString().Contains("rolls +")
+        // )
+        // {
+        //     throw new Exception("Embed is not an Action Roll.");
+        // }
         Momentum = momentum ?? 0;
         var actionScore = ParseActionScore(embed);
         ActionDie = new Die(random, 6, actionScore[0]);
@@ -71,14 +71,16 @@ public class ActionRoll : IronswornRoll
         {
             return "Your action die was canceled by your negative momentum (see p. 34).";
         }
-        var momentumResultString = MomentumBurnOutcome == IronswornRollOutcome.WeakHit ? IronswornRollResources.Weak_Hit : MomentumBurnOutcome == IronswornRollOutcome.StrongHit ? IronswornRollResources.Strong_Hit : "ERROR";
+        var momentumOutcomeString = IronswornRoll.ToOutcomeString(MomentumBurnOutcome, IsMatch);
         if (IsBurnable && !IsBurnt)
         {
-            return $"You may burn +{Momentum} momentum for a {momentumResultString} (see p. 32).";
+            return $"You may burn +{Momentum} momentum to score a {momentumOutcomeString} instead (see p. 32).";
         }
         if (IsBurnt)
         {
-            return $"You burned +{Momentum} momentum to improve this roll to a {momentumResultString}";
+            var oldOutcome = IronswornRoll.Resolve(Math.Min(ActionDie.Value + Stat + Adds, 10), ChallengeDice);
+            var oldOutcomeString = IronswornRoll.ToOutcomeString(oldOutcome, IsMatch);
+            return $"You burned +{Momentum} momentum to improve this roll's outcome from a {oldOutcomeString} to a {OutcomeText()} (see p. 32).";
         }
         return "";
     }
@@ -123,17 +125,18 @@ public class ActionRoll : IronswornRoll
             return Stat + Adds + ActionDie;
         }
     }
-    private const string ActionScorePattern = @"^(?:~~)([1-6])(?:~~) \+ ([1-9]|10) \+ ([1-9]|10) = \*\*([1-9]|10)\*\*$";
-    private const string BurntActionScorePattern = @"^~~([1-6]) \+ ([1-9]|10) \+ ([1-9]|10) = ([1-9]|10)~~ \*\*([1-9]|10)\*\*$";
+    private const string ActionScorePattern = @"([0-9]+)";
     public static int[] ParseActionScore(string actionScoreString)
     {
-        if (Regex.IsMatch(actionScoreString, BurntActionScorePattern))
-        {
-            return Regex.Matches(actionScoreString, BurntActionScorePattern).Select(match => int.Parse(match.ToString())) as int[];
-        }
         if (Regex.IsMatch(actionScoreString, ActionScorePattern))
         {
-            return Regex.Matches(actionScoreString, ActionScorePattern).Select(match => int.Parse(match.ToString())) as int[];
+            var matchValues = Regex.Matches(actionScoreString, ActionScorePattern).Select(match =>
+            {
+                if (!int.TryParse(match.Value, out int value))
+                { throw new Exception($"Unable to parse an integer from {match.Value}"); }
+                return value;
+            }).ToArray();
+            return matchValues;
         }
         throw new Exception($"Unable to parse string '{actionScoreString}' in to action score.");
     }
@@ -189,7 +192,19 @@ public class ActionRoll : IronswornRoll
     {
         if (IsBurnt)
         {
-            base.ToEmbed().AddField(MomentumBurnScoreField());
+            var embed = base.ToEmbed();
+            embed.Fields.Clear();
+            embed
+            .AddField(
+                ScoreField()
+                .WithIsInline(true))
+            .AddField(
+                MomentumBurnScoreField()
+                .WithIsInline(true))
+            .AddField(
+                ChallengeDice.ToEmbedField()
+            );
+            return embed;
         }
         return base.ToEmbed();
     }
