@@ -42,15 +42,52 @@ public class EditPlayerPaths : InteractionModuleBase
         return;
     }
     [SlashCommand("impacts", "Manage a player character's Impacts (p. 46).")]
-    public async Task SetImpacts([Autocomplete(typeof(CharacterAutocomplete))] string character, string impact)
+    public async Task SetImpacts(
+        [Autocomplete(typeof(CharacterAutocomplete))]
+        string character,
+        AddRemoveOptions action,
+        [Autocomplete(typeof(ImpactAutocomplete))]
+        string impact
+    )
     {
         if (!int.TryParse(character, out var id)) return;
         var pc = await DbContext.PlayerCharacters.FindAsync(id);
+        if (pc == null) { throw new Exception($"PC not found: {character}"); }
 
-        pc.Impacts.Add(impact);
+        if (pc.Impacts == null)
+        {
+            pc.Impacts = new List<string>();
+        }
 
-        await RespondAsync($"Impacts will update next time you trigger an interaction on that character card", ephemeral: true);
+        var pcHasImpact = pc.Impacts?.Contains(impact, StringComparer.InvariantCultureIgnoreCase) ?? false;
+        var response = "";
 
+        switch (action)
+        {
+            case AddRemoveOptions.Remove:
+                if (pcHasImpact)
+                {
+                    pc.Impacts = pc.Impacts.Where(item => !string.Equals(item, impact, StringComparison.OrdinalIgnoreCase)) as List<string>;
+                    response += $"**{impact}** was removed. ";
+                }
+                break;
+            case AddRemoveOptions.Add:
+                if (!pcHasImpact)
+                {
+                    pc.Impacts.Add(impact);
+                    response += $"**{impact}** was added. ";
+                }
+                break;
+        }
+        var impactListString = (pc.ImpactCount > 0 ? string.Join(", ", pc.Impacts) : "*none*") + ".";
+        response += $"{pc.Name}'s current impacts: {impactListString} (Momentum Max {pc.MomentumMax}, Momentum Reset {pc.MomentumReset})\n\n";
+        response += "Impacts will update next time you trigger an interaction on that character card.";
+
+        var pcEntity = new PlayerCharacterEntity(pc);
+        var components = new ComponentBuilder()
+        .WithButton(await pcEntity.GetJumpButton(Context))
+        ;
+        await RespondAsync(response, ephemeral: true, components: components.Build()).ConfigureAwait(true);
         //await pc.RedrawCard(Context.Client);
     }
 
@@ -82,4 +119,10 @@ public class EditPlayerPaths : InteractionModuleBase
             .WithButton("Delete", $"delete-player-{pc.Id}", style: ButtonStyle.Danger)
             .Build());
     }
+}
+
+public enum AddRemoveOptions
+{
+    Remove,
+    Add
 }
