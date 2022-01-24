@@ -30,15 +30,15 @@ public class EditPlayerPaths : InteractionModuleBase
     public async Task BuildPlayerCard(string name, [MaxValue(4)][MinValue(1)] int edge, [MaxValue(4)][MinValue(1)] int heart, [MaxValue(4)][MinValue(1)] int iron, [MaxValue(4)][MinValue(1)] int shadow, [MaxValue(4)][MinValue(1)] int wits)
     {
         await DeferAsync();
-        var pc = new PlayerCharacter(Context as SocketInteractionContext, name, edge, heart, iron, shadow, wits);
-        DbContext.PlayerCharacters.Add(pc);
+        var pcData = new PlayerCharacter(Context as SocketInteractionContext, name, edge, heart, iron, shadow, wits);
+        DbContext.PlayerCharacters.Add(pcData);
         await DbContext.SaveChangesAsync();
 
         // AfterExecute does SaveChanges, but the PC has to be saved to the DB to get an Id.
         GuildPlayer.LastUsedPcId = pcData.Id;
 
-        var pc = new PlayerCharacterEntity(pcData);
-        await FollowupAsync(embeds: pc.GetEmbeds(), components: pc.GetComponents()).ConfigureAwait(false);
+        var pcEntity = new PlayerCharacterEntity(pcData);
+        await FollowupAsync(embeds: pcEntity.GetEmbeds(), components: pcEntity.GetComponents()).ConfigureAwait(false);
         return;
     }
     [SlashCommand("impacts", "Manage a player character's Impacts (p. 46).")]
