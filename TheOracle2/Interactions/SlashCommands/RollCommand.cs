@@ -222,12 +222,10 @@ public class PCRollComponents : InteractionModuleBase<SocketInteractionContext<S
 
         var pc = EfContext.PlayerCharacters.Find(Id);
 
-        var roll = new ActionRoll(Random, 0, 0, 0, $"{embed.Description}\n{pc.Name} burned {pc.Momentum} momentum to change this roll result", 1, die1Val, die2Val)
-        {
-            ActionDie = new Die(Random, 10, pc.Momentum)
-        };
+        var roll = new ActionRoll(Random, embed, pc.Momentum);
 
-        pc.BurnMomentum();
+        pc.BurnMomentum(roll);
+
         GuildPlayer.LastUsedPcId = pc.Id;
         await EfContext.SaveChangesAsync();
 
@@ -237,7 +235,7 @@ public class PCRollComponents : InteractionModuleBase<SocketInteractionContext<S
             await Context.Interaction.ModifyOriginalResponseAsync(msg =>
             {
                 msg.Embed = roll.ToEmbed().WithAuthor(embed.Author?.ToEmbedAuthorBuilder()).Build();
-                msg.Components = new ComponentBuilder().Build();
+                msg.Components = roll.MakeComponents().Build();
             });
             await FollowupAsync($"I couldn't find the character card to update, but it should update the next time you click a button on that card", ephemeral: true);
             return;

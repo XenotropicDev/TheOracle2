@@ -84,7 +84,7 @@ public class PcCardComponents : InteractionModuleBase<SocketInteractionContext<S
     [ComponentInteraction("burn-momentum-*")]
     public async Task burn(string pcId)
     {
-        await UpdatePCValue(pcId, pc => pc.BurnMomentum()).ConfigureAwait(false);
+        await UpdatePCValue(pcId, pc => pc.ResetMomentum()).ConfigureAwait(false);
     }
 
     [ComponentInteraction("player-more-*")]

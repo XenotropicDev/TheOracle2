@@ -26,7 +26,7 @@ public class PlayerCharacter
         Health = 5;
         Spirit = 5;
         Supply = 5;
-        Momentum = 2;
+        Momentum = MomentumResetBase;
         XpGained = 0;
         XpSpent = 0;
         Impacts = new List<string>();
@@ -47,7 +47,7 @@ public class PlayerCharacter
         Health = 5;
         Spirit = 5;
         Supply = 5;
-        Momentum = 2;
+        Momentum = MomentumResetBase;
         XpGained = 0;
         XpSpent = 0;
         Impacts = new List<string>();
@@ -69,7 +69,7 @@ public class PlayerCharacter
         Health = 5;
         Spirit = 5;
         Supply = 5;
-        Momentum = 2;
+        Momentum = MomentumResetBase;
         XpGained = 0;
         XpSpent = 0;
         Impacts = new List<string>();
@@ -90,16 +90,53 @@ public class PlayerCharacter
     public int Health { get => health; set => health = (value >= 5) ? 5 : (value <= 0) ? 0 : value; }
     public int Spirit { get => spirit; set => spirit = (value >= 5) ? 5 : (value <= 0) ? 0 : value; }
     public int Supply { get => supply; set => supply = (value >= 5) ? 5 : (value <= 0) ? 0 : value; }
-    public int Momentum { get => momentum; set => momentum = (value >= 10) ? 10 : (value <= -6) ? -6 : value; }
+    public IList<string> Impacts { get; set; }
+    private const int MomentumResetBase = 2;
+    private const int MomentumResetMin = 0;
+    public int MomentumReset => Math.Max(MomentumResetBase - (ImpactCount), MomentumResetMin);
+    public const int MomentumMin = -6;
+    private const int MomentumMaxBase = 10;
+
+    // seems silly, but it was throwing on empty lists and things like Any() didn't seem to work, maybe because the DB removes empty lists?
+    public int ImpactCount => Impacts == null ? 0 : Impacts.Count;
+    public int MomentumMax => MomentumMaxBase - (ImpactCount);
+    public int Momentum { get => momentum; set => momentum = (value >= MomentumMax) ? MomentumMax : (value <= MomentumMin) ? MomentumMin : value; }
     public int XpGained { get; set; }
     public int XpSpent { get; set; }
     public string Image { get; set; }
 
-    public IList<string> Impacts { get; set; }
+    // this is mathematically required by the dice anyways, but is included as an extra safeguard against stuff getting weird.
+    public const int MinMomentumToBurn = 2;
 
-    internal void BurnMomentum()
+    /// <summary>
+    /// Attempts to reset momentum to a PC's momentum reset value, generally only used by momentum burn (but see BurnMomentum() for a more complete option). Returns true if it succeeds, and false if it fails.
+    /// </summary>
+    public bool ResetMomentum()
     {
-        Momentum = Math.Max(2 - Impacts.Count, 0);
+        if (Momentum >= MinMomentumToBurn)
+        {
+            Momentum = MomentumReset;
+            return true;
+        }
+        return false;
+    }
+    /// <summary>
+    /// Attempts to burn momentum on an ActionRoll; sets momentum on the PlayerCharacter if it succeeds, and returns the new ActionRoll result.
+    /// </summary>
+    public ActionRoll BurnMomentum(ActionRoll roll)
+    {
+        roll.Momentum = Momentum;
+        if (!roll.IsBurnable)
+        {
+            throw new Exception($"Unable to burn {Momentum} momentum because it does not beat any challenge dice values ({roll.ChallengeDice})");
+        }
+        // this shouldn't happen normally, but if something goes wrong it might make it easier to diagnose where the math is incorrect.
+        if (!ResetMomentum())
+        {
+            throw new Exception($"Unable to burn {Momentum} momentum. Momentum of less than {MinMomentumToBurn} can't cancel any challenge die result.");
+        }
+        roll.IsBurnt = true;
+        return roll;
     }
     public GuildPlayer GetLastGuildPlayer(EFContext dbContext)
     {
