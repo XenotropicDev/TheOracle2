@@ -22,7 +22,6 @@ public interface ITrack
     public int Ticks { get; set; }
     public int Score { get; }
     public ProgressRoll Roll(Random random);
-
     /// <summary>
     /// Calculates a progress score from a given number of ticks, capped by TrackSize.
     /// </summary>
@@ -155,21 +154,5 @@ public interface ITrack
         }
         if (ticks > 1) { tickAutoPlural += "s"; }
         return $"{ticks} {tickAutoPlural}";
-    }
-    public static EmbedFieldBuilder StrikeField(EmbedFieldBuilder field)
-    {
-        field = StrikeFieldName(field);
-        field = StrikeFieldValue(field);
-        return field;
-    }
-    public static EmbedFieldBuilder StrikeFieldName(EmbedFieldBuilder field)
-    {
-        field.Name = "~~" + field.Name + "~~";
-        return field;
-    }
-    public static EmbedFieldBuilder StrikeFieldValue(EmbedFieldBuilder field)
-    {
-        field.Value = "~~" + field.Value + "~~";
-        return field;
     }
 }

@@ -8,11 +8,38 @@ namespace TheOracle2.DiscordHelpers
 {
     public static class EmbedExtensions
     {
+        /// <summary>
+        /// Apply strikethrough to all text in a field.
+        /// </summary>
+        public static EmbedFieldBuilder Strike(this EmbedFieldBuilder field)
+        {
+            return field.WrapIn("~~");
+        }
+        /// <summary>
+        /// Remove any strikethrough wrapping the Name and Value of this field.
+        /// </summary>
+        public static EmbedFieldBuilder Unstrike(this EmbedFieldBuilder field)
+        {
+            return field.UnwrapFrom("~~");
+        }
+        private static EmbedFieldBuilder WrapIn(this EmbedFieldBuilder field, string tag)
+        {
+            return field
+                .WithName(field.Name.WrapIn(tag))
+                .WithValue(field.Value.ToString().WrapIn(tag))
+            ;
+        }
+        private static EmbedFieldBuilder UnwrapFrom(this EmbedFieldBuilder field, string tag)
+        {
+            return field
+                .WithName(field.Name.UnwrapFrom(tag))
+                .WithValue(field.Value.ToString().UnwrapFrom(tag))
+            ;
+        }
         public static EmbedAuthorBuilder ToEmbedAuthorBuilder(this EmbedAuthor author)
         {
             return new EmbedAuthorBuilder().WithName(author.Name).WithUrl(author.Url).WithIconUrl(author.IconUrl);
         }
-
         /// <summary>
         /// Changes a numeric field on an embed
         /// </summary>
