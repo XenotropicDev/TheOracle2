@@ -149,9 +149,6 @@ public class PcCardComponents : InteractionModuleBase<SocketInteractionContext<S
         }
         change(pc);
         GuildPlayer.LastUsedPcId = Id;
-        // await DbContext.SaveChangesAsync();
-        // TODO: commenting out the above to see what breaks.
-
         var entity = new PlayerCharacterEntity(pc);
         await Context.Interaction.UpdateAsync(msg =>
         {

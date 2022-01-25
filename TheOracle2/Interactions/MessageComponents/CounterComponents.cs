@@ -216,7 +216,6 @@ public class CounterComponents : InteractionModuleBase<SocketInteractionContext<
         await Interaction.FollowupAsync(embed: answerEmbed.Build()).ConfigureAwait(false);
     }
 
-    // TODO: refactor in same style as progress menu
     [ComponentInteraction("clock-menu")]
     public async Task ClockMenu(string[] values)
     {
