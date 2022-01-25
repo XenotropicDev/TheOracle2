@@ -135,7 +135,6 @@ public class RollCommand : InteractionModuleBase
     }
 }
 
-
 public class PCRollComponents : InteractionModuleBase<SocketInteractionContext<SocketMessageComponent>>
 {
     public PCRollComponents(Random random, EFContext efContext)
