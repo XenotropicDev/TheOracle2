@@ -1,4 +1,5 @@
-namespace TheOracle2.GameObjects;
+﻿namespace TheOracle2.GameObjects;
+
 using TheOracle2.UserContent;
 
 public abstract class ProgressTrack : IProgressTrack, IMoveRef
@@ -11,8 +12,8 @@ public abstract class ProgressTrack : IProgressTrack, IMoveRef
         Description = embed.Description;
         DbContext = dbContext;
         AlertOnIncrement = alerts;
-
     }
+
     protected internal ProgressTrack(EFContext dbContext, Embed embed, int ticks, bool alerts = false)
     {
         Rank = IProgressTrack.ParseRank(embed);
@@ -22,6 +23,7 @@ public abstract class ProgressTrack : IProgressTrack, IMoveRef
         DbContext = dbContext;
         AlertOnIncrement = alerts;
     }
+
     protected internal ProgressTrack(EFContext dbContext, ChallengeRank rank, int ticks = 0, string title = "", string description = "", bool alerts = false)
     {
         Rank = rank;
@@ -41,32 +43,43 @@ public abstract class ProgressTrack : IProgressTrack, IMoveRef
     {
         return new EmbedBuilder();
     }
+
     public ChallengeRank Rank { get; set; }
     private int _ticks;
+
     /// <summary>
     /// The current number of progress ticks, from 0 to 40.
     /// </summary>
     public int Ticks { get => _ticks; set => _ticks = Math.Max(0, Math.Min(value, ITrack.MaxTicks)); }
+
     public RankData RankData => IProgressTrack.RankInfo[Rank];
     public int Score => ITrack.GetScore(Ticks);
+
     /// <inheritdoc/>
     public virtual string EmbedCategory => TrackDescription + " Progress Track";
+
     /// <summary>
     /// A short string describing what the track represents, like "Vow" or "Combat Objective". Used in formatting certain output; EmbedCategory defaults to this + " Progress Track".
     /// </summary>
     public abstract string TrackDescription { get; }
+
     /// <inheritdoc/>
     public string Title { get; set; }
+
     /// <inheritdoc/>
     public string Description { get; set; }
+
     /// <inheritdoc/>
     public string Footer { get; set; }
+
     public string AlertFooter { get; set; }
     public string LogMessage { get; set; }
+
     public ProgressRoll Roll(Random random)
     {
         return new ProgressRoll(random, Score, Title);
     }
+
     /// <inheritdoc/>
     public virtual EmbedBuilder ToEmbed()
     {
@@ -76,6 +89,7 @@ public abstract class ProgressTrack : IProgressTrack, IMoveRef
           .WithDescription(Description);
         return IProgressTrack.ProgressTemplate(this, embed);
     }
+
     /// <summary>
     /// Generates a menu option for clearing one unit of progress.
     /// </summary>
@@ -83,6 +97,7 @@ public abstract class ProgressTrack : IProgressTrack, IMoveRef
     {
         return IProgressTrack.ClearOption(RankData.MarkTrack);
     }
+
     public virtual string MarkAlertTitle => "Mark Progress";
 
     /// <summary>
@@ -92,6 +107,7 @@ public abstract class ProgressTrack : IProgressTrack, IMoveRef
     {
         return IProgressTrack.MarkOption(this, RankData.MarkTrack);
     }
+
     public virtual string ResolveMoveName => $"Resolve {EmbedCategory}";
 
     /// <summary>
@@ -108,6 +124,7 @@ public abstract class ProgressTrack : IProgressTrack, IMoveRef
     {
         return IMoveRef.MenuBase(this);
     }
+
     public static SelectMenuBuilder MenuStub(ProgressTrack track, string prefix = "progress-", string suffix = "")
     {
         return new SelectMenuBuilder()
@@ -117,14 +134,17 @@ public abstract class ProgressTrack : IProgressTrack, IMoveRef
         .WithMinValues(0)
         ;
     }
+
     /// <summary>
     /// Whether this type of progress track should display buttons or menu options to recommit.
     /// </summary>
     public abstract bool CanRecommit { get; }
+
     public virtual SelectMenuOptionBuilder RecommitOption()
     {
         return IProgressTrack.RecommitOption(this);
     }
+
     public virtual SelectMenuBuilder MakeMenu()
     {
         SelectMenuBuilder menu = MenuStub(this);
@@ -146,6 +166,7 @@ public abstract class ProgressTrack : IProgressTrack, IMoveRef
         }
         return menu;
     }
+
     /// <inheritdoc/>
     public virtual ComponentBuilder MakeComponents()
     {
@@ -160,6 +181,7 @@ public abstract class ProgressTrack : IProgressTrack, IMoveRef
         // ));
         return components;
     }
+
     /// <summary>
     /// Recommits to a vow after a miss (for e.g. Fulfill Your Vow); updates the ProgressTrack and returns an alert embed that summarizes the result.
     /// </summary>
@@ -182,6 +204,7 @@ public abstract class ProgressTrack : IProgressTrack, IMoveRef
         if (Rank.ToString() != oldRank) { embed.Fields?.FirstOrDefault(field => field.Name == "Rank")?.WithValue($"~~{oldRank}~~ {this.Rank}"); }
         return embed;
     }
+
     /// <inheritdoc/>
     public EmbedBuilder Mark(int addTicks, string alertTitle)
     {
@@ -195,11 +218,13 @@ public abstract class ProgressTrack : IProgressTrack, IMoveRef
           .WithDescription(message)
           ;
     }
+
     /// <inheritdoc/>
     public EmbedBuilder Mark(int addTicks)
     {
         return Mark(addTicks, MarkAlertTitle);
     }
+
     /// <inheritdoc/>
     public EmbedBuilder Mark()
     {

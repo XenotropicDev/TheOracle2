@@ -1,4 +1,4 @@
-namespace TheOracle2;
+﻿namespace TheOracle2;
 
 public class ProgressRoll : IronswornRoll
 {

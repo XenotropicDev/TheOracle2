@@ -30,6 +30,7 @@ public class GenericComponents : InteractionModuleBase<SocketInteractionContext<
     {
         return new ButtonBuilder(label ?? "Cancel", "delete-original-response", style: ButtonStyle.Secondary);
     }
+
     [ComponentInteraction("alert-toggle:*")]
     public async Task ToggleAlert(string togglesToString)
     {

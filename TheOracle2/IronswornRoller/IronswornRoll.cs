@@ -3,6 +3,7 @@ using TheOracle2.GameObjects;
 using TheOracle2.IronswornRoller;
 
 namespace TheOracle2;
+
 /// <summary>
 /// Represents an Ironsworn roll, where a Score of 0-10 is compared to two Challenge Dice (d10).
 /// </summary>
@@ -33,6 +34,7 @@ public abstract class IronswornRoll : IWidget, IMatchable
             EmbedCategory = $"{EmbedCategory}: {moveName}";
         }
     }
+
     /// <summary>
     /// Rebuild an IronswornRoll object from an Ironsworn roll embed.
     /// </summary>
@@ -43,16 +45,23 @@ public abstract class IronswornRoll : IWidget, IMatchable
         Description = embed.Description;
         EmbedCategory = embed.Author.ToString();
     }
+
     public ChallengeDice ChallengeDice { get; set; }
+
     /// <summary>A user-provided text annotation to the roll.</summary>
     public bool IsMatch => ChallengeDice.IsMatch;
+
     public string Description { get; set; }
+
     /// <summary>The roll's score before it's reduced by the score cap.</summary>
     public abstract int RawScore { get; }
+
     /// <summary>The Score to be compared to the Challenge Dice, capped at 10.</summary>
     public int Score => Math.Min(10, RawScore);
+
     /// <summary>A Markdown string representation of the Score (and any relevant arithmetic) for use in text output.</summary>
     public virtual string ToScoreString() => $"**{Score}**";
+
     public static int ParseScore(string scoreFieldString)
     {
         string pattern = Regex.Escape("**") + "([0-9]|10)" + Regex.Escape("**");
@@ -63,13 +72,16 @@ public abstract class IronswornRoll : IWidget, IMatchable
         }
         return score;
     }
+
     public abstract string ScoreLabel { get; }
+
     public virtual EmbedFieldBuilder ScoreField()
     {
         return new EmbedFieldBuilder()
           .WithName(ScoreLabel)
           .WithValue(ToScoreString());
     }
+
     /// <summary>A Markdown string representation of the roll and any user-provided text, for use in text output.</summary>
     public override string ToString()
     {
@@ -80,6 +92,7 @@ public abstract class IronswornRoll : IWidget, IMatchable
         }
         return baseString;
     }
+
     /// <summary>
     /// Resolve a score and two challenge dice to a roll outcome.
     /// </summary>
@@ -92,6 +105,7 @@ public abstract class IronswornRoll : IWidget, IMatchable
         }
         throw new Exception("Unable to resolve challenge dice into Ironsworn roll outcome.");
     }
+
     public static IronswornRollOutcome Resolve(int score, int challengeDie1, int challengeDie2)
     {
         if (score > challengeDie1 && score > challengeDie2)
@@ -104,13 +118,16 @@ public abstract class IronswornRoll : IWidget, IMatchable
         }
         return IronswornRollOutcome.WeakHit;
     }
+
     /// <summary>The outcome of the roll - a Strong Hit, Weak Hit, or Miss.</summary>
     public IronswornRollOutcome Outcome => Resolve(Score, ChallengeDice);
+
     /// <summary>The string representation of the roll outcome - a Strong Hit, Weak Hit, or Miss - and whether or not it's a Match.</summary>
     public string OutcomeText()
     {
         return ToOutcomeString(Outcome, IsMatch);
     }
+
     public Color OutcomeColor() => Outcome switch
     {
         IronswornRollOutcome.Miss => new Color(0xC50933),
@@ -126,6 +143,7 @@ public abstract class IronswornRoll : IWidget, IMatchable
         IronswornRollOutcome.StrongHit => IronswornRollResources.StrongHitImageURL,
         _ => IronswornRollResources.MissImageURL,
     };
+
     public EmbedBuilder ToEmbed()
     {
         return IWidget.EmbedStub(this)
@@ -135,15 +153,19 @@ public abstract class IronswornRoll : IWidget, IMatchable
           .AddField(ChallengeDice.ToEmbedField())
           ;
     }
+
     public string OverMaxMessage() => RawScore > 10 ? string.Format(IronswornRollResources.OverMaxMessage, Score) : "";
+
     public virtual ComponentBuilder MakeComponents()
     {
         return new ComponentBuilder()
         // .WithButton("Dummy button", "dummy", ButtonStyle.Secondary)
         ;
     }
+
     public string Title => OutcomeText();
     public virtual string Footer => OverMaxMessage();
+
     // <summary>A string description of the roll type (e.g. "Progress Roll", "Action Roll"), for use in labelling embed output.</summary>
     public virtual string EmbedCategory { get; set; } = "Roll";
 
@@ -167,5 +189,6 @@ public abstract class IronswornRoll : IWidget, IMatchable
             _ => "ERROR",
         };
     }
+
     public static readonly Dictionary<string, IEmote> Emoji = new() { { "roll", new Emoji("🎲") } };
 }

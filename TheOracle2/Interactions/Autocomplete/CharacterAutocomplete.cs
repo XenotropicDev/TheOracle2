@@ -1,6 +1,5 @@
 ﻿using System.Text.RegularExpressions;
 using Discord.Interactions;
-using Microsoft.EntityFrameworkCore;
 using TheOracle2.UserContent;
 
 namespace TheOracle2;
@@ -9,6 +8,7 @@ public class CharacterAutocomplete : AutocompleteHandler
 {
     public EFContext Db { get; set; }
     private const int BroadenSearchAt = 4;
+
     public override Task<AutocompletionResult> GenerateSuggestionsAsync(IInteractionContext context, IAutocompleteInteraction autocompleteInteraction, IParameterInfo parameter, IServiceProvider services)
     {
         try
@@ -33,6 +33,7 @@ public class CharacterAutocomplete : AutocompleteHandler
                             .Select(pc => new AutocompleteResult(pc.Name, pc.Id.ToString())).AsEnumerable();
                     }
                     break;
+
                 case >= BroadenSearchAt:
                     {
                         // if the user still hasn't found the character, broaden search to strings within words
@@ -43,6 +44,7 @@ public class CharacterAutocomplete : AutocompleteHandler
                             .Select(pc => new AutocompleteResult(pc.Name, pc.Id.ToString())).AsEnumerable();
                     }
                     break;
+
                 default:
                     {
                         // fallback to list of users own guild PCs, sorted alphabetically

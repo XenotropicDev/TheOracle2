@@ -1,6 +1,6 @@
 using Discord.Interactions;
-using Discord.WebSocket;
 using TheOracle2.GameObjects;
+
 namespace TheOracle2.UserContent;
 
 /// <summary>
@@ -14,27 +14,36 @@ public class GuildPlayer
         UserId = userId;
         DiscordGuildId = discordGuildId;
     }
+
     public GuildPlayer(EFContext dbContext, ulong userId, ulong discordGuildId, int lastUsedPcId) : this(dbContext, userId, discordGuildId)
     {
         LastUsedPcId = lastUsedPcId;
     }
-    public GuildPlayer(EFContext dbContext, SocketInteractionContext interaction) : this(dbContext, interaction.User.Id, interaction.Guild?.Id ?? interaction.User.Id) { }
+
+    public GuildPlayer(EFContext dbContext, SocketInteractionContext interaction) : this(dbContext, interaction.User.Id, interaction.Guild?.Id ?? interaction.User.Id)
+    {
+    }
+
     public GuildPlayer(EFContext dbContext, SocketInteractionContext interaction, int lastUsedPcId) : this(dbContext, interaction)
     {
         LastUsedPcId = lastUsedPcId;
     }
+
     /// <summary>
     /// The EFContext of this GuildPlayer.
     /// </summary>
     public EFContext DbContext { get; set; }
+
     /// <summary>
     /// The user's discord snowflake id.
     /// </summary>
     public ulong UserId { get; set; }
+
     /// <summary>
     /// The discord guild's snowflake id.
     /// </summary>
     public ulong DiscordGuildId { get; set; }
+
     /// <summary>
     /// The id of the PlayerCharacter last touched by the GuildPlayer.
     /// </summary>
@@ -60,6 +69,7 @@ public class GuildPlayer
         }
         return guildPlayer;
     }
+
     /// <summary>
     /// Finds a GuildPlayer by their user id and guild id; if they don't exist, creates a new GuildPlayer for those ids. Returns the GuildPlayer.
     /// </summary>
@@ -72,6 +82,7 @@ public class GuildPlayer
         var guildId = Context.Guild?.Id ?? userId;
         return GetAndAddIfMissing(dbContext, userId, guildId, pcId);
     }
+
     public PlayerCharacter LastUsedPc()
     {
         if (LastUsedPcId == 0)
@@ -80,6 +91,7 @@ public class GuildPlayer
         }
         return DbContext.PlayerCharacters.Find(LastUsedPcId);
     }
+
     /// <summary>
     /// Get all PCs owned by this GuildPlayer.
     /// </summary>
@@ -87,6 +99,7 @@ public class GuildPlayer
     {
         return GetUserPcs(DiscordGuildId);
     }
+
     /// <summary>
     /// Get all PCs owned by the User of this GuildPlayer, regardless of server.
     /// </summary>
@@ -99,6 +112,7 @@ public class GuildPlayer
         }
         return DbContext.PlayerCharacters.Where(pc => pc.UserId == UserId && pc.DiscordGuildId == guildId);
     }
+
     public void CleanupLastUsedPc()
     {
         if (LastUsedPc() == null && LastUsedPcId != 0)

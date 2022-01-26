@@ -1,5 +1,4 @@
 ﻿using Discord.Interactions;
-using Discord.WebSocket;
 using TheOracle2.Commands;
 using TheOracle2.UserContent;
 

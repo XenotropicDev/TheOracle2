@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TheOracle2.DataClasses;
+﻿using TheOracle2.DataClasses;
 using TheOracle2.UserContent;
 
 namespace TheOracle2

@@ -1,7 +1,7 @@
-﻿using Discord.WebSocket;
-using Microsoft.Extensions.Logging;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Runtime.CompilerServices;
+using Discord.WebSocket;
+using Microsoft.Extensions.Logging;
 
 namespace TheOracle2;
 

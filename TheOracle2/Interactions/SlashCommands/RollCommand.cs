@@ -61,6 +61,7 @@ public class RollCommand : InteractionModuleBase
         GuildPlayer.LastUsedPcId = pcData.Id;
         await RespondAsync(embed: roll.ToEmbed().Build(), components: roll.MakeComponents(pcData.Id)?.Build()).ConfigureAwait(false);
     }
+
     public async Task OfferActionRollFallbackPcs(
         int id,
         RollableStats stat,
@@ -133,7 +134,6 @@ public class RollCommand : InteractionModuleBase
     }
 }
 
-
 public class PCRollComponents : InteractionModuleBase<SocketInteractionContext<SocketMessageComponent>>
 {
     public PCRollComponents(Random random, EFContext efContext)
@@ -141,13 +141,16 @@ public class PCRollComponents : InteractionModuleBase<SocketInteractionContext<S
         EfContext = efContext;
         Random = random;
     }
+
     public GuildPlayer GuildPlayer => GuildPlayer.GetAndAddIfMissing(EfContext, Context);
     public Random Random { get; }
     public EFContext EfContext { get; }
+
     public override async Task AfterExecuteAsync(ICommandInfo command)
     {
         await EfContext.SaveChangesAsync().ConfigureAwait(false);
     }
+
     /// <summary>
     /// Provides fallback options when the player character action roll command receives an invalid id.
     /// </summary>
@@ -186,6 +189,7 @@ public class PCRollComponents : InteractionModuleBase<SocketInteractionContext<S
         await FollowupAsync(embed: roll.ToEmbed().Build(), components: roll.MakeComponents().Build()).ConfigureAwait(false);
         return;
     }
+
     /// <summary>
     /// Provides fallback options when the player character action roll command receives an invalid id.
     /// </summary>
@@ -195,6 +199,7 @@ public class PCRollComponents : InteractionModuleBase<SocketInteractionContext<S
         var selectedValue = Context.Interaction.Data.Values.FirstOrDefault();
         await FinishActionRoll(selectedValue, statString, addsString, actionDieString, challengeDie1String, challengeDie2String);
     }
+
     // TODO: for compatibility with earlier alpha buttons. remove by first release.
     [ComponentInteraction("burn-roll-*,*,*")]
     public async Task BurnFromRollLegacy(string Die1, string Die2, string pcId)

@@ -1,6 +1,4 @@
-﻿using OracleData;
-
-namespace TheOracle2.DataClasses;
+﻿namespace TheOracle2.DataClasses;
 
 //Todo: convert the classes in this file to records that should be.
 //lazy loading virtual regex: public (?!class|int|string|partial|.List<string>|virtual|.*?\()
@@ -84,12 +82,15 @@ public partial class ChanceTable : ITableResult
     public IList<string> PartOfSpeech { get; set; }
 
     public virtual Suggest Suggestions { get; set; }
+
     [JsonProperty("Thumbnail")]
     public string Image { get; set; }
+
     public int Value { get; set; }
-    
+
     [JsonIgnore]
     string ITableResult.Name { get => Oracle?.Name ?? Tables?.Displayname; }
+
     [JsonIgnore]
     string ITableResult.Category { get => Oracle?.Category; }
 }

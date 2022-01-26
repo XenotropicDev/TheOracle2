@@ -1,6 +1,4 @@
-using OracleData;
-
-namespace TheOracle2.DataClasses;
+﻿namespace TheOracle2.DataClasses;
 
 //Todo convert the classes in the file to records that should be
 

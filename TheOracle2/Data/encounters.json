@@ -1,6 +1,9 @@
 {
   "Name": "Encounters",
-  "Source": { "Name": "Starforged Backer Preview", "Date": "122421" },
+  "Source": {
+    "Name": "Starforged Backer Preview",
+    "Date": "122421"
+  },
   "Encounters": [
     {
       "Name": "Chiton",
@@ -50,7 +53,7 @@
         "Bipedal form",
         "Etched with cryptic runes"
       ],
-      "Drives": ["Slumber", "When awakened, carry out inscrutable purpose"],
+      "Drives": [ "Slumber", "When awakened, carry out inscrutable purpose" ],
       "Tactics": [
         "Ignore puny foes",
         "Unleash destructive energy attacks",
@@ -77,7 +80,7 @@
         "Shifting form",
         "Spiky appendages"
       ],
-      "Drives": ["Gather and consume minerals", "Protect the nest"],
+      "Drives": [ "Gather and consume minerals", "Protect the nest" ],
       "Tactics": [
         "Camouflage within its environment",
         "Reshape to bolster defense and attacks",
@@ -136,13 +139,13 @@
       "Summary": "Energy-based lifeforms",
       "Source": { "Page": 260 },
       "Rank": 1,
-      "Features": ["Ethereal, fiery form", "Pulsing glow"],
+      "Features": [ "Ethereal, fiery form", "Pulsing glow" ],
       "Drives": [
         "Ride the drifts",
         "Move together in dizzying patterns of light",
         "Seek out sources of energy"
       ],
-      "Tactics": ["Surround and envelop", "Absorb energy"],
+      "Tactics": [ "Surround and envelop", "Absorb energy" ],
       "Variants": [
         {
           "Name": "Wisp congregation",
@@ -201,7 +204,7 @@
         "Corpse-like eyes",
         "Rows of multi-pronged teeth"
       ],
-      "Drives": ["Lurk in darkness", "Feed"],
+      "Drives": [ "Lurk in darkness", "Feed" ],
       "Tactics": [
         "Sense motion",
         "Lure prey with bioluminescent display",
@@ -228,7 +231,7 @@
         "Appear as they did in life",
         "Ravages of a violent death"
       ],
-      "Drives": ["Haunt the living", "Find rest"],
+      "Drives": [ "Haunt the living", "Find rest" ],
       "Tactics": [
         "Lure and isolate with subtle visions or disturbances",
         "Reveal horrifying visions",
@@ -255,8 +258,8 @@
         "Long, jutting fangs",
         "Spider-like limbs"
       ],
-      "Drives": ["Consume and proliferate", "Avoid detection"],
-      "Tactics": ["Swarm larger foes", "Disable ship systems"],
+      "Drives": [ "Consume and proliferate", "Avoid detection" ],
+      "Tactics": [ "Swarm larger foes", "Disable ship systems" ],
       "Variants": [
         {
           "Name": "Gnawling brood mother",
@@ -273,8 +276,8 @@
       "Summary": "Jungle predators",
       "Source": { "Page": 266 },
       "Rank": "Dangerous",
-      "Features": ["Sleek, feline frame", "Eyeless visage", "Bat-like ears"],
-      "Drives": ["Hunt and feed", "Protect the pack"],
+      "Features": [ "Sleek, feline frame", "Eyeless visage", "Bat-like ears" ],
+      "Drives": [ "Hunt and feed", "Protect the pack" ],
       "Tactics": [
         "Keep to the shadows",
         "Stalk prey using echolocation",
@@ -338,7 +341,7 @@
         "Writing tendrils sprouting from a dessicated host",
         "Barbed thorns dripping with ichor"
       ],
-      "Drives": ["Seek out new hosts", "Grow and consume"],
+      "Drives": [ "Seek out new hosts", "Grow and consume" ],
       "Tactics": [
         "Entangle with thorny vines",
         "Implant seeds",
@@ -366,7 +369,7 @@
         "Seven pairs of grasping legs",
         "Hooked tail"
       ],
-      "Drives": ["Hunt from above", "Mark and defend territory"],
+      "Drives": [ "Hunt from above", "Mark and defend territory" ],
       "Tactics": [
         "Lurk within the cover of ash clouds",
         "Swoop down to grapple with enfolding legs",
@@ -419,7 +422,7 @@
       "Summary": "Wandering raiders",
       "Source": { "Page": 272 },
       "Rank": 2,
-      "Features": ["Cobbled-together weapons and armor", "Ramshackle vehicles"],
+      "Features": [ "Cobbled-together weapons and armor", "Ramshackle vehicles" ],
       "Drives": [
         "Stand together with clan-mates",
         "Seize what can be spared",
@@ -525,7 +528,7 @@
         "Wispy tendrils",
         "Bellowing song"
       ],
-      "Drives": ["Seek out placid skies", "Nurture symbiotic lifeforms"],
+      "Drives": [ "Seek out placid skies", "Nurture symbiotic lifeforms" ],
       "Tactics": [
         "Grasp with tendrils",
         "Rally a swarm of creatures in defense"
@@ -653,8 +656,8 @@
         "Elongated snout",
         "Rock-breaking claws"
       ],
-      "Drives": ["Find water", "Meet new friends"],
-      "Tactics": ["Dig and hide", "When desperate, rake with claws"],
+      "Drives": [ "Find water", "Meet new friends" ],
+      "Tactics": [ "Dig and hide", "When desperate, rake with claws" ],
       "Variants": [
         {
           "Name": "Dowser",
@@ -681,7 +684,7 @@
         "Shape the landscape",
         "Endlessly pursue prey"
       ],
-      "Tactics": ["Detect prey through vibrations", "Shatter stone and steel"],
+      "Tactics": [ "Detect prey through vibrations", "Shatter stone and steel" ],
       "Variants": [
         {
           "Name": "Worldbreaker brood",

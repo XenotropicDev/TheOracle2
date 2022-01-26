@@ -2,7 +2,7 @@
 
 namespace TheOracle2;
 
-interface ISlashCommand
+internal interface ISlashCommand
 {
     public void SetCommandContext(SocketSlashCommand slashCommandContext);
 

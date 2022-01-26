@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using Discord.Interactions;
 using Microsoft.Extensions.Logging;
 using TheOracle2.DataClasses;

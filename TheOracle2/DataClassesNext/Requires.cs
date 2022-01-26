@@ -1,6 +1,7 @@
-namespace TheOracle2.DataClassesNext;
+﻿namespace TheOracle2.DataClassesNext;
+
 public class Requires
 {
-  public IList<string> Paths;
-  public IList<string> Results;
+    public IList<string> Paths;
+    public IList<string> Results;
 }

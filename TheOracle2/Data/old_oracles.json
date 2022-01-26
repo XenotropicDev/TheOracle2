@@ -6246,7 +6246,7 @@
           "Name": "Starforged Backer Preview",
           "Date": "081921"
         },
-        "Requires":  { "Zone": [ "Access" ] } ,
+        "Requires": { "Zone": [ "Access" ] },
         "Oracles": [
           {
             "Name": "Area",
@@ -6488,7 +6488,7 @@
           "Name": "Starforged Backer Preview",
           "Date": "081921"
         },
-        "Requires":  { "Zone": [ "Community" ] } ,
+        "Requires": { "Zone": [ "Community" ] },
         "Oracles": [
           {
             "Name": "Area",
@@ -6714,7 +6714,7 @@
           "Name": "Starforged Backer Preview",
           "Date": "081921"
         },
-        "Requires":  { "Zone": [ "Engineering" ] } ,
+        "Requires": { "Zone": [ "Engineering" ] },
         "Oracles": [
           {
             "Name": "Area",
@@ -6940,7 +6940,7 @@
           "Name": "Starforged Backer Preview",
           "Date": "081921"
         },
-        "Requires":  { "Zone": [ "Living" ] } ,
+        "Requires": { "Zone": [ "Living" ] },
         "Oracles": [
           {
             "Name": "Area",
@@ -7166,7 +7166,7 @@
           "Name": "Starforged Backer Preview",
           "Date": "081921"
         },
-        "Requires":  { "Zone": [ "Medical" ] } ,
+        "Requires": { "Zone": [ "Medical" ] },
         "Oracles": [
           {
             "Name": "Area",
@@ -7392,7 +7392,7 @@
           "Name": "Starforged Backer Preview",
           "Date": "081921"
         },
-        "Requires":  { "Zone": [ "Operations" ] } ,
+        "Requires": { "Zone": [ "Operations" ] },
         "Oracles": [
           {
             "Name": "Area",
@@ -7618,7 +7618,7 @@
           "Name": "Starforged Backer Preview",
           "Date": "081921"
         },
-        "Requires":  { "Zone": [ "Production" ] } ,
+        "Requires": { "Zone": [ "Production" ] },
         "Oracles": [
           {
             "Name": "Area",
@@ -7844,7 +7844,7 @@
           "Name": "Starforged Backer Preview",
           "Date": "081921"
         },
-        "Requires":  { "Zone": [ "Research" ] } ,
+        "Requires": { "Zone": [ "Research" ] },
         "Oracles": [
           {
             "Name": "Area",
@@ -13210,7 +13210,7 @@
                     "Description": "Orbital settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Orbital" ]}
+                      "Attributes": { "Location": [ "Orbital" ] }
                     }
                   },
                   {
@@ -13218,7 +13218,7 @@
                     "Description": "Planetside settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Planetside" ]}
+                      "Attributes": { "Location": [ "Planetside" ] }
                     }
                   },
                   {
@@ -13255,7 +13255,7 @@
                     "Description": "Orbital settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Orbital" ]}
+                      "Attributes": { "Location": [ "Orbital" ] }
                     }
                   },
                   {
@@ -13263,7 +13263,7 @@
                     "Description": "Planetside settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Planetside" ]}
+                      "Attributes": { "Location": [ "Planetside" ] }
                     }
                   },
                   {
@@ -13300,7 +13300,7 @@
                     "Description": "Orbital settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Orbital" ]}
+                      "Attributes": { "Location": [ "Orbital" ] }
                     }
                   },
                   {
@@ -13308,7 +13308,7 @@
                     "Description": "Planetside settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Planetside" ]}
+                      "Attributes": { "Location": [ "Planetside" ] }
                     }
                   }
                 ]
@@ -13371,7 +13371,7 @@
                 "Description": "▶️Precursor Vault (orbital)",
                 "Game object": {
                   "Object type": "Precursor Vault",
-                  "Attributes": { "Location": [ "Orbital" ]}
+                  "Attributes": { "Location": [ "Orbital" ] }
                 }
               }
             ]
@@ -13452,7 +13452,7 @@
                 "Description": "▶️Precursor Vault (planetside)",
                 "Game object": {
                   "Object type": "Precursor Vault",
-                  "Attributes": { "Location": [ "Planetside" ]}
+                  "Attributes": { "Location": [ "Planetside" ] }
                 }
               }
             ]
@@ -13575,7 +13575,7 @@
                     "Description": "Orbital settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Orbital" ]}
+                      "Attributes": { "Location": [ "Orbital" ] }
                     }
                   },
                   {
@@ -13583,7 +13583,7 @@
                     "Description": "Planetside settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Planetside" ]}
+                      "Attributes": { "Location": [ "Planetside" ] }
                     }
                   },
                   {
@@ -13620,7 +13620,7 @@
                     "Description": "Orbital settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Orbital" ]}
+                      "Attributes": { "Location": [ "Orbital" ] }
                     }
                   },
                   {
@@ -13628,7 +13628,7 @@
                     "Description": "Planetside settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Planetside" ]}
+                      "Attributes": { "Location": [ "Planetside" ] }
                     }
                   },
                   {
@@ -13665,7 +13665,7 @@
                     "Description": "Orbital settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Orbital" ]}
+                      "Attributes": { "Location": [ "Orbital" ] }
                     }
                   },
                   {
@@ -13673,7 +13673,7 @@
                     "Description": "Planetside settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Planetside" ]}
+                      "Attributes": { "Location": [ "Planetside" ] }
                     }
                   }
                 ]
@@ -13736,7 +13736,7 @@
                 "Description": "▶️Precursor Vault (orbital)",
                 "Game object": {
                   "Object type": "Precursor Vault",
-                  "Attributes": { "Location": [ "Orbital" ]}
+                  "Attributes": { "Location": [ "Orbital" ] }
                 }
               }
             ]
@@ -13817,7 +13817,7 @@
                 "Description": "▶️Precursor Vault (planetside)",
                 "Game object": {
                   "Object type": "Precursor Vault",
-                  "Attributes": { "Location": [ "Planetside" ]}
+                  "Attributes": { "Location": [ "Planetside" ] }
                 }
               }
             ]
@@ -13940,7 +13940,7 @@
                     "Description": "Orbital settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Orbital" ]}
+                      "Attributes": { "Location": [ "Orbital" ] }
                     }
                   },
                   {
@@ -13948,7 +13948,7 @@
                     "Description": "Planetside settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Planetside" ]}
+                      "Attributes": { "Location": [ "Planetside" ] }
                     }
                   },
                   {
@@ -13985,7 +13985,7 @@
                     "Description": "Orbital settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Orbital" ]}
+                      "Attributes": { "Location": [ "Orbital" ] }
                     }
                   },
                   {
@@ -13993,7 +13993,7 @@
                     "Description": "Planetside settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Planetside" ]}
+                      "Attributes": { "Location": [ "Planetside" ] }
                     }
                   }
                 ]
@@ -14012,7 +14012,7 @@
                     "Description": "Orbital settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Orbital" ]}
+                      "Attributes": { "Location": [ "Orbital" ] }
                     }
                   },
                   {
@@ -14020,7 +14020,7 @@
                     "Description": "Planetside settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Planetside" ]}
+                      "Attributes": { "Location": [ "Planetside" ] }
                     }
                   }
                 ]
@@ -14099,7 +14099,7 @@
                 "Description": "▶️Precursor Vault (orbital)",
                 "Game object": {
                   "Object type": "Precursor Vault",
-                  "Attributes": { "Location": [ "Orbital" ]}
+                  "Attributes": { "Location": [ "Orbital" ] }
                 }
               }
             ]
@@ -14196,7 +14196,7 @@
                 "Description": "▶️Precursor Vault (planetside)",
                 "Game object": {
                   "Object type": "Precursor Vault",
-                  "Attributes": { "Location": [ "Planetside" ]}
+                  "Attributes": { "Location": [ "Planetside" ] }
                 }
               }
             ]
@@ -14312,7 +14312,7 @@
                     "Description": "Orbital settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Orbital" ]}
+                      "Attributes": { "Location": [ "Orbital" ] }
                     }
                   },
                   {
@@ -14320,7 +14320,7 @@
                     "Description": "Planetside settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Planetside" ]}
+                      "Attributes": { "Location": [ "Planetside" ] }
                     }
                   },
                   {
@@ -14357,7 +14357,7 @@
                     "Description": "Orbital settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Orbital" ]}
+                      "Attributes": { "Location": [ "Orbital" ] }
                     }
                   },
                   {
@@ -14365,7 +14365,7 @@
                     "Description": "Planetside settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Planetside" ]}
+                      "Attributes": { "Location": [ "Planetside" ] }
                     }
                   },
                   {
@@ -14402,7 +14402,7 @@
                     "Description": "Orbital settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Orbital" ]}
+                      "Attributes": { "Location": [ "Orbital" ] }
                     }
                   },
                   {
@@ -14410,7 +14410,7 @@
                     "Description": "Planetside settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Planetside" ]}
+                      "Attributes": { "Location": [ "Planetside" ] }
                     }
                   }
                 ]
@@ -14473,7 +14473,7 @@
                 "Description": "▶️Precursor Vault (orbital)",
                 "Game object": {
                   "Object type": "Precursor Vault",
-                  "Attributes": { "Location": [ "Orbital" ]}
+                  "Attributes": { "Location": [ "Orbital" ] }
                 }
               }
             ]
@@ -14554,7 +14554,7 @@
                 "Description": "▶️Precursor Vault (planetside)",
                 "Game object": {
                   "Object type": "Precursor Vault",
-                  "Attributes": { "Location": [ "Planetside" ]}
+                  "Attributes": { "Location": [ "Planetside" ] }
                 }
               }
             ]
@@ -14672,7 +14672,7 @@
                     "Description": "Orbital settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Orbital" ]}
+                      "Attributes": { "Location": [ "Orbital" ] }
                     }
                   },
                   {
@@ -14680,7 +14680,7 @@
                     "Description": "Planetside settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Planetside" ]}
+                      "Attributes": { "Location": [ "Planetside" ] }
                     }
                   },
                   {
@@ -14717,7 +14717,7 @@
                     "Description": "Orbital settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Orbital" ]}
+                      "Attributes": { "Location": [ "Orbital" ] }
                     }
                   },
                   {
@@ -14725,7 +14725,7 @@
                     "Description": "Planetside settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Planetside" ]}
+                      "Attributes": { "Location": [ "Planetside" ] }
                     }
                   },
                   {
@@ -14762,7 +14762,7 @@
                     "Description": "Orbital settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Orbital" ]}
+                      "Attributes": { "Location": [ "Orbital" ] }
                     }
                   },
                   {
@@ -14770,7 +14770,7 @@
                     "Description": "Planetside settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Planetside" ]}
+                      "Attributes": { "Location": [ "Planetside" ] }
                     }
                   }
                 ]
@@ -14833,7 +14833,7 @@
                 "Description": "▶️Precursor Vault (orbital)",
                 "Game object": {
                   "Object type": "Precursor Vault",
-                  "Attributes": { "Location": [ "Orbital" ]}
+                  "Attributes": { "Location": [ "Orbital" ] }
                 }
               }
             ]
@@ -14914,7 +14914,7 @@
                 "Description": "▶️Precursor Vault (planetside)",
                 "Game object": {
                   "Object type": "Precursor Vault",
-                  "Attributes": { "Location": [ "Planetside" ]}
+                  "Attributes": { "Location": [ "Planetside" ] }
                 }
               }
             ]
@@ -15037,7 +15037,7 @@
                     "Description": "Orbital settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Orbital" ]}
+                      "Attributes": { "Location": [ "Orbital" ] }
                     }
                   },
                   {
@@ -15045,7 +15045,7 @@
                     "Description": "Planetside settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Planetside" ]}
+                      "Attributes": { "Location": [ "Planetside" ] }
                     }
                   },
                   {
@@ -15082,7 +15082,7 @@
                     "Description": "Orbital settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Orbital" ]}
+                      "Attributes": { "Location": [ "Orbital" ] }
                     }
                   },
                   {
@@ -15090,7 +15090,7 @@
                     "Description": "Planetside settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Planetside" ]}
+                      "Attributes": { "Location": [ "Planetside" ] }
                     }
                   },
                   {
@@ -15127,7 +15127,7 @@
                     "Description": "Orbital settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Orbital" ]}
+                      "Attributes": { "Location": [ "Orbital" ] }
                     }
                   },
                   {
@@ -15135,7 +15135,7 @@
                     "Description": "Planetside settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Planetside" ]}
+                      "Attributes": { "Location": [ "Planetside" ] }
                     }
                   },
                   {
@@ -15216,7 +15216,7 @@
                 "Description": "▶️Precursor Vault (orbital)",
                 "Game object": {
                   "Object type": "Precursor Vault",
-                  "Attributes": { "Location": [ "Orbital" ]}
+                  "Attributes": { "Location": [ "Orbital" ] }
                 }
               }
             ]
@@ -15297,7 +15297,7 @@
                 "Description": "▶️Precursor Vault (planetside)",
                 "Game object": {
                   "Object type": "Precursor Vault",
-                  "Attributes": { "Location": [ "Planetside" ]}
+                  "Attributes": { "Location": [ "Planetside" ] }
                 }
               }
             ]
@@ -15417,7 +15417,7 @@
                     "Description": "Orbital settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Orbital" ]}
+                      "Attributes": { "Location": [ "Orbital" ] }
                     }
                   },
                   {
@@ -15425,7 +15425,7 @@
                     "Description": "Planetside settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Planetside" ]}
+                      "Attributes": { "Location": [ "Planetside" ] }
                     }
                   },
                   {
@@ -15462,7 +15462,7 @@
                     "Description": "Orbital settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Orbital" ]}
+                      "Attributes": { "Location": [ "Orbital" ] }
                     }
                   },
                   {
@@ -15470,7 +15470,7 @@
                     "Description": "Planetside settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Planetside" ]}
+                      "Attributes": { "Location": [ "Planetside" ] }
                     }
                   },
                   {
@@ -15507,7 +15507,7 @@
                     "Description": "Orbital settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Orbital" ]}
+                      "Attributes": { "Location": [ "Orbital" ] }
                     }
                   },
                   {
@@ -15515,7 +15515,7 @@
                     "Description": "Planetside settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Planetside" ]}
+                      "Attributes": { "Location": [ "Planetside" ] }
                     }
                   },
                   {
@@ -15596,7 +15596,7 @@
                 "Description": "▶️Precursor Vault (orbital)",
                 "Game object": {
                   "Object type": "Precursor Vault",
-                  "Attributes": { "Location": [ "Orbital" ]}
+                  "Attributes": { "Location": [ "Orbital" ] }
                 }
               }
             ]
@@ -15677,7 +15677,7 @@
                 "Description": "▶️Precursor Vault (planetside)",
                 "Game object": {
                   "Object type": "Precursor Vault",
-                  "Attributes": { "Location": [ "Planetside" ]}
+                  "Attributes": { "Location": [ "Planetside" ] }
                 }
               }
             ]
@@ -15795,7 +15795,7 @@
                     "Description": "Orbital settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Orbital" ]}
+                      "Attributes": { "Location": [ "Orbital" ] }
                     }
                   },
                   {
@@ -15803,7 +15803,7 @@
                     "Description": "Planetside settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Planetside" ]}
+                      "Attributes": { "Location": [ "Planetside" ] }
                     }
                   },
                   {
@@ -15840,7 +15840,7 @@
                     "Description": "Orbital settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Orbital" ]}
+                      "Attributes": { "Location": [ "Orbital" ] }
                     }
                   },
                   {
@@ -15848,7 +15848,7 @@
                     "Description": "Planetside settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Planetside" ]}
+                      "Attributes": { "Location": [ "Planetside" ] }
                     }
                   },
                   {
@@ -15885,7 +15885,7 @@
                     "Description": "Orbital settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Orbital" ]}
+                      "Attributes": { "Location": [ "Orbital" ] }
                     }
                   },
                   {
@@ -15893,7 +15893,7 @@
                     "Description": "Planetside settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Planetside" ]}
+                      "Attributes": { "Location": [ "Planetside" ] }
                     }
                   }
                 ]
@@ -15956,7 +15956,7 @@
                 "Description": "▶️Precursor Vault (orbital)",
                 "Game object": {
                   "Object type": "Precursor Vault",
-                  "Attributes": { "Location": [ "Orbital" ]}
+                  "Attributes": { "Location": [ "Orbital" ] }
                 }
               }
             ]
@@ -16037,7 +16037,7 @@
                 "Description": "▶️Precursor Vault (planetside)",
                 "Game object": {
                   "Object type": "Precursor Vault",
-                  "Attributes": { "Location": [ "Planetside" ]}
+                  "Attributes": { "Location": [ "Planetside" ] }
                 }
               }
             ]
@@ -16160,7 +16160,7 @@
                     "Description": "Orbital settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Orbital" ]}
+                      "Attributes": { "Location": [ "Orbital" ] }
                     }
                   },
                   {
@@ -16168,7 +16168,7 @@
                     "Description": "Planetside settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Planetside" ]}
+                      "Attributes": { "Location": [ "Planetside" ] }
                     }
                   },
                   {
@@ -16205,7 +16205,7 @@
                     "Description": "Orbital settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Orbital" ]}
+                      "Attributes": { "Location": [ "Orbital" ] }
                     }
                   },
                   {
@@ -16213,7 +16213,7 @@
                     "Description": "Planetside settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Planetside" ]}
+                      "Attributes": { "Location": [ "Planetside" ] }
                     }
                   },
                   {
@@ -16241,7 +16241,7 @@
                     "Description": "Orbital settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Orbital" ]}
+                      "Attributes": { "Location": [ "Orbital" ] }
                     }
                   },
                   {
@@ -16249,7 +16249,7 @@
                     "Description": "Planetside settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Planetside" ]}
+                      "Attributes": { "Location": [ "Planetside" ] }
                     }
                   }
                 ]
@@ -16320,7 +16320,7 @@
                 "Description": "▶️Precursor Vault (orbital)",
                 "Game object": {
                   "Object type": "Precursor Vault",
-                  "Attributes": { "Location": [ "Orbital" ]}
+                  "Attributes": { "Location": [ "Orbital" ] }
                 }
               }
             ]
@@ -16415,7 +16415,7 @@
                 "Description": "▶️Precursor Vault (planetside)",
                 "Game object": {
                   "Object type": "Precursor Vault",
-                  "Attributes": { "Location": [ "Planetside" ]}
+                  "Attributes": { "Location": [ "Planetside" ] }
                 }
               }
             ]
@@ -16525,7 +16525,7 @@
                     "Description": "Orbital settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Orbital" ]}
+                      "Attributes": { "Location": [ "Orbital" ] }
                     }
                   },
                   {
@@ -16533,7 +16533,7 @@
                     "Description": "Planetside settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Planetside" ]}
+                      "Attributes": { "Location": [ "Planetside" ] }
                     }
                   },
                   {
@@ -16570,7 +16570,7 @@
                     "Description": "Orbital settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Orbital" ]}
+                      "Attributes": { "Location": [ "Orbital" ] }
                     }
                   },
                   {
@@ -16578,7 +16578,7 @@
                     "Description": "Planetside settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Planetside" ]}
+                      "Attributes": { "Location": [ "Planetside" ] }
                     }
                   }
                 ]
@@ -16597,7 +16597,7 @@
                     "Description": "Orbital settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Orbital" ]}
+                      "Attributes": { "Location": [ "Orbital" ] }
                     }
                   },
                   {
@@ -16605,7 +16605,7 @@
                     "Description": "Planetside settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Planetside" ]}
+                      "Attributes": { "Location": [ "Planetside" ] }
                     }
                   }
                 ]
@@ -16668,7 +16668,7 @@
                 "Description": "▶️Precursor Vault (orbital)",
                 "Game object": {
                   "Object type": "Precursor Vault",
-                  "Attributes": { "Location": [ "Orbital" ]}
+                  "Attributes": { "Location": [ "Orbital" ] }
                 }
               }
             ]
@@ -16749,7 +16749,7 @@
                 "Description": "▶️Precursor Vault (planetside)",
                 "Game object": {
                   "Object type": "Precursor Vault",
-                  "Attributes": { "Location": [ "Planetside" ]}
+                  "Attributes": { "Location": [ "Planetside" ] }
                 }
               }
             ]
@@ -16854,7 +16854,7 @@
                     "Description": "Orbital settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Orbital" ]}
+                      "Attributes": { "Location": [ "Orbital" ] }
                     }
                   },
                   {
@@ -16862,7 +16862,7 @@
                     "Description": "Planetside settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Planetside" ]}
+                      "Attributes": { "Location": [ "Planetside" ] }
                     }
                   },
                   {
@@ -16899,7 +16899,7 @@
                     "Description": "Orbital settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Orbital" ]}
+                      "Attributes": { "Location": [ "Orbital" ] }
                     }
                   },
                   {
@@ -16907,7 +16907,7 @@
                     "Description": "Planetside settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Planetside" ]}
+                      "Attributes": { "Location": [ "Planetside" ] }
                     }
                   },
                   {
@@ -16944,7 +16944,7 @@
                     "Description": "Orbital settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Orbital" ]}
+                      "Attributes": { "Location": [ "Orbital" ] }
                     }
                   },
                   {
@@ -16952,7 +16952,7 @@
                     "Description": "Planetside settlement",
                     "Game object": {
                       "Object type": "Settlement",
-                      "Attributes": { "Location": [ "Planetside" ]}
+                      "Attributes": { "Location": [ "Planetside" ] }
                     }
                   },
                   {
@@ -17033,7 +17033,7 @@
                 "Description": "▶️Precursor Vault (orbital)",
                 "Game object": {
                   "Object type": "Precursor Vault",
-                  "Attributes": { "Location": [ "Orbital" ]}
+                  "Attributes": { "Location": [ "Orbital" ] }
                 }
               }
             ]
@@ -17114,7 +17114,7 @@
                 "Description": "▶️Precursor Vault (planetside)",
                 "Game object": {
                   "Object type": "Precursor Vault",
-                  "Attributes": { "Location": [ "Planetside" ]}
+                  "Attributes": { "Location": [ "Planetside" ] }
                 }
               }
             ]

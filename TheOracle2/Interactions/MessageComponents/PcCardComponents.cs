@@ -15,12 +15,15 @@ public class PcCardComponents : InteractionModuleBase<SocketInteractionContext<S
     {
         DbContext = dbContext;
     }
+
     public GuildPlayer GuildPlayer => GuildPlayer.GetAndAddIfMissing(DbContext, Context);
     public EFContext DbContext { get; }
-    public override void AfterExecute(ICommandInfo command)
+
+    public override async Task AfterExecuteAsync(ICommandInfo command)
     {
         DbContext.SaveChanges();
     }
+
     [ComponentInteraction("add-momentum-*")]
     public async Task AddMomentum(string pcId)
     {

@@ -1,5 +1,5 @@
-using TheOracle2;
-using TheOracle2.UserContent;
+﻿using TheOracle2.UserContent;
+
 namespace TheOracle2.GameObjects;
 
 /// <summary>
@@ -20,39 +20,49 @@ public interface IProgressTrack : ITrack, ILogWidget, IRanked
           );
         return embed;
     }
+
     /// <summary>
     /// Marks ticks of progress on the track, and returns an alert embed (with a custom title) to notify the player of the change.
     /// </summary>
     /// <param name="addTicks">The number of ticks to add.</param>
     /// <param name="alertTitle">A title for the alert.</param>
     public EmbedBuilder Mark(int addTicks, string alertTitle);
+
     /// <summary>
     /// Marks ticks of progress on the track, and returns an alert embed (titled with the default progress marking move of the track) to notify the player of the change.
     /// </summary>
     public EmbedBuilder Mark(int addTicks);
+
     /// <summary>
     /// Marks one unit of progress on the track, and returns an alert embed (titled with the default progress marking move of the track) to notify the player of the change.
     /// </summary>
     public EmbedBuilder Mark();
+
     public static ProgressTrack FromEmbed(EFContext dbContext, Embed embed, bool alerts = false)
     {
         switch (embed.Author.ToString())
         {
             case "Progress Track":
                 return new GenericTrack(dbContext, embed, alerts);
+
             case "Scene Challenge":
                 return new SceneChallenge(dbContext, embed, alerts);
+
             case "Vow Progress Track":
                 return new VowTrack(dbContext, embed, alerts);
+
             case "Combat Objective Progress Track":
                 return new CombatTrack(dbContext, embed, alerts);
+
             case "Expedition Progress Track":
                 return new ExpeditionTrack(dbContext, embed, alerts);
+
             default:
                 break;
         }
         throw new Exception("Unable to parse embed into progress track.");
     }
+
     /// <summary>
     /// Builds embed without parsing the progress bar string. Might be faster than an embed alone if you can parse the ticks from a CustomId.
     /// </summary>
@@ -62,19 +72,25 @@ public interface IProgressTrack : ITrack, ILogWidget, IRanked
         {
             case "Progress Track":
                 return new GenericTrack(dbContext, embed, ticks);
+
             case "Scene Challenge":
                 return new SceneChallenge(dbContext, embed, ticks);
+
             case "Vow Progress Track":
                 return new VowTrack(dbContext, embed, ticks);
+
             case "Combat Objective Progress Track":
                 return new CombatTrack(dbContext, embed, ticks);
+
             case "Expedition Progress Track":
                 return new ExpeditionTrack(dbContext, embed, ticks);
+
             default:
                 break;
         }
         throw new Exception("Unable to parse embed into progress track.");
     }
+
     public static SelectMenuOptionBuilder ResolveOption(ProgressTrack track)
     {
         string moveName = track.ResolveMoveName;
@@ -109,6 +125,7 @@ public interface IProgressTrack : ITrack, ILogWidget, IRanked
         }
         return option;
     }
+
     public static SelectMenuOptionBuilder ClearOption(int subtractTicks)
     {
         return new SelectMenuOptionBuilder()

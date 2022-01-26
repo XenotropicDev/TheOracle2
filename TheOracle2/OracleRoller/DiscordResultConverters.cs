@@ -72,14 +72,14 @@ public class DiscordOracleBuilder
     {
         foreach (var item in node.FollowUpTables)
         {
-            if ((item.Tables?.Count ?? 0) == 0 && item.Table != null) 
+            if ((item.Tables?.Count ?? 0) == 0 && item.Table != null)
                 AddOracleSelect.AddOption(item.Name, $"oracle:{item.Id}");
-            
+
             if (item.Tables != null)
             {
                 foreach (var table in item.Tables)
                 {
-                    AddOracleSelect.AddOption($"{item.Name} > {table.Name}" , $"tables:{table.Id}");
+                    AddOracleSelect.AddOption($"{item.Name} > {table.Name}", $"tables:{table.Id}");
                 }
             }
         }
