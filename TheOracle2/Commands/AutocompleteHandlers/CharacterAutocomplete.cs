@@ -25,7 +25,7 @@ public class CharacterAutocomplete : AutocompleteHandler
                         // return list of guild PCs that start with query; own PCs at top.
                         successList = Db.PlayerCharacters
                             .Where((pc) => pc.DiscordGuildId == guildId && pc.Name.StartsWith(userText))
-                            .OrderBy(pc => pc.UserId != pc.UserId).ThenBy(pc => pc.Name)
+                            .OrderBy(pc => pc.UserId != userId).ThenBy(pc => pc.Name)
                             .Take(SelectMenuBuilder.MaxOptionCount)
                             .Select(pc => new AutocompleteResult(pc.Name, pc.Id.ToString())).AsEnumerable();
                     }
@@ -35,7 +35,7 @@ public class CharacterAutocomplete : AutocompleteHandler
                         // if the user still hasn't found the character, broaden search to "Contains". fuzzier matching might be better tho
                         successList = Db.PlayerCharacters
                             .Where((pc) => pc.DiscordGuildId == guildId && pc.Name.Contains(userText))
-                            .OrderBy(pc => pc.UserId != pc.UserId).ThenBy(pc => pc.Name)
+                            .OrderBy(pc => pc.UserId != userId).ThenBy(pc => pc.Name)
                             .Take(SelectMenuBuilder.MaxOptionCount)
                             .Select(pc => new AutocompleteResult(pc.Name, pc.Id.ToString())).AsEnumerable();
                     }
