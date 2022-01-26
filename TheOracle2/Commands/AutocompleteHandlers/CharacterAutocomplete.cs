@@ -24,8 +24,10 @@ public class CharacterAutocomplete : AutocompleteHandler
                     {
                         // return list of guild PCs that start with query; own PCs at top.
                         successList = Db.PlayerCharacters
-                            .Where((pc) => pc.DiscordGuildId == guildId && Regex.IsMatch(pc.Name, $@"\b(?i){userText}"))
                             // '\b' instead of '^' to handle cases like searching 'Izar' for 'Celebrant Izar'
+                            .Where((pc) => pc.DiscordGuildId == guildId && Regex.IsMatch(pc.Name, $@"\b(?i){userText}"))
+                            // TODO: write a custom sort method
+                            // not-equal-to operator below is intentional: 'false' (0) comes before 'true' (1) in sorting
                             .OrderBy(pc => pc.UserId != userId).ThenBy(pc => pc.Name)
                             .Take(SelectMenuBuilder.MaxOptionCount)
                             .Select(pc => new AutocompleteResult(pc.Name, pc.Id.ToString())).AsEnumerable();
