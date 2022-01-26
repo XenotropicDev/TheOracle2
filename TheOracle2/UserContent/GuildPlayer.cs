@@ -62,7 +62,7 @@ public class GuildPlayer
     /// <param name="Context"></param>
     /// <param name="DbContext"></param>
     /// <param name="pcId">Optional, a value to set LastUsedPcId.</param>
-    public static GuildPlayer AddIfMissing(IInteractionContext Context, EFContext DbContext, int pcId = 0)
+    public static GuildPlayer GetAndAddIfMissing(IInteractionContext Context, EFContext DbContext, int pcId = 0)
     {
         var userId = Context.Interaction.User.Id;
         var guildId = Context.Guild?.Id ?? userId;

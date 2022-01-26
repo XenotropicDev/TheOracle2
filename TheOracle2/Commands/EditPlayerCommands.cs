@@ -15,7 +15,7 @@ public class EditPlayerPaths : InteractionModuleBase
     {
         DbContext = dbContext;
     }
-    public GuildPlayer GuildPlayer => GuildPlayer.AddIfMissing(Context, DbContext);
+    public GuildPlayer GuildPlayer => GuildPlayer.GetAndAddIfMissing(Context, DbContext);
     public override async Task AfterExecuteAsync(ICommandInfo command)
     {
         await DbContext.SaveChangesAsync().ConfigureAwait(false);

@@ -17,7 +17,7 @@ public class PlayerRollCommand : InteractionModuleBase
 
     public Random Random { get; }
     public EFContext EfContext { get; }
-    public GuildPlayer GuildPlayer => GuildPlayer.AddIfMissing(Context, EfContext);
+    public GuildPlayer GuildPlayer => GuildPlayer.GetAndAddIfMissing(Context, EfContext);
 
     public override async Task AfterExecuteAsync(ICommandInfo command)
     {
@@ -121,7 +121,7 @@ public class PCRollComponents : InteractionModuleBase<SocketInteractionContext<S
         EfContext = efContext;
         Random = random;
     }
-    public GuildPlayer GuildPlayer => GuildPlayer.AddIfMissing(Context, EfContext);
+    public GuildPlayer GuildPlayer => GuildPlayer.GetAndAddIfMissing(Context, EfContext);
     public Random Random { get; }
     public EFContext EfContext { get; }
     public override async Task AfterExecuteAsync(ICommandInfo command)
