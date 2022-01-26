@@ -3,34 +3,27 @@ using Discord.Net;
 using Discord.WebSocket;
 using Microsoft.Extensions.Logging;
 using TheOracle2.GameObjects;
-
 namespace TheOracle2;
-
 /// <summary>
 /// General-purpose components for managing messages.
 /// </summary>
-
 public class GenericComponents : InteractionModuleBase<SocketInteractionContext<SocketMessageComponent>>
 {
     private readonly ILogger<GenericComponents> logger;
-
     public GenericComponents(ILogger<GenericComponents> logger)
     {
         this.logger = logger;
     }
-
     [ComponentInteraction("delete-original-response")]
     public async Task DeleteOriginalAction()
     {
         await DeferAsync();
         await Context.Interaction.Message.DeleteAsync();
     }
-
     public static ButtonBuilder CancelButton(string label = null)
     {
         return new ButtonBuilder(label ?? "Cancel", "delete-original-response", style: ButtonStyle.Secondary);
     }
-
     [ComponentInteraction("alert-toggle:*")]
     public async Task ToggleAlert(string togglesToString)
     {

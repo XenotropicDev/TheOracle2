@@ -3,9 +3,7 @@ using Discord.WebSocket;
 
 namespace TheOracle2.UserContent;
 
-public interface IOracleGameObjectTemplate
-{
-}
+public interface IOracleGameObjectTemplate { }
 
 /* Things to solve/support:
  * Action buttons for oracles

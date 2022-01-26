@@ -1,20 +1,15 @@
 ﻿using Discord.Interactions;
 using TheOracle2.GameObjects;
-
 namespace TheOracle2;
-
 public class OracleAskPaths : InteractionModuleBase
 {
     private readonly Random random;
-
     public OracleAskPaths(Random random)
     {
         this.random = random;
     }
-
     [SlashCommand("ask", "Ask the Oracle a yes/no question (p. 225). To roll on a specific oracle table, use /oracle.")]
     public async Task AskTheOracle(
-
         [Summary(description: "The question to ask the oracle.")]
         string question,
         [Summary(description: "The odds of receiving a 'yes' answer.")]
