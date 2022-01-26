@@ -41,47 +41,12 @@ public class PlayerRollCommand : InteractionModuleBase
 
         if (!int.TryParse(character, out id))
         {
-            throw new Exception();
+            throw new Exception($"Unable to parse PlayerCharacter ID from {character}.");
         }
         pcData = id == -1 ? GuildPlayer.LastUsedPc(EfContext) : EfContext.PlayerCharacters.Find(id);
         if (pcData == null)
         {
-            string errorMessage = id == -1 ? "I couldn't find a recently used player character for you on this server." : $"I couldn't find a character with an Id of {id} on this server.";
-
-            errorMessage += "If you want to create a character, use the `/player` command.";
-
-            var fallbackPcs = GuildPlayer.GetPcs(EfContext);
-            ComponentBuilder components = null;
-            if (fallbackPcs.Any())
-            {
-                components = new ComponentBuilder();
-                errorMessage += $"\n\nOr select from one of your characters below to roll +{stat}";
-                if (!string.IsNullOrEmpty(description))
-                {
-                    errorMessage += $" ({description})";
-                }
-                errorMessage += ":";
-                if (fallbackPcs.Count() <= 5)
-                {
-                    foreach (PlayerCharacter fallbackPc in fallbackPcs)
-                    {
-                        components.WithButton(fallbackPc.Name, $"finish-action-roll:{fallbackPc.Id},{stat},{adds},{actionDie},{challengeDie1},{challengeDie2}");
-                    }
-                }
-                if (fallbackPcs.Count() > 5)
-                {
-                    var menu = new SelectMenuBuilder()
-                    .WithCustomId($"finish-action-roll-menu:{stat},{adds},{actionDie},{challengeDie1},{challengeDie2}")
-                    .WithOptions(
-                        fallbackPcs.Take(25).Select(fallbackPc => new SelectMenuOptionBuilder(
-                            fallbackPc.Name,
-                            fallbackPc.Id.ToString()
-                        )).ToList()
-                    )
-                    ;
-                }
-            }
-            await RespondAsync(errorMessage, components: components?.Build(), ephemeral: true).ConfigureAwait(false);
+            await OfferActionRollFallbackPcs(id, stat, adds, description, actionDie, challengeDie1, challengeDie2);
             return;
         }
 
@@ -96,7 +61,6 @@ public class PlayerRollCommand : InteractionModuleBase
         GuildPlayer.LastUsedPcId = pcData.Id;
         await RespondAsync(embed: roll.ToEmbed().Build(), components: roll.MakeComponents(pcData.Id)?.Build()).ConfigureAwait(false);
     }
-
     private int GetStatValue(RollableStats stat, PlayerCharacter pc)
     {
         return stat switch
@@ -112,7 +76,55 @@ public class PlayerRollCommand : InteractionModuleBase
             _ => throw new NotImplementedException(),
         };
     }
+    public async Task OfferActionRollFallbackPcs(
+        int id,
+        RollableStats stat,
+        int adds,
+        string description = "",
+        int? actionDie = null,
+        int? challengeDie1 = null,
+        int? challengeDie2 = null
+    )
+    {
+        string errorMessage = id == -1 ? "I couldn't find a recently used player character for you on this server." : $"I couldn't find a character with an Id of {id} on this server.";
+
+        errorMessage += "If you want to create a character, use the `/player` command.";
+
+        var fallbackPcs = GuildPlayer.GetPcs(EfContext);
+        ComponentBuilder components = null;
+        if (fallbackPcs.Any())
+        {
+            components = new ComponentBuilder();
+            errorMessage += $"\n\nOr select from one of your characters below to roll +{stat}";
+            if (!string.IsNullOrEmpty(description))
+            {
+                errorMessage += $" ({description})";
+            }
+            errorMessage += ":";
+            if (fallbackPcs.Count() <= 5)
+            {
+                foreach (PlayerCharacter fallbackPc in fallbackPcs)
+                {
+                    components.WithButton(fallbackPc.Name, $"finish-action-roll:{fallbackPc.Id},{stat},{adds},{actionDie},{challengeDie1},{challengeDie2}");
+                }
+            }
+            if (fallbackPcs.Count() > 5)
+            {
+                var menu = new SelectMenuBuilder()
+                .WithCustomId($"finish-action-roll-menu:{stat},{adds},{actionDie},{challengeDie1},{challengeDie2}")
+                .WithOptions(
+                    fallbackPcs.Take(25).Select(fallbackPc => new SelectMenuOptionBuilder(
+                        fallbackPc.Name,
+                        fallbackPc.Id.ToString()
+                    )).ToList()
+                );
+            }
+        }
+        await RespondAsync(errorMessage, components: components?.Build(), ephemeral: true).ConfigureAwait(false);
+    }
 }
+
+
 
 public class PCRollComponents : InteractionModuleBase<SocketInteractionContext<SocketMessageComponent>>
 {
