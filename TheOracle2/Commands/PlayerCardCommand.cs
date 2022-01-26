@@ -16,10 +16,12 @@ public class PlayerCardCommand : InteractionModuleBase<SocketInteractionContext>
     public EFContext DbContext { get; }
 
     public GuildPlayer GuildPlayer => GuildPlayer.GetAndAddIfMissing(DbContext, Context);
+
     public override async Task AfterExecuteAsync(ICommandInfo command)
     {
         await DbContext.SaveChangesAsync().ConfigureAwait(false);
     }
+
     [SlashCommand("player", "Generates a post to keep track of a player character's stats")]
     public async Task BuildPlayerCard(string name, [MaxValue(4)][MinValue(1)] int edge, [MaxValue(4)][MinValue(1)] int heart, [MaxValue(4)][MinValue(1)] int iron, [MaxValue(4)][MinValue(1)] int shadow, [MaxValue(4)][MinValue(1)] int wits)
     {
@@ -44,12 +46,15 @@ public class PlayerCardComponents : InteractionModuleBase<SocketInteractionConte
     {
         DbContext = dbContext;
     }
+
     public GuildPlayer GuildPlayer => GuildPlayer.GetAndAddIfMissing(DbContext, Context);
     public EFContext DbContext { get; }
+
     public override async Task AfterExecuteAsync(ICommandInfo command)
     {
         await DbContext.SaveChangesAsync().ConfigureAwait(false);
     }
+
     [ComponentInteraction("add-momentum-*")]
     public async Task AddMomentum(string pcId)
     {

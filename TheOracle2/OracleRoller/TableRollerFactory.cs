@@ -1,5 +1,4 @@
 ﻿using TheOracle2.DataClasses;
-using TheOracle2;
 using TheOracle2.UserContent;
 
 namespace TheOracle2.ActionRoller
@@ -29,7 +28,7 @@ namespace TheOracle2.ActionRoller
         {
             int.TryParse(value.AsSpan(value.IndexOf(":") + 1), out int id);
             if (id == default && !int.TryParse(value.AsSpan(value.IndexOf(":") + 1), out id)) throw new ArgumentException($"Unknown id {value}");
-            
+
             if (value.StartsWith("tables:"))
             {
                 var table = Context.Tables.Find(id);

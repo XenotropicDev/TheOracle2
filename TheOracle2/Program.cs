@@ -1,15 +1,14 @@
-﻿global using Discord;
+﻿global using System.Linq;
+global using Discord;
 global using Microsoft.Extensions.DependencyInjection;
 global using Newtonsoft.Json;
-global using System.Linq;
+using System.Reflection;
 using Discord.Commands;
 using Discord.Interactions;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System.Reflection;
 using TheOracle2.UserContent;
-using System.Diagnostics;
 
 namespace TheOracle2;
 

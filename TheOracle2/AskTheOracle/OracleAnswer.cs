@@ -1,16 +1,20 @@
-namespace TheOracle2.GameObjects;
+﻿namespace TheOracle2.GameObjects;
 
-public class OracleAnswer : Die, IMatchable {
-    public OracleAnswer(Random random, AskOption odds, string question) : base(random, 100) {
+public class OracleAnswer : Die, IMatchable
+{
+    public OracleAnswer(Random random, AskOption odds, string question) : base(random, 100)
+    {
         Question = question;
         Odds = odds;
     }
+
     public string Question { get; set; }
     public AskOption Odds { get; }
     public bool IsYes => Value <= (int)Odds;
     public bool IsMatch => Value == 100 || Value % 11 == 0;
 
-    public override string ToString() {
+    public override string ToString()
+    {
         return $"Rolled {Value} vs. {(int)Odds}: **{AnswerString}**";
     }
 
@@ -18,10 +22,13 @@ public class OracleAnswer : Die, IMatchable {
 
     private string MatchMessage => (IsMatch) ? "You rolled a match! Envision an extreme result or twist." : String.Empty;
 
-    private string AnswerString {
-        get {
+    private string AnswerString
+    {
+        get
+        {
             string str = IsYes ? "Yes" : "No";
-            if (IsMatch) {
+            if (IsMatch)
+            {
                 str = $"hell {str}!".ToUpperInvariant();
             }
             return str;
@@ -37,7 +44,8 @@ public class OracleAnswer : Die, IMatchable {
         { AskOption.SureThing, "Sure thing" }
     };
 
-    public EmbedBuilder ToEmbed() {
+    public EmbedBuilder ToEmbed()
+    {
         string authorString = $"Ask the Oracle: {OddsString[Odds]}";
         string footerString = MatchMessage;
         return new EmbedBuilder()

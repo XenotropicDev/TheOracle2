@@ -1,8 +1,9 @@
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using TheOracle2.GameObjects;
 using TheOracle2.IronswornRoller;
 
 namespace TheOracle2;
+
 /// <inheritdoc/>
 public class ActionRoll : IronswornRoll
 {
@@ -25,6 +26,7 @@ public class ActionRoll : IronswornRoll
             EmbedCategory += $" +{statName}";
         }
     }
+
     public ActionRoll(Random random, Embed embed, int? momentum = null) : base(random, embed)
     {
         if (!embed.Author.ToString().StartsWith("Action Roll") ||
@@ -39,24 +41,30 @@ public class ActionRoll : IronswornRoll
         Stat = actionScore[1];
         Adds = actionScore[2];
     }
+
     public int Stat { get; set; }
     public int Adds { get; set; }
+
     /// <summary>
     /// The action die (d6) for this action roll.
     /// </summary>
     public Die ActionDie { get; set; }
+
     /// <summary>
     /// The current momentum of the PC rolling.
     /// </summary>
     public int Momentum { get; set; }
+
     /// <summary>
     /// Whether the action die is cancelled to 0 due to negative momentum.
     /// </summary>
     public bool IsActionDieCanceled => Momentum < 0 && Math.Abs(Momentum) == ActionDie;
+
     /// <summary>
     /// Whether burning momentum is possible (and would improve the outcome).
     /// </summary>
     public bool IsBurnable => MomentumBurnOutcome > Outcome;
+
     private bool _burnt;
     public bool IsBurnt { get => _burnt; set => _burnt = ((value == true & !IsBurnable) ? false : value); }
 
@@ -64,6 +72,7 @@ public class ActionRoll : IronswornRoll
     /// The outcome that would result if Momentum were used in place of the score.
     /// </summary>
     private IronswornRollOutcome MomentumBurnOutcome => Resolve(Momentum, ChallengeDice);
+
     public string MomentumText()
     {
         if (IsActionDieCanceled)
@@ -81,11 +90,15 @@ public class ActionRoll : IronswornRoll
         }
         return "";
     }
+
     /// <inheritdoc/>
     public override string Footer => $"{base.Footer}\n{MomentumText()}";
+
     /// <inheritdoc/>
     public override string EmbedCategory { get; set; } = "Action Roll";
+
     private string ActionDieString => IsActionDieCanceled ? $"~~{ActionDie}~~" : $"{ActionDie}";
+
     /// <inheritdoc/>
     public override string ToScoreString()
     {
@@ -96,6 +109,7 @@ public class ActionRoll : IronswornRoll
         }
         return $"{arithmetic} = {base.ToScoreString()}";
     }
+
     /// <inheritdoc/>
     public override int RawScore
     {
@@ -108,8 +122,10 @@ public class ActionRoll : IronswornRoll
             return Stat + Adds + ActionDie;
         }
     }
+
     private const string ActionScorePattern = @"^(?:~~)([1-6])(?:~~) \+ ([1-9]|10) \+ ([1-9]|10) = \*\*([1-9]|10)\*\*$";
     private const string BurntActionScorePattern = @"^~~([1-6]) \+ ([1-9]|10) \+ ([1-9]|10) = ([1-9]|10)~~ \*\*([1-9]|10)\*\*$";
+
     public static int[] ParseActionScore(string actionScoreString)
     {
         if (Regex.IsMatch(actionScoreString, BurntActionScorePattern))
@@ -122,17 +138,21 @@ public class ActionRoll : IronswornRoll
         }
         throw new Exception($"Unable to parse string '{actionScoreString}' in to action score.");
     }
+
     public static int[] ParseActionScore(EmbedField embedField)
     {
         return ParseActionScore(embedField.Value);
     }
+
     public override string ScoreLabel { get => _scoreLabel; }
     private const string _scoreLabel = "Action Score";
+
     public static int[] ParseActionScore(Embed embed)
     {
         EmbedField embedField = embed.Fields.FirstOrDefault(field => field.Name == _scoreLabel);
         return ParseActionScore(embedField);
     }
+
     public ButtonBuilder MomentumBurnButton(int pcId)
     {
         return new ButtonBuilder()
@@ -142,6 +162,7 @@ public class ActionRoll : IronswornRoll
           .WithStyle(ButtonStyle.Danger)
           ;
     }
+
     public ComponentBuilder MakeComponents(int pcId)
     {
         var components = base.MakeComponents();
@@ -151,5 +172,6 @@ public class ActionRoll : IronswornRoll
         }
         return components;
     }
+
     public static readonly Dictionary<string, IEmote> ActionRollEmoji = new() { { "burn", new Emoji("🔥") } };
 }

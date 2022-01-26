@@ -1,8 +1,5 @@
-﻿using Discord.Interactions;
-using Discord.WebSocket;
-using TheOracle2.DiscordHelpers;
+﻿using Discord.WebSocket;
 using TheOracle2.GameObjects;
-using TheOracle2.UserContent;
 
 namespace TheOracle2.UserContent
 {
@@ -28,11 +25,13 @@ namespace TheOracle2.UserContent
                 .WithButton("-Mo", $"lose-momentum-{Pc.Id}", row: 1, style: ButtonStyle.Secondary)
                 .WithButton("Burn", $"burn-momentum-{Pc.Id}", row: 0, style: ButtonStyle.Danger, emote: new Emoji("🔥"))
                 .WithButton("...", $"player-more-{Pc.Id}", row: 0, style: ButtonStyle.Primary).Build();
+
         public async Task<IMessage> GetDiscordMessage(IInteractionContext context)
         {
             var channel = (Pc.ChannelId == context.Channel.Id) ? context.Channel : await (context.Client as DiscordSocketClient)?.Rest.GetChannelAsync(Pc.ChannelId) as IMessageChannel;
             return await channel.GetMessageAsync(Pc.MessageId);
         }
+
         public Embed[] GetEmbeds()
         {
             var builder = new EmbedBuilder()
@@ -51,6 +50,7 @@ namespace TheOracle2.UserContent
 
             return new Embed[] { builder.Build() };
         }
+
         /// <summary>
         /// Make an action roll using one of this PC's stats.
         /// </summary>
@@ -70,6 +70,7 @@ namespace TheOracle2.UserContent
                 );
             return roll;
         }
+
         private int GetStatValue(RollableStats stat)
         {
             return stat switch

@@ -3,10 +3,12 @@ using TheOracle2.GameObjects;
 
 namespace TheOracle2;
 
-public class OracleAskPaths : InteractionModuleBase {
+public class OracleAskPaths : InteractionModuleBase
+{
     private readonly Random random;
 
-    public OracleAskPaths(Random random) {
+    public OracleAskPaths(Random random)
+    {
         this.random = random;
     }
 
@@ -21,8 +23,8 @@ public class OracleAskPaths : InteractionModuleBase {
         int odds,
         [Summary(description: "The question to ask the oracle.")]
         string question
-    ) {
-
+    )
+    {
         /// TODO: once discord display string attributes are available for enums, this can use the AskOption enum directly
         await RespondAsync(embed: new OracleAnswer(random, (AskOption)odds, question).ToEmbed().Build()).ConfigureAwait(false);
     }

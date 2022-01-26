@@ -1,5 +1,7 @@
-namespace TheOracle2.GameObjects;
+﻿namespace TheOracle2.GameObjects;
+
 using TheOracle2.UserContent;
+
 public class SceneChallenge : ProgressTrack, IClock
 {
     public SceneChallenge(EFContext dbContext, Embed embed, bool alerts = false) : base(dbContext, embed, alerts)
@@ -8,17 +10,20 @@ public class SceneChallenge : ProgressTrack, IClock
         Filled = clockData.Item1;
         Segments = clockData.Item2;
     }
+
     public SceneChallenge(EFContext dbContext, Embed embed, int ticks, bool alerts = false) : base(dbContext, embed, ticks, alerts)
     {
         Tuple<int, int> clockData = IClock.ParseClock(embed);
         Filled = clockData.Item1;
         Segments = clockData.Item2;
     }
+
     public SceneChallenge(EFContext dbContext, SceneChallengeClockSize segments = (SceneChallengeClockSize)6, int filledSegments = 0, int ticks = 0, string title = "", string description = "", ChallengeRank rank = ChallengeRank.Formidable, bool alerts = false) : base(dbContext, rank, ticks, title, description, alerts)
     {
         Filled = filledSegments;
         Segments = (int)segments;
     }
+
     public override string EmbedCategory => "Scene Challenge";
     public string FooterMessage { get; set; } = "When the tension clock is filled, time is up. You must resolve the encounter by making a progress roll.";
     public override string ResolveMoveName => "Resolve Scene Challenge";
@@ -28,10 +33,12 @@ public class SceneChallenge : ProgressTrack, IClock
     public int Segments { get; }
     public int Filled { get; set; }
     public bool IsFull => Filled >= Segments;
+
     public override EmbedBuilder ToEmbed()
     {
         return IClock.AddClockTemplate(base.ToEmbed(), this);
     }
+
     public SelectMenuBuilder MakeSelectMenu()
     {
         SelectMenuBuilder menu = ProgressTrack.MenuStub(this, "scene-challenge-");
@@ -45,6 +52,7 @@ public class SceneChallenge : ProgressTrack, IClock
         if (Filled > 0) { menu = menu.AddOption(IClock.ResetOption()); }
         return menu;
     }
+
     public override ComponentBuilder MakeComponents()
     {
         return new ComponentBuilder()

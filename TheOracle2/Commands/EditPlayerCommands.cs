@@ -15,7 +15,9 @@ public class EditPlayerPaths : InteractionModuleBase
     {
         DbContext = dbContext;
     }
+
     public GuildPlayer GuildPlayer => GuildPlayer.GetAndAddIfMissing(DbContext, Context);
+
     public override async Task AfterExecuteAsync(ICommandInfo command)
     {
         await DbContext.SaveChangesAsync().ConfigureAwait(false);
@@ -65,10 +67,12 @@ public class EditPlayerComponents : InteractionModuleBase<SocketInteractionConte
         EfContext = efContext;
         this.logger = logger;
     }
+
     public override async Task AfterExecuteAsync(ICommandInfo command)
     {
         await EfContext.SaveChangesAsync().ConfigureAwait(false);
     }
+
     public GuildPlayer GuildPlayer => GuildPlayer.GetAndAddIfMissing(EfContext, Context);
     public EFContext EfContext { get; }
 
