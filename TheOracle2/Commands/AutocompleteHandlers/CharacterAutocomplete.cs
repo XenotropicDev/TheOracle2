@@ -1,4 +1,5 @@
-﻿using Discord.Interactions;
+﻿using System.Text.RegularExpressions;
+using Discord.Interactions;
 using Microsoft.EntityFrameworkCore;
 using TheOracle2.UserContent;
 
@@ -8,7 +9,6 @@ public class CharacterAutocomplete : AutocompleteHandler
 {
     public EFContext Db { get; set; }
     private const int BroadenSearchAt = 4;
-
     public override Task<AutocompletionResult> GenerateSuggestionsAsync(IInteractionContext context, IAutocompleteInteraction autocompleteInteraction, IParameterInfo parameter, IServiceProvider services)
     {
         try
@@ -24,7 +24,8 @@ public class CharacterAutocomplete : AutocompleteHandler
                     {
                         // return list of guild PCs that start with query; own PCs at top.
                         successList = Db.PlayerCharacters
-                            .Where((pc) => pc.DiscordGuildId == guildId && pc.Name.StartsWith(userText))
+                            .Where((pc) => pc.DiscordGuildId == guildId && Regex.IsMatch(pc.Name, $@"\b(?i){userText}"))
+                            // '\b' instead of '^' to handle cases like searching 'Izar' for 'Celebrant Izar'
                             .OrderBy(pc => pc.UserId != userId).ThenBy(pc => pc.Name)
                             .Take(SelectMenuBuilder.MaxOptionCount)
                             .Select(pc => new AutocompleteResult(pc.Name, pc.Id.ToString())).AsEnumerable();
@@ -32,9 +33,9 @@ public class CharacterAutocomplete : AutocompleteHandler
                     break;
                 case >= BroadenSearchAt:
                     {
-                        // if the user still hasn't found the character, broaden search to "Contains". fuzzier matching might be better tho
+                        // if the user still hasn't found the character, broaden search to strings within words
                         successList = Db.PlayerCharacters
-                            .Where((pc) => pc.DiscordGuildId == guildId && pc.Name.Contains(userText))
+                            .Where((pc) => pc.DiscordGuildId == guildId && Regex.IsMatch(pc.Name, $"(?i){userText}"))
                             .OrderBy(pc => pc.UserId != userId).ThenBy(pc => pc.Name)
                             .Take(SelectMenuBuilder.MaxOptionCount)
                             .Select(pc => new AutocompleteResult(pc.Name, pc.Id.ToString())).AsEnumerable();
