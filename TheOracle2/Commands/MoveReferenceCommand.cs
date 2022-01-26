@@ -20,7 +20,7 @@ public class MoveReferenceCommand : InteractionModuleBase
         var movedata = DbContext.Moves.Find(move);
         var entityItem = new DiscordMoveEntity(movedata);
 
-        await RespondAsync(entityItem.GetDiscordMessage(), embeds: entityItem.GetEmbeds(), ephemeral: ephemeral || entityItem.IsEphemeral, components: entityItem.GetComponents());
+        await RespondAsync(embeds: entityItem.GetEmbeds(), ephemeral: ephemeral || entityItem.IsEphemeral, components: entityItem.GetComponents());
 
         if (!keepMessage && !ephemeral)
         {

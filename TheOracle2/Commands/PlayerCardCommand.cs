@@ -15,17 +15,26 @@ public class PlayerCardCommand : InteractionModuleBase<SocketInteractionContext>
 
     public EFContext DbContext { get; }
 
+    public GuildPlayer GuildPlayer => GuildPlayer.GetAndAddIfMissing(DbContext, Context);
+    public override async Task AfterExecuteAsync(ICommandInfo command)
+    {
+        await DbContext.SaveChangesAsync().ConfigureAwait(false);
+    }
     [SlashCommand("player", "Generates a post to keep track of a player character's stats")]
     public async Task BuildPlayerCard(string name, [MaxValue(4)][MinValue(1)] int edge, [MaxValue(4)][MinValue(1)] int heart, [MaxValue(4)][MinValue(1)] int iron, [MaxValue(4)][MinValue(1)] int shadow, [MaxValue(4)][MinValue(1)] int wits)
     {
         await DeferAsync();
-        var pc = new PlayerCharacter(Context, name, edge, heart, iron, shadow, wits);
-        DbContext.PlayerCharacters.Add(pc);
+        var pcData = new PlayerCharacter(Context, name, edge, heart, iron, shadow, wits);
+        DbContext.PlayerCharacters.Add(pcData);
+
         await DbContext.SaveChangesAsync();
+        // AfterExecute does SaveChanges, but the PC has to be saved to the DB to get an Id.
+        GuildPlayer.LastUsedPcId = pcData.Id;
 
-        var entity = new PlayerCharacterEntity(pc);
-
-        await FollowupAsync(embeds: entity.GetEmbeds(), components: entity.GetComponents());
+        var pcEntity = new PlayerCharacterEntity(pcData);
+        var characterSheet = await FollowupAsync(embeds: pcEntity.GetEmbeds(), components: pcEntity.GetComponents()).ConfigureAwait(false);
+        pcData.MessageId = characterSheet.Id;
+        return;
     }
 }
 
@@ -35,9 +44,12 @@ public class PlayerCardComponents : InteractionModuleBase<SocketInteractionConte
     {
         DbContext = dbContext;
     }
-
+    public GuildPlayer GuildPlayer => GuildPlayer.GetAndAddIfMissing(DbContext, Context);
     public EFContext DbContext { get; }
-
+    public override async Task AfterExecuteAsync(ICommandInfo command)
+    {
+        await DbContext.SaveChangesAsync().ConfigureAwait(false);
+    }
     [ComponentInteraction("add-momentum-*")]
     public async Task AddMomentum(string pcId)
     {
@@ -156,17 +168,17 @@ public class PlayerCardComponents : InteractionModuleBase<SocketInteractionConte
 
     private async Task UpdatePCValue(string pcId, Action<PlayerCharacter> change)
     {
-        if (!int.TryParse(pcId, out var Id)) return;
-        var pc = DbContext.PlayerCharacters.Find(Id);
-
-        if (pc.MessageId != Context.Interaction.Message.Id)
+        if (!int.TryParse(pcId, out var Id))
         {
-            pc.MessageId = Context.Interaction.Message.Id;
-            pc.ChannelId = Context.Interaction.Channel.Id;
+            throw new ArgumentException($"Unable to parse integer from {pcId}");
         }
-
+        var pc = await DbContext.PlayerCharacters.FindAsync(Id);
+        pc.MessageId = Context.Interaction.Message.Id;
+        pc.ChannelId = Context.Interaction.Channel.Id;
         change(pc);
-        await DbContext.SaveChangesAsync();
+        GuildPlayer.LastUsedPcId = Id;
+        // await DbContext.SaveChangesAsync();
+        // TODO: commenting out the above to see what breaks.
 
         var entity = new PlayerCharacterEntity(pc);
         await Context.Interaction.UpdateAsync(msg =>

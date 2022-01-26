@@ -15,16 +15,18 @@ public class EditPlayerPaths : InteractionModuleBase
     {
         DbContext = dbContext;
     }
+    public GuildPlayer GuildPlayer => GuildPlayer.GetAndAddIfMissing(DbContext, Context);
+    public override async Task AfterExecuteAsync(ICommandInfo command)
+    {
+        await DbContext.SaveChangesAsync().ConfigureAwait(false);
+    }
 
     [SlashCommand("add-impact", "Changes the impacts on a character")]
     public async Task SetImpacts([Autocomplete(typeof(CharacterAutocomplete))] string character, string impact)
     {
         if (!int.TryParse(character, out var id)) return;
         var pc = await DbContext.PlayerCharacters.FindAsync(id);
-
         pc.Impacts.Add(impact);
-        await DbContext.SaveChangesAsync();
-
         await RespondAsync($"Impacts will update next time you trigger an interaction on that character card", ephemeral: true);
 
         //await pc.RedrawCard(Context.Client);
@@ -46,7 +48,6 @@ public class EditPlayerPaths : InteractionModuleBase
         {
             await RespondAsync($"You are not allowed to delete this player character.", ephemeral: true);
         }
-
         await RespondAsync($"Are you sure you want to delete {pc.Name}?\nMomentum: {pc.Momentum}, xp: {pc.XpGained}\nPlayer id: {pc.Id}, last known message id: {pc.MessageId}",
             components: new ComponentBuilder()
             .WithButton(GenericComponentHandlers.CancelButton())
@@ -64,7 +65,11 @@ public class EditPlayerComponents : InteractionModuleBase<SocketInteractionConte
         EfContext = efContext;
         this.logger = logger;
     }
-
+    public override async Task AfterExecuteAsync(ICommandInfo command)
+    {
+        await EfContext.SaveChangesAsync().ConfigureAwait(false);
+    }
+    public GuildPlayer GuildPlayer => GuildPlayer.GetAndAddIfMissing(EfContext, Context);
     public EFContext EfContext { get; }
 
     [ComponentInteraction("delete-player-*")]
@@ -90,8 +95,9 @@ public class EditPlayerComponents : InteractionModuleBase<SocketInteractionConte
         var errors = new List<string>();
         try
         {
+            // TODO: configure cascade delete for this table in the DB context?
             EfContext.PlayerCharacters.Remove(pc);
-            await EfContext.SaveChangesAsync();
+            GuildPlayer.LastUsedPcId = 0;
         }
         catch (Exception ex)
         {
@@ -105,7 +111,10 @@ public class EditPlayerComponents : InteractionModuleBase<SocketInteractionConte
             try
             {
                 var msg = await ((await Context.Client.GetChannelAsync(pc.ChannelId)) as IMessageChannel)?.GetMessageAsync(pc.MessageId);
-                await msg?.DeleteAsync(); //The message could've been deleted by the user.
+                if (msg != null)
+                {
+                    await msg?.DeleteAsync(); //The message could've been deleted by the user.
+                }
             }
             catch (Exception ex)
             {

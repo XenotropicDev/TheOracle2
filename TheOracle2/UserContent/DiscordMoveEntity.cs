@@ -1,6 +1,6 @@
-﻿using TheOracle2.ActionRoller;
+﻿using System.Text.Json;
+using TheOracle2.ActionRoller;
 using TheOracle2.DataClasses;
-using System.Text.Json;
 
 namespace TheOracle2.UserContent
 {
@@ -44,9 +44,9 @@ namespace TheOracle2.UserContent
       return null;
     }
 
-    public string GetDiscordMessage()
+    public async Task<IMessage> GetDiscordMessage(IInteractionContext context)
     {
-      return null;
+        return null;
     }
 
     public Embed[] GetEmbeds()

@@ -35,7 +35,7 @@ public class SearchCommand : InteractionModuleBase<SocketInteractionContext>
 
         if (entityItem != null)
         {
-            await RespondAsync(entityItem.GetDiscordMessage(), embeds: entityItem.GetEmbeds(), ephemeral: entityItem.IsEphemeral, components: entityItem.GetComponents());
+            await RespondAsync(embeds: entityItem.GetEmbeds(), ephemeral: entityItem.IsEphemeral, components: entityItem.GetComponents());
             return;
         }
 

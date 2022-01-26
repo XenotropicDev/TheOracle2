@@ -17,6 +17,7 @@ public class EFContext : DbContext
     }
 
     public DbSet<OracleGuild> OracleGuilds { get; set; }
+    public DbSet<GuildPlayer> GuildPlayers { get; set; }
     public DbSet<Asset> Assets { get; set; }
     public DbSet<Move> Moves { get; set; }
     public DbSet<OracleInfo> OracleInfo { get; set; }
@@ -109,6 +110,7 @@ public class EFContext : DbContext
 
         //TheOracle Stuff
         modelBuilder.Entity<PlayerCharacter>().Property(pc => pc.Impacts).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
+        modelBuilder.Entity<GuildPlayer>().HasKey(guildPlayer => new { guildPlayer.UserId, guildPlayer.DiscordGuildId });
 
         //Dataforged stuff
         modelBuilder.Entity<Ability>().Property(a => a.Input).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
