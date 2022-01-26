@@ -133,35 +133,39 @@ public static class InteractionExtensions
 
 public static class ComponentExtenstions
 {
-
     public static bool ContainsCustomId(this ActionRowComponent components, string id)
     {
         if (components.Components.Count() == 0) { return false; }
         if (components.Components.Any(item => item.CustomId == id)) { return true; }
         return false;
     }
+
     public static bool ContainsCustomId(this IEnumerable<ActionRowComponent> components, string id)
     {
         if (components.Count() == 0) { return false; }
         if (components.Any(row => row.ContainsCustomId(id))) { return true; }
         return false;
     }
+
     public static ActionRowBuilder GetRowContainingId(this ComponentBuilder builder, string id)
     {
         ActionRowBuilder row = builder.ActionRows.Find(r => r.Components.Any(c => c.CustomId == id));
         return row;
     }
+
     public static ActionRowComponent GetRowContainingId(this IEnumerable<ActionRowComponent> components, string id)
     {
         ActionRowComponent row = components.FirstOrDefault(row => row.Components.Any(c => c.CustomId == id));
         return row;
     }
+
     public static IMessageComponent GetComponentById(this IEnumerable<ActionRowComponent> components, string id)
     {
         ActionRowComponent row = GetRowContainingId(components, id);
         IMessageComponent component = row.Components.FirstOrDefault(item => item.CustomId == id);
         return component;
     }
+
     public static IMessageComponent GetComponentById(this ComponentBuilder builder, string id)
     {
         ActionRowBuilder row = GetRowContainingId(builder, id);

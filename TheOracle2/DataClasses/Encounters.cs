@@ -1,6 +1,4 @@
-using OracleData;
-
-namespace TheOracle2.DataClasses;
+﻿namespace TheOracle2.DataClasses;
 
 public partial class Encounter
 {
@@ -27,6 +25,7 @@ public partial class Encounter
     public Source Source { get; set; }
 
     public string Summary { get; set; }
+
     [JsonProperty("Tactics")]
     public IList<string> Tactics { get; set; }
 
@@ -45,6 +44,7 @@ public partial class EncountersRoot
     [JsonProperty("Source")]
     public virtual Source Source { get; set; }
 }
+
 public partial class Variant
 {
     [JsonProperty("Description")]

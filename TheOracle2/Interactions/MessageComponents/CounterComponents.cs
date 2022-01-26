@@ -1,4 +1,4 @@
-using Discord.Interactions;
+﻿using Discord.Interactions;
 using Discord.WebSocket;
 using TheOracle2.GameObjects;
 using TheOracle2.UserContent;
@@ -231,6 +231,7 @@ public class CounterComponents : InteractionModuleBase<SocketInteractionContext<
             case "clock-reset":
                 await ResetClock().ConfigureAwait(false);
                 return;
+
             case "clock-advance":
                 await AdvanceClock().ConfigureAwait(false);
                 return;

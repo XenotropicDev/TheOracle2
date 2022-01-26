@@ -1,8 +1,5 @@
-﻿using Discord.Interactions;
-using Discord.WebSocket;
-using TheOracle2.DiscordHelpers;
+﻿using Discord.WebSocket;
 using TheOracle2.GameObjects;
-using TheOracle2.UserContent;
 
 namespace TheOracle2.UserContent
 {
@@ -120,6 +117,7 @@ namespace TheOracle2.UserContent
 
             return new Embed[] { builder.Build() };
         }
+
         /// <summary>
         /// Make an action roll using one of this PC's stats, and style the Author field to reflect their image and embed url.
         /// </summary>

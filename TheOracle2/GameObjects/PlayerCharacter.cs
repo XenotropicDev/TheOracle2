@@ -1,5 +1,4 @@
 ﻿using Discord.Interactions;
-using Discord.WebSocket;
 using Microsoft.EntityFrameworkCore;
 using TheOracle2.UserContent;
 
@@ -22,15 +21,18 @@ public class PlayerCharacter
     {
         ChannelId = interactionContext.Interaction.Channel.Id;
     }
+
     public PlayerCharacter(ulong ownerId, ulong guildId, ulong messageId, string name, int edge, int heart, int iron, int shadow, int wits) : this(ownerId, guildId, name, edge, heart, iron, shadow, wits)
     {
         MessageId = messageId;
     }
+
     private PlayerCharacter(ulong ownerId, ulong guildId, string name, int edge, int heart, int iron, int shadow, int wits) : this(name, edge, heart, iron, shadow, wits)
     {
         UserId = ownerId;
         DiscordGuildId = guildId;
     }
+
     private PlayerCharacter(string name, int edge, int heart, int iron, int shadow, int wits) : this()
     {
         Name = name;
@@ -122,6 +124,7 @@ public class PlayerCharacter
         roll.IsBurnt = true;
         return roll;
     }
+
     public GuildPlayer GetLastGuildPlayer(EFContext dbContext)
     {
         return dbContext.GuildPlayers.FirstOrDefault(guildPlayer => guildPlayer.LastUsedPcId == Id);

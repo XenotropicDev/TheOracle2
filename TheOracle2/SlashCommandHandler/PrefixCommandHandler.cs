@@ -1,10 +1,6 @@
-﻿using Discord;
+﻿using System.Reflection;
 using Discord.Commands;
 using Discord.WebSocket;
-using System;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
 
 namespace TheOracle2
 {

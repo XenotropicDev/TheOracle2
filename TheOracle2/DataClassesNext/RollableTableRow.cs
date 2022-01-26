@@ -1,63 +1,66 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace TheOracle2.DataClassesNext;
+
 public class RollableTableRow
 {
-  public bool RollIsInRange(int roll)
-  {
-    if (roll >= Floor && roll <= Ceiling) { return true; }
-    return false;
-  }
-  public override string ToString()
-  {
-    return $"`{ToRangeString().PadLeft(7)}` {ToResultString()}";
-  }
-  public string ToResultString()
-  {
-    if (Summary != null)
+    public bool RollIsInRange(int roll)
     {
-      return $"{Result} ({Summary})";
+        if (roll >= Floor && roll <= Ceiling) { return true; }
+        return false;
     }
-    return Result;
-  }
 
-  public string ToRangeString()
-  {
-    if (Floor == Ceiling) { return Floor.ToString(); }
-    return $"{Floor}-{Ceiling}";
-  }
-  public int Floor { get; set; }
+    public override string ToString()
+    {
+        return $"`{ToRangeString().PadLeft(7)}` {ToResultString()}";
+    }
 
-  public int Ceiling { get; set; }
+    public string ToResultString()
+    {
+        if (Summary != null)
+        {
+            return $"{Result} ({Summary})";
+        }
+        return Result;
+    }
 
-  public string Result { get; set; }
+    public string ToRangeString()
+    {
+        if (Floor == Ceiling) { return Floor.ToString(); }
+        return $"{Floor}-{Ceiling}";
+    }
 
-  public string Summary { get; set; }
+    public int Floor { get; set; }
 
-  [JsonProperty("Game objects")]
-  public GameObject[] GameObjects { get; set; }
+    public int Ceiling { get; set; }
 
-  [JsonProperty("Multiple rolls")]
-  public MultipleRolls MultipleRolls { get; set; }
+    public string Result { get; set; }
 
-  [JsonProperty("Oracle rolls")]
-  public string[] OracleRolls { get; set; }
+    public string Summary { get; set; }
 
-  public Suggestions Suggestions { get; set; }
+    [JsonProperty("Game objects")]
+    public GameObject[] GameObjects { get; set; }
 
+    [JsonProperty("Multiple rolls")]
+    public MultipleRolls MultipleRolls { get; set; }
 
-  [DefaultValue(null)]
-  public int Amount { get; set; }
+    [JsonProperty("Oracle rolls")]
+    public string[] OracleRolls { get; set; }
 
-  [JsonProperty("Part of speech")]
-  public IList<string> PartOfSpeech { get; set; }
+    public Suggestions Suggestions { get; set; }
 
-  public IList<string> Assets { get; set; }
+    [DefaultValue(null)]
+    public int Amount { get; set; }
 
-  public RollableTable Table { get; set; }
+    [JsonProperty("Part of speech")]
+    public IList<string> PartOfSpeech { get; set; }
 
-  [JsonProperty("Add template")]
-  public AddTemplate AddTemplate { get; set; }
+    public IList<string> Assets { get; set; }
 
-  public string Image { get; set; }
+    public RollableTable Table { get; set; }
+
+    [JsonProperty("Add template")]
+    public AddTemplate AddTemplate { get; set; }
+
+    public string Image { get; set; }
 }

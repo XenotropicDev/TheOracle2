@@ -1,5 +1,5 @@
-using TheOracle2.IronswornRoller;
-namespace TheOracle2.GameObjects;
+﻿namespace TheOracle2.GameObjects;
+
 public class ChallengeDice : Dice, IMatchable
 {
     private const int Sides = 10;

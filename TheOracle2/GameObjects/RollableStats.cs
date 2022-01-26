@@ -1,4 +1,4 @@
-namespace TheOracle2.GameObjects;
+﻿namespace TheOracle2.GameObjects;
 
 public enum RollableStats
 {

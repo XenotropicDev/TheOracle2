@@ -112,13 +112,14 @@ public class OracleRoller : ITableRoller
         return null;
     }
 
-    class SingleRoll
+    private class SingleRoll
     {
         public SingleRoll(int roll, ChanceTable chanceTable)
         {
             Roll = roll;
             ChanceTable = chanceTable;
         }
+
         public int Roll { get; set; }
         public ChanceTable ChanceTable { get; set; }
     }

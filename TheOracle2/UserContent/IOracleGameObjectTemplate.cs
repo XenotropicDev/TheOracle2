@@ -1,6 +1,5 @@
-﻿using Discord;
+﻿using System.Text.RegularExpressions;
 using Discord.WebSocket;
-using System.Text.RegularExpressions;
 
 namespace TheOracle2.UserContent;
 
@@ -101,6 +100,6 @@ public class TrackButton : ButtonBuilder, IGameButton
     public new string Url { get; set; }
 
     public new bool IsDisabled { get; set; }
-    public ButtonBuilder AsButtonBuilder() => this;
 
+    public ButtonBuilder AsButtonBuilder() => this;
 }

@@ -1,8 +1,6 @@
-﻿using Discord.Interactions;
+﻿using System.Text.RegularExpressions;
+using Discord.Interactions;
 using Microsoft.Extensions.Logging;
-using System.Diagnostics;
-using System.Text.RegularExpressions;
-using TheOracle2.DataClasses;
 using TheOracle2.UserContent;
 
 namespace TheOracle2.Commands;

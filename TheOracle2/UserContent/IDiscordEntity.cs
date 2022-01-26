@@ -6,7 +6,8 @@
 
         MessageComponent GetComponents();
 
-        public Task<IMessage> GetMessageAsync(IInteractionContext context);
+        public Task<IMessage> GetDiscordMessage(IInteractionContext context);
+
         bool IsEphemeral { get; set; }
     }
 }

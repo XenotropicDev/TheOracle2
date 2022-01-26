@@ -1,5 +1,4 @@
-using TheOracle2.DiscordHelpers;
-namespace TheOracle2.GameObjects;
+﻿namespace TheOracle2.GameObjects;
 
 /// <summary>
 /// Interface for game widgets that can increment/decrement and might want to report such events to a log or embed.
@@ -10,12 +9,16 @@ public interface ILogWidget : IWidget
     public bool AlertOnDecrement { get; }
     public bool LogOnIncrement { get; }
     public bool LogOnDecrement { get; }
+
     /// <summary>
     /// A message string. Sent to the log, and used as the alert embed title.
     /// </summary>
     public string LogMessage { get; }
+
     public string AlertFooter { get; }
+
     public EmbedBuilder AlertEmbed();
+
     public static bool ParseAlertStatus(ButtonComponent button)
     {
         return button.CustomId switch
@@ -25,6 +28,7 @@ public interface ILogWidget : IWidget
             _ => throw new Exception($"Unable to parse alert status from customId: {button.CustomId}")
         };
     }
+
     public static bool ParseAlertStatus(IEnumerable<ActionRowComponent> actionRows)
     {
         return actionRows.ContainsCustomId("alert-toggle:True");
@@ -40,6 +44,7 @@ public interface ILogWidget : IWidget
             .WithEmote(emoji)
             .WithStyle(ButtonStyle.Secondary);
     }
+
     /// <summary>
     /// Template/stub for use in building alert embeds.
     /// </summary>

@@ -1,6 +1,4 @@
-﻿using System.Text.Json;
-using TheOracle2.ActionRoller;
-using TheOracle2.DataClasses;
+﻿using TheOracle2.DataClasses;
 
 namespace TheOracle2.UserContent
 {
@@ -44,7 +42,7 @@ namespace TheOracle2.UserContent
             return null;
         }
 
-        public async Task<IMessage> GetMessageAsync(IInteractionContext context)
+        public async Task<IMessage> GetDiscordMessage(IInteractionContext context)
         {
             return null;
         }
@@ -89,5 +87,4 @@ namespace TheOracle2.UserContent
       {"Ask the Oracle", new Emoji("🔮")}
   };
     }
-
 }
