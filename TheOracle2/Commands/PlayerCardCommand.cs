@@ -15,7 +15,7 @@ public class PlayerCardCommand : InteractionModuleBase<SocketInteractionContext>
 
     public EFContext DbContext { get; }
 
-    public GuildPlayer GuildPlayer => GuildPlayer.GetAndAddIfMissing(Context, DbContext);
+    public GuildPlayer GuildPlayer => GuildPlayer.GetAndAddIfMissing(DbContext, Context);
 
     public override void AfterExecute(ICommandInfo command)
     {
@@ -45,7 +45,7 @@ public class PlayerCardComponents : InteractionModuleBase<SocketInteractionConte
     {
         DbContext = dbContext;
     }
-    public GuildPlayer GuildPlayer => GuildPlayer.GetAndAddIfMissing(Context, DbContext);
+    public GuildPlayer GuildPlayer => GuildPlayer.GetAndAddIfMissing(DbContext, Context);
     public EFContext DbContext { get; }
     public override void AfterExecute(ICommandInfo command)
     {

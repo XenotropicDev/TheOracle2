@@ -17,7 +17,7 @@ public class PlayerRollCommand : InteractionModuleBase
 
     public Random Random { get; }
     public EFContext EfContext { get; }
-    public GuildPlayer GuildPlayer => GuildPlayer.GetAndAddIfMissing(Context, EfContext);
+    public GuildPlayer GuildPlayer => GuildPlayer.GetAndAddIfMissing(EfContext, Context);
 
     public override async Task AfterExecuteAsync(ICommandInfo command)
     {
@@ -43,7 +43,7 @@ public class PlayerRollCommand : InteractionModuleBase
         {
             throw new Exception($"Unable to parse PlayerCharacter ID from {character}.");
         }
-        pcData = id == -1 ? GuildPlayer.LastUsedPc(EfContext) : EfContext.PlayerCharacters.Find(id);
+        pcData = id == -1 ? GuildPlayer.LastUsedPc() : EfContext.PlayerCharacters.Find(id);
         if (pcData == null)
         {
             await OfferActionRollFallbackPcs(id, stat, adds, description, actionDie, challengeDie1, challengeDie2);
@@ -75,7 +75,7 @@ public class PlayerRollCommand : InteractionModuleBase
 
         errorMessage += "If you want to create a character, use the `/player` command.";
 
-        var fallbackPcs = GuildPlayer.GetPcs(EfContext);
+        var fallbackPcs = GuildPlayer.GetPcs();
         ComponentBuilder components = null;
         if (fallbackPcs.Any())
         {
@@ -115,7 +115,7 @@ public class PCRollComponents : InteractionModuleBase<SocketInteractionContext<S
         EfContext = efContext;
         Random = random;
     }
-    public GuildPlayer GuildPlayer => GuildPlayer.GetAndAddIfMissing(Context, EfContext);
+    public GuildPlayer GuildPlayer => GuildPlayer.GetAndAddIfMissing(EfContext, Context);
     public Random Random { get; }
     public EFContext EfContext { get; }
     public override async Task AfterExecuteAsync(ICommandInfo command)
