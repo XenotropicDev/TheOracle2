@@ -15,7 +15,7 @@ public class PcCardComponents : InteractionModuleBase<SocketInteractionContext<S
     {
         DbContext = dbContext;
     }
-    public GuildPlayer GuildPlayer => GuildPlayer.AddIfMissing(Context, DbContext);
+    public GuildPlayer GuildPlayer => GuildPlayer.GetAndAddIfMissing(DbContext, Context);
     public EFContext DbContext { get; }
     public override void AfterExecute(ICommandInfo command)
     {

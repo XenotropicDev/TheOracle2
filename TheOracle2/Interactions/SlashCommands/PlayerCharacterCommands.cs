@@ -18,11 +18,10 @@ public class EditPlayerPaths : InteractionModuleBase
 
     public EFContext DbContext { get; }
 
-    public GuildPlayer GuildPlayer => GuildPlayer.AddIfMissing(Context, DbContext);
-
-    public override void AfterExecute(ICommandInfo command)
+    public GuildPlayer GetGuildPlayer() => GuildPlayer.GetAndAddIfMissing(this.DbContext, Context);
+    public override async Task AfterExecuteAsync(ICommandInfo command)
     {
-        DbContext.SaveChanges();
+        await DbContext.SaveChangesAsync().ConfigureAwait(false);
     }
 
 
@@ -35,7 +34,7 @@ public class EditPlayerPaths : InteractionModuleBase
         await DbContext.SaveChangesAsync();
 
         // AfterExecute does SaveChanges, but the PC has to be saved to the DB to get an Id.
-        GuildPlayer.LastUsedPcId = pcData.Id;
+        GetGuildPlayer().LastUsedPcId = pcData.Id;
 
         var pcEntity = new PlayerCharacterEntity(pcData);
         await FollowupAsync(embeds: pcEntity.GetEmbeds(), components: pcEntity.GetComponents()).ConfigureAwait(false);

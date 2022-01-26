@@ -251,5 +251,6 @@ public class CounterComponents : InteractionModuleBase<SocketInteractionContext<
             await ClockMenu(values).ConfigureAwait(false);
             return;
         }
+        return;
     }
 }
