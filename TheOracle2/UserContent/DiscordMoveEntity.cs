@@ -42,7 +42,7 @@ namespace TheOracle2.UserContent
             return null;
         }
 
-        public async Task<IMessage> GetDiscordMessage(IInteractionContext context)
+        public async Task<IMessage> GetMessageAsync(IInteractionContext context)
         {
             return null;
         }
