@@ -1,5 +1,4 @@
 ﻿namespace TheOracle2;
-
 public class ProgressRoll : IronswornRoll
 {
     /// <summary>
@@ -13,14 +12,10 @@ public class ProgressRoll : IronswornRoll
     {
         ProgressScore = progressScore;
     }
-
     /// <inheritdoc/>
     public override string EmbedCategory { get; set; } = "Progress Roll";
-
     public override string ScoreLabel { get => "Progress Score"; }
-
     public int ProgressScore { get; set; }
-
     /// <inheritdoc/>
     public override int RawScore { get => ProgressScore; }
 }

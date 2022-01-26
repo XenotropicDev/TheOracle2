@@ -11,7 +11,6 @@ public class ClockCommand : InteractionModuleBase
     {
         DbContext = dbContext;
     }
-
     [SlashCommand("clock", "Set a campaign clock, tension clock, or scene challenge (p. 230).")]
     public async Task BuildClock(
         [Summary(description: "The type of clock: campaign clock (p. 231), tension clock (p. 234), or scene challenge (p. 235).")]

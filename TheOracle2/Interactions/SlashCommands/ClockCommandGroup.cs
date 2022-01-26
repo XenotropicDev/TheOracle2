@@ -1,23 +1,17 @@
 using Discord.Interactions;
 using TheOracle2.GameObjects;
 using TheOracle2.UserContent;
-
 namespace TheOracle2;
-
 // same as ClockCommand, but as a command group. only one should be enabled at a time.
-
 [DontAutoRegister]
-
 [Group("clock", "Set a campaign clock, tension clock, or scene challenge (p. 230)")]
 public class ClockCommandGroup : InteractionModuleBase
 {
     public EFContext DbContext { get; set; }
-
     public ClockCommandGroup(EFContext dbContext)
     {
         DbContext = dbContext;
     }
-
     [SlashCommand("campaign", "Set a campaign clock to resolve objectives and actions in the background of your campaign (p. 231).")]
     public async Task BuildCampaignClock(
       [Summary(description: "A title that makes it clear what project is complete or event triggered when the clock is filled.")]
@@ -34,7 +28,6 @@ public class ClockCommandGroup : InteractionModuleBase
           components: campaignClock.MakeComponents().Build()
           );
     }
-
     [SlashCommand("tension", "Set a tension clock: a smaller-scope clock to fill as you suffer setbacks or fail to act (p. 234).")]
     public async Task BuildTensionClock(
       [Summary(description: "A title for the tension clock.")]
@@ -50,7 +43,6 @@ public class ClockCommandGroup : InteractionModuleBase
           embed: tensionClock.ToEmbed().Build(),
           components: tensionClock.MakeComponents().Build());
     }
-
     [SlashCommand("scene-challenge", "Create a scene challenge for extended non-combat scenes against threats or other characters (p. 235).")]
     public async Task BuildSceneChallenge(
       [Summary(description: "The scene challenge's objective.")]

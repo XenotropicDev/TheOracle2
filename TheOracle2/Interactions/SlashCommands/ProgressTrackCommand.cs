@@ -1,11 +1,8 @@
 ﻿using Discord.Interactions;
 using TheOracle2.GameObjects;
 using TheOracle2.UserContent;
-
 namespace TheOracle2;
-
 // same as ProgressTrackCommandGroup, but as a single command with progress type set via a parameter. only one should be enabled at a time.
-
 // [DontAutoRegister]
 public class ProgressTrackCommand : InteractionModuleBase
 {
@@ -105,7 +102,6 @@ public class ProgressTrackCommand : InteractionModuleBase
         await RespondAsync(embed: track.ToEmbed().Build(), components: track.MakeComponents().Build());
     }
 }
-
 public enum ProgressTrackType
 {
     Vow,
