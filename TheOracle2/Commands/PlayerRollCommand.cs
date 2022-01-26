@@ -61,21 +61,6 @@ public class PlayerRollCommand : InteractionModuleBase
         GuildPlayer.LastUsedPcId = pcData.Id;
         await RespondAsync(embed: roll.ToEmbed().Build(), components: roll.MakeComponents(pcData.Id)?.Build()).ConfigureAwait(false);
     }
-    private int GetStatValue(RollableStats stat, PlayerCharacter pc)
-    {
-        return stat switch
-        {
-            RollableStats.Edge => pc.Edge,
-            RollableStats.Heart => pc.Heart,
-            RollableStats.Iron => pc.Iron,
-            RollableStats.Shadow => pc.Shadow,
-            RollableStats.Wits => pc.Wits,
-            RollableStats.Health => pc.Health,
-            RollableStats.Spirit => pc.Spirit,
-            RollableStats.Supply => pc.Supply,
-            _ => throw new NotImplementedException(),
-        };
-    }
     public async Task OfferActionRollFallbackPcs(
         int id,
         RollableStats stat,
@@ -147,7 +132,6 @@ public class PCRollComponents : InteractionModuleBase<SocketInteractionContext<S
     public async Task FinishActionRoll
         (string pcIdString, string statString, string addsString, string actionDieString, string challengeDie1String, string challengeDie2String)
     {
-
         await DeferAsync();
         if (!int.TryParse(pcIdString, out var pcId))
         {
