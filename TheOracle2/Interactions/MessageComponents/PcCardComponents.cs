@@ -16,7 +16,7 @@ public class PcCardComponents : InteractionModuleBase<SocketInteractionContext<S
     public EFContext DbContext { get; }
     public override async Task AfterExecuteAsync(ICommandInfo command)
     {
-        DbContext.SaveChanges();
+        await DbContext.SaveChangesAsync().ConfigureAwait(false);
     }
     [ComponentInteraction("add-momentum-*")]
     public async Task AddMomentum(string pcId)
