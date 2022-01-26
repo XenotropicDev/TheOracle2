@@ -108,9 +108,6 @@ public class PlayerRollCommand : InteractionModuleBase
         await RespondAsync(errorMessage, components: components?.Build(), ephemeral: true).ConfigureAwait(false);
     }
 }
-
-
-
 public class PCRollComponents : InteractionModuleBase<SocketInteractionContext<SocketMessageComponent>>
 {
     public PCRollComponents(Random random, EFContext efContext)
@@ -148,7 +145,6 @@ public class PCRollComponents : InteractionModuleBase<SocketInteractionContext<S
         int? actionDie = !string.IsNullOrEmpty(actionDieString) ? int.Parse(actionDieString) : null;
         int? challengeDie1 = !string.IsNullOrEmpty(challengeDie1String) ? int.Parse(challengeDie1String) : null;
         int? challengeDie2 = !string.IsNullOrEmpty(challengeDie2String) ? int.Parse(challengeDie2String) : null;
-
 
         var roll = pcEntity.RollAction(this.Random, stat, adds, description, actionDie, challengeDie1, challengeDie2);
 
@@ -221,16 +217,4 @@ public class PCRollComponents : InteractionModuleBase<SocketInteractionContext<S
             components: new ComponentBuilder().Build()
         );
     }
-}
-
-public enum RollableStats
-{
-    Edge,
-    Heart,
-    Iron,
-    Shadow,
-    Wits,
-    Health,
-    Spirit,
-    Supply
 }
