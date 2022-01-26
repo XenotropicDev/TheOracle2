@@ -4,7 +4,7 @@ using TheOracle2.UserContent;
 
 namespace TheOracle2;
 
-// same as ProgressTrackCommand, but as a command group. only one should be enabled at a time.
+// same as ClockCommand, but as a command group. only one should be enabled at a time.
 
 [DontAutoRegister]
 
