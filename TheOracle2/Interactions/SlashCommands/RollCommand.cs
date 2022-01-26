@@ -53,9 +53,6 @@ public class RollCommand : InteractionModuleBase
         }
         var pcEntity = new PlayerCharacterEntity(EfContext, pcData);
         var roll = await pcEntity.RollAction(Context, this.Random, stat, adds, description, actionDie, challengeDie1, challengeDie2);
-        var embed = roll.ToEmbed();
-
-        Console.WriteLine($"received embed: {embed.Author.Url}, {embed.Author.IconUrl}");
 
         GuildPlayer.LastUsedPcId = pcData.Id;
 
