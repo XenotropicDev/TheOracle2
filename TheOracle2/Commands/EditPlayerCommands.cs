@@ -48,8 +48,6 @@ public class EditPlayerPaths : InteractionModuleBase
         {
             await RespondAsync($"You are not allowed to delete this player character.", ephemeral: true);
         }
-        // TODO: if PC is removed, what happens to GuildPlayers that have it as LastUsedPcId? should it be deleted from all GuildPlayer here, or hooked into something else? maybe it's something the PC autocomplete could handle - if the GuildPlayer has an invalid LastUsedPcId, it's set to 0.
-
         await RespondAsync($"Are you sure you want to delete {pc.Name}?\nMomentum: {pc.Momentum}, xp: {pc.XpGained}\nPlayer id: {pc.Id}, last known message id: {pc.MessageId}",
             components: new ComponentBuilder()
             .WithButton(GenericComponentHandlers.CancelButton())
@@ -67,7 +65,11 @@ public class EditPlayerComponents : InteractionModuleBase<SocketInteractionConte
         EfContext = efContext;
         this.logger = logger;
     }
-
+    public override async Task AfterExecuteAsync(ICommandInfo command)
+    {
+        await EfContext.SaveChangesAsync().ConfigureAwait(false);
+    }
+    public GuildPlayer GuildPlayer => GuildPlayer.GetAndAddIfMissing(EfContext, Context);
     public EFContext EfContext { get; }
 
     [ComponentInteraction("delete-player-*")]
@@ -93,7 +95,9 @@ public class EditPlayerComponents : InteractionModuleBase<SocketInteractionConte
         var errors = new List<string>();
         try
         {
+            // TODO: configure cascade delete for this table in the DB context?
             EfContext.PlayerCharacters.Remove(pc);
+            GuildPlayer.LastUsedPcId = 0;
         }
         catch (Exception ex)
         {
@@ -107,7 +111,10 @@ public class EditPlayerComponents : InteractionModuleBase<SocketInteractionConte
             try
             {
                 var msg = await ((await Context.Client.GetChannelAsync(pc.ChannelId)) as IMessageChannel)?.GetMessageAsync(pc.MessageId);
-                await msg?.DeleteAsync(); //The message could've been deleted by the user.
+                if (msg != null)
+                {
+                    await msg?.DeleteAsync(); //The message could've been deleted by the user.
+                }
             }
             catch (Exception ex)
             {

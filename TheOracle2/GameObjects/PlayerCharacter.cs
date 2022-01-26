@@ -18,54 +18,34 @@ public class PlayerCharacter
     private int heart;
     private int edge;
 
+    public PlayerCharacter(SocketInteractionContext interactionContext, string name, int edge, int heart, int iron, int shadow, int wits) : this(interactionContext.User.Id, interactionContext.Guild?.Id ?? interactionContext.User.Id, name, edge, heart, iron, shadow, wits)
+    {
+        ChannelId = interactionContext.Interaction.Channel.Id;
+    }
+    public PlayerCharacter(ulong ownerId, ulong guildId, ulong messageId, string name, int edge, int heart, int iron, int shadow, int wits) : this(ownerId, guildId, name, edge, heart, iron, shadow, wits)
+    {
+        MessageId = messageId;
+    }
+    private PlayerCharacter(ulong ownerId, ulong guildId, string name, int edge, int heart, int iron, int shadow, int wits) : this(name, edge, heart, iron, shadow, wits)
+    {
+        UserId = ownerId;
+        DiscordGuildId = guildId;
+    }
+    private PlayerCharacter(string name, int edge, int heart, int iron, int shadow, int wits) : this()
+    {
+        Name = name;
+        Edge = edge;
+        Heart = heart;
+        Iron = iron;
+        Shadow = shadow;
+        Wits = wits;
+    }
+
     /// <summary>
     /// This constructor is only for EF/Json
     /// </summary>
     public PlayerCharacter()
     {
-        Health = 5;
-        Spirit = 5;
-        Supply = 5;
-        Momentum = 2;
-        XpGained = 0;
-        XpSpent = 0;
-        Impacts = new List<string>();
-    }
-
-    public PlayerCharacter(ulong ownerId, ulong guildId, ulong messageId, string name, int edge, int heart, int iron, int shadow, int wits)
-    {
-        UserId = ownerId;
-        DiscordGuildId = guildId;
-        MessageId = messageId;
-        Name = name;
-        Edge = edge;
-        Heart = heart;
-        Iron = iron;
-        Shadow = shadow;
-        Wits = wits;
-
-        Health = 5;
-        Spirit = 5;
-        Supply = 5;
-        Momentum = 2;
-        XpGained = 0;
-        XpSpent = 0;
-        Impacts = new List<string>();
-    }
-
-    public PlayerCharacter(SocketInteractionContext interaction, string name, int edge, int heart, int iron, int shadow, int wits)
-    {
-        UserId = interaction.User.Id;
-        DiscordGuildId = interaction.Guild?.Id ?? interaction.User.Id;
-        //MessageId = interaction.Interaction;
-        ChannelId = interaction.Interaction.Channel.Id;
-        Name = name;
-        Edge = edge;
-        Heart = heart;
-        Iron = iron;
-        Shadow = shadow;
-        Wits = wits;
-
         Health = 5;
         Spirit = 5;
         Supply = 5;

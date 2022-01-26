@@ -49,14 +49,13 @@ public class PlayerRollCommand : InteractionModuleBase
             await OfferActionRollFallbackPcs(id, stat, adds, description, actionDie, challengeDie1, challengeDie2);
             return;
         }
-
-        var pc = new PlayerCharacterEntity(pcData);
-        var roll = pc.RollAction(this.Random, stat, adds, description, actionDie, challengeDie1, challengeDie2);
+        var pcEntity = new PlayerCharacterEntity(pcData);
+        var roll = pcEntity.RollAction(this.Random, stat, adds, description, actionDie, challengeDie1, challengeDie2);
         var embed = roll.ToEmbed();
         if (pcData.MessageId > 0)
         {
-            var characterSheet = await pc.GetDiscordMessage(Context);
-            embed.Author.Url = characterSheet.GetJumpUrl();
+            var characterSheet = await pcEntity.GetDiscordMessage(Context);
+            embed.Author.Url = characterSheet?.GetJumpUrl();
         }
         GuildPlayer.LastUsedPcId = pcData.Id;
         await RespondAsync(embed: roll.ToEmbed().Build(), components: roll.MakeComponents(pcData.Id)?.Build()).ConfigureAwait(false);
@@ -149,9 +148,11 @@ public class PCRollComponents : InteractionModuleBase<SocketInteractionContext<S
         var roll = pcEntity.RollAction(this.Random, stat, adds, description, actionDie, challengeDie1, challengeDie2);
 
         var embed = roll.ToEmbed();
-        var characterSheet = await pcEntity.GetDiscordMessage(Context);
-
-        embed.Author.Url = characterSheet.GetJumpUrl();
+        if (pcData.MessageId > 0)
+        {
+            var characterSheet = await pcEntity.GetDiscordMessage(Context);
+            embed.Author.Url = characterSheet.GetJumpUrl();
+        }
 
         GuildPlayer.LastUsedPcId = pcEntity.Pc.Id;
 
