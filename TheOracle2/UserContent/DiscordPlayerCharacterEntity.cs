@@ -63,15 +63,23 @@ namespace TheOracle2.UserContent
         {
             return await client.GetChannelAsync(Pc.ChannelId) as IMessageChannel;
         }
+        /// <summary>
+        /// Infers a jump URL to the PC's embed from the PC's Discord Guild, Channel Id, and Message Id.
+        /// Otherewise, attempts to look up the message.
+        /// </summary>
+
         public async Task<string> GetJumpUrl(IInteractionContext context)
         {
+            if (!string.IsNullOrEmpty(Pc.JumpUrl))
+            {
+                return Pc.JumpUrl;
+            }
             var msg = await GetMessageAsync(context.Client);
             if (msg != null)
             {
                 var url = msg.GetJumpUrl();
                 if (url != null)
                 {
-                    Console.WriteLine($"Found jump url: {url}");
                     return url;
                 }
             }

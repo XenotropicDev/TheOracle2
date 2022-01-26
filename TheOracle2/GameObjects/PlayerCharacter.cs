@@ -60,6 +60,10 @@ public class PlayerCharacter
     public ulong DiscordGuildId { get; set; }
     public ulong MessageId { get; set; }
     public ulong ChannelId { get; set; }
+    /// <summary>
+    /// Reconstructs the PC embed's jump URL from it's guild id, channel id, and message id, if possible. Otherwise returns an empty string. This will break if Discord changes its url structure (but that seems unlikely in the forseeable future).
+    /// </summary>
+    public string JumpUrl => DiscordGuildId != 0 && ChannelId != 0 && MessageId != 0 ? $"https://discord.com/channels/{DiscordGuildId}/{ChannelId}/{MessageId}" : string.Empty;
     public string Name { get; set; }
     public int Edge { get => edge; set => edge = (value >= 4) ? 4 : (value <= 1) ? 1 : value; }
     public int Heart { get => heart; set => heart = (value >= 4) ? 4 : (value <= 1) ? 1 : value; }
