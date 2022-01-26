@@ -41,7 +41,7 @@ public class PlayerRollCommand : InteractionModuleBase
 
         if (!int.TryParse(character, out id))
         {
-            throw new Exception($"Unable to parse PlayerCharacter ID from {character}.");
+            throw new ArgumentException($"Unable to parse PlayerCharacter ID from {character}.");
         }
         pcData = id == -1 ? GuildPlayer.LastUsedPc() : EfContext.PlayerCharacters.Find(id);
         if (pcData == null)
@@ -132,7 +132,7 @@ public class PCRollComponents : InteractionModuleBase<SocketInteractionContext<S
         await DeferAsync();
         if (!int.TryParse(pcIdString, out var pcId))
         {
-            throw new Exception($"Unable to parse entity ID from {Context.Interaction.Data.CustomId}");
+            throw new ArgumentException($"Unable to parse entity ID from {Context.Interaction.Data.CustomId}");
         }
         var pcData = await EfContext.PlayerCharacters.FindAsync(pcId);
         var pcEntity = new PlayerCharacterEntity(pcData);
