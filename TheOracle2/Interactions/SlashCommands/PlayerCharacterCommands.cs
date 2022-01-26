@@ -36,7 +36,7 @@ public class EditPlayerPaths : InteractionModuleBase
         // AfterExecute does SaveChanges, but the PC has to be saved to the DB to get an Id.
         GetGuildPlayer().LastUsedPcId = pcData.Id;
 
-        var pcEntity = new PlayerCharacterEntity(pcData);
+        var pcEntity = new PlayerCharacterEntity(DbContext, pcData);
         await FollowupAsync(embeds: pcEntity.GetEmbeds(), components: pcEntity.GetComponents()).ConfigureAwait(false);
         return;
     }
@@ -50,15 +50,15 @@ public class EditPlayerPaths : InteractionModuleBase
     )
     {
         if (!int.TryParse(character, out var id)) return;
-        var pc = await DbContext.PlayerCharacters.FindAsync(id);
-        if (pc == null) { throw new Exception($"PC not found: {character}"); }
+        var pcData = await DbContext.PlayerCharacters.FindAsync(id);
+        if (pcData == null) { throw new Exception($"PC not found: {character}"); }
 
-        if (pc.Impacts == null)
+        if (pcData.Impacts == null)
         {
-            pc.Impacts = new List<string>();
+            pcData.Impacts = new List<string>();
         }
 
-        var pcHasImpact = pc.Impacts?.Contains(impact, StringComparer.InvariantCultureIgnoreCase) ?? false;
+        var pcHasImpact = pcData.Impacts?.Contains(impact, StringComparer.InvariantCultureIgnoreCase) ?? false;
         var response = "";
 
         switch (action)
@@ -66,24 +66,24 @@ public class EditPlayerPaths : InteractionModuleBase
             case AddRemoveOptions.Remove:
                 if (pcHasImpact)
                 {
-                    pc.Impacts = pc.Impacts.Where(item => !string.Equals(item, impact, StringComparison.OrdinalIgnoreCase)) as List<string>;
+                    pcData.Impacts = pcData.Impacts.Where(item => !string.Equals(item, impact, StringComparison.OrdinalIgnoreCase)) as List<string>;
                     response += $"**{impact}** was removed. ";
                 }
                 break;
             case AddRemoveOptions.Add:
                 if (!pcHasImpact)
                 {
-                    pc.Impacts.Add(impact);
+                    pcData.Impacts.Add(impact);
                     response += $"**{impact}** was added. ";
                 }
                 break;
         }
-        if (pc.Momentum > pc.MomentumMax) { pc.Momentum = pc.MomentumMax; }
-        var impactListString = (pc.ImpactCount > 0 ? string.Join(", ", pc.Impacts) : "*none*") + ".";
-        response += $"{pc.Name}'s current impacts: {impactListString} (Momentum Max {pc.MomentumMax}, Momentum Reset {pc.MomentumReset})\n\n";
+        if (pcData.Momentum > pcData.MomentumMax) { pcData.Momentum = pcData.MomentumMax; }
+        var impactListString = (pcData.ImpactCount > 0 ? string.Join(", ", pcData.Impacts) : "*none*") + ".";
+        response += $"{pcData.Name}'s current impacts: {impactListString} (Momentum Max {pcData.MomentumMax}, Momentum Reset {pcData.MomentumReset})\n\n";
         response += "Impacts will update next time you trigger an interaction on that character card.";
 
-        var pcEntity = new PlayerCharacterEntity(pc);
+        var pcEntity = new PlayerCharacterEntity(DbContext, pcData);
         var components = new ComponentBuilder()
         .WithButton(await pcEntity.GetJumpButton(Context))
         ;

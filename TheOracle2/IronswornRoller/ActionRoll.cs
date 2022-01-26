@@ -28,12 +28,6 @@ public class ActionRoll : IronswornRoll
     }
     public ActionRoll(Random random, Embed embed, int? momentum = null) : base(random, embed)
     {
-        // if (!embed.Author.ToString().StartsWith("Action Roll") ||
-        // !embed.Author.ToString().Contains("rolls +")
-        // )
-        // {
-        //     throw new Exception("Embed is not an Action Roll.");
-        // }
         Momentum = momentum ?? 0;
         var actionScore = ParseActionScore(embed);
         ActionDie = new Die(random, 6, actionScore[0]);

@@ -146,7 +146,7 @@ public abstract class IronswornRoll : IWidget, IMatchable
     }
     public virtual EmbedBuilder ToEmbed()
     {
-        return IWidget.EmbedStub(this)
+        return EmbedStub()
           .WithColor(OutcomeColor())
           .WithThumbnailUrl(OutcomeIcon())
           .AddField(ScoreField().WithIsInline(true))

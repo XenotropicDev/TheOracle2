@@ -136,20 +136,19 @@ public class PcCardComponents : InteractionModuleBase<SocketInteractionContext<S
             throw;
         }
     }
-
     private async Task UpdatePCValue(string pcId, Action<PlayerCharacter> change)
     {
         if (!int.TryParse(pcId, out var Id)) return;
 
-        var pc = await DbContext.PlayerCharacters.FindAsync(Id);
-        if (pc.MessageId != Context.Interaction.Message.Id)
+        var pcData = await DbContext.PlayerCharacters.FindAsync(Id);
+        if (pcData.MessageId != Context.Interaction.Message.Id)
         {
-            pc.MessageId = Context.Interaction.Message.Id;
-            pc.ChannelId = Context.Interaction.Channel.Id;
+            pcData.MessageId = Context.Interaction.Message.Id;
+            pcData.ChannelId = Context.Interaction.Channel.Id;
         }
-        change(pc);
+        change(pcData);
         GuildPlayer.LastUsedPcId = Id;
-        var entity = new PlayerCharacterEntity(pc);
+        var entity = new PlayerCharacterEntity(DbContext, pcData);
         await Context.Interaction.UpdateAsync(msg =>
         {
             msg.Embeds = entity.GetEmbeds();

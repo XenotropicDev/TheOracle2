@@ -8,17 +8,19 @@ namespace TheOracle2.UserContent
 {
     internal class PlayerCharacterEntity : IDiscordEntity
     {
-        public PlayerCharacterEntity(PlayerCharacter Pc)
+        public PlayerCharacterEntity(EFContext dbContext, PlayerCharacter Pc)
         {
             this.Pc = Pc;
+            DbContext = dbContext;
         }
 
         public bool IsEphemeral { get; set; } = false;
+        public EFContext DbContext { get; set; }
 
         public PlayerCharacter Pc { get; }
 
         /// <summary>
-        /// Sets an EmbedBuilder's author link to the PC's embed, and the author icon to the PC's image.
+        /// Sets an EmbedBuilder's author link to the PC's embed, and the author icon to the PC's image. This should be used to attribute embeds to the originating character when appropriate.
         /// </summary>
         public async Task<EmbedBuilder> AddPcAuthorTemplate(EmbedBuilder embed, IInteractionContext context)
         {
@@ -31,7 +33,6 @@ namespace TheOracle2.UserContent
                 embed.Author.WithIconUrl(Pc.Image);
             }
             return embed;
-
         }
 
         public MessageComponent GetComponents() => new ComponentBuilder()
@@ -45,15 +46,53 @@ namespace TheOracle2.UserContent
                 .WithButton("-Mo", $"lose-momentum-{Pc.Id}", row: 1, style: ButtonStyle.Secondary)
                 .WithButton("Burn", $"burn-momentum-{Pc.Id}", row: 0, style: ButtonStyle.Danger, emote: new Emoji("🔥"))
                 .WithButton("...", $"player-more-{Pc.Id}", row: 0, style: ButtonStyle.Primary).Build();
-        public async Task<IMessage> GetDiscordMessage(IInteractionContext context)
+        public async Task<IMessage> GetMessageAsync(IDiscordClient client)
         {
-            var channel = (Pc.ChannelId == context.Channel.Id) ? context.Channel : await (context.Client as DiscordSocketClient)?.Rest.GetChannelAsync(Pc.ChannelId) as IMessageChannel;
+            var channel = await GetChannelAsync(client);
             return await channel.GetMessageAsync(Pc.MessageId);
+        }
+        public async Task<IMessage> GetMessageAsync(IInteractionContext context)
+        {
+            if (context.Channel.Id == Pc.ChannelId)
+            {
+                return await context.Channel.GetMessageAsync(Pc.MessageId);
+            }
+            return await GetMessageAsync(context.Client);
+        }
+        public async Task<IMessageChannel> GetChannelAsync(IDiscordClient client)
+        {
+            return await client.GetChannelAsync(Pc.ChannelId) as IMessageChannel;
         }
         public async Task<string> GetJumpUrl(IInteractionContext context)
         {
-            var msg = await GetDiscordMessage(context);
-            return msg?.GetJumpUrl();
+            var msg = await GetMessageAsync(context.Client);
+            if (msg != null)
+            {
+                var url = msg.GetJumpUrl();
+                if (url != null)
+                {
+                    Console.WriteLine($"Found jump url: {url}");
+                    return url;
+                }
+            }
+            return string.Empty;
+        }
+        /// <summary>
+        /// Adds the PC's portrait and jump link to an existing author field.
+        /// </summary>
+        public async Task<EmbedAuthorBuilder> PcAuthorTemplate(IInteractionContext context, EmbedAuthorBuilder authorField)
+        {
+            if (Pc.Image != null)
+            {
+                authorField.WithIconUrl(Pc.Image);
+            }
+
+            var jumpUrl = await GetJumpUrl(context);
+            if (jumpUrl != null)
+            {
+                authorField.WithUrl(jumpUrl);
+            }
+            return authorField;
         }
         public Embed[] GetEmbeds()
         {
@@ -92,8 +131,8 @@ namespace TheOracle2.UserContent
                 statName: stat.ToString()
                 )
             {
-                AuthorUrl = jumpUrl,
-                AuthorIcon = Pc.Image
+                AuthorIcon = Pc.Image,
+                AuthorUrl = jumpUrl
             };
             return roll;
         }
