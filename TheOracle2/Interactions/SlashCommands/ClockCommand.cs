@@ -1,8 +1,11 @@
 using Discord.Interactions;
 using TheOracle2.GameObjects;
 using TheOracle2.UserContent;
+
 namespace TheOracle2;
-// same as ClockCommandGroup, but as a single command with clock type set via a parameter. only one should be enabled at a time.
+
+// same as ProgressTrackCommandGroup, but as a single command with progress type set via a parameter. only one should be enabled at a time.
+
 // [DontAutoRegister]
 public class ClockCommand : InteractionModuleBase
 {
@@ -11,6 +14,7 @@ public class ClockCommand : InteractionModuleBase
     {
         DbContext = dbContext;
     }
+
 
     [SlashCommand("clock", "Set a campaign clock, tension clock, or scene challenge (p. 230).")]
     public async Task BuildClock(
@@ -40,6 +44,7 @@ public class ClockCommand : InteractionModuleBase
                 break;
         }
     }
+
     // [SlashCommand("campaign", "Set a campaign clock to resolve objectives and actions in the background of your campaign (p. 231).")]
     public async Task BuildCampaignClock(
       [Summary(description: "A title that makes it clear what project is complete or event triggered when the clock is filled.")]
@@ -56,6 +61,7 @@ public class ClockCommand : InteractionModuleBase
           components: campaignClock.MakeComponents().Build()
           );
     }
+
     // [SlashCommand("tension", "Set a tension clock: a smaller-scope clock to fill as you suffer setbacks or fail to act (p. 234).")]
     public async Task BuildTensionClock(
       [Summary(description: "A title for the tension clock.")]
@@ -71,6 +77,7 @@ public class ClockCommand : InteractionModuleBase
           embed: tensionClock.ToEmbed().Build(),
           components: tensionClock.MakeComponents().Build());
     }
+
     // [SlashCommand("scene-challenge", "Create a scene challenge for extended non-combat scenes against threats or other characters (p. 235).")]
     public async Task BuildSceneChallenge(
       [Summary(description: "The scene challenge's objective.")]
