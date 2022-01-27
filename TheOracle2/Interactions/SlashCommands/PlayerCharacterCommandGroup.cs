@@ -88,7 +88,7 @@ public class PlayerCharacterCommandGroup : InteractionModuleBase
         .WithButton(await pcEntity.GetJumpButton(Context))
         ;
         await RespondAsync(response, ephemeral: true, components: components.Build()).ConfigureAwait(true);
-        //await pc.RedrawCard(Context.Client);
+        //await pcData.RedrawCard(Context.Client);
     }
 
     [SlashCommand("earned-xp", "Set a player character's earned xp.")]
@@ -96,9 +96,9 @@ public class PlayerCharacterCommandGroup : InteractionModuleBase
                                 [Summary(description: "The total amount of Xp this character has earned")][MinValue(0)] int earnedXp)
     {
         if (!int.TryParse(character, out var Id)) return;
-        var pc = DbContext.PlayerCharacters.Find(Id);
-        pc.XpGained = earnedXp;
-        await RespondAsync($"{pc.Name}'s XP was set to **{earnedXp}**. Their card will be updated the next time you click a button on the card.", ephemeral: true).ConfigureAwait(false);
+        var pcData = DbContext.PlayerCharacters.Find(Id);
+        pcData.XpGained = earnedXp;
+        await RespondAsync($"{pcData.Name}'s XP was set to **{earnedXp}**. Their card will be updated the next time you click a button on the card.", ephemeral: true).ConfigureAwait(false);
         return;
     }
 
@@ -106,17 +106,17 @@ public class PlayerCharacterCommandGroup : InteractionModuleBase
     public async Task DeleteCharacter([Autocomplete(typeof(CharacterAutocomplete))] string character)
     {
         if (!int.TryParse(character, out var id)) return;
-        var pc = await DbContext.PlayerCharacters.FindAsync(id);
+        var pcData = await DbContext.PlayerCharacters.FindAsync(id);
 
-        if (pc.DiscordGuildId != Context.Guild.Id || (pc.UserId != Context.User.Id && Context.Guild.OwnerId != Context.User.Id))
+        if (pcData.DiscordGuildId != Context.Guild.Id || (pcData.UserId != Context.User.Id && Context.Guild.OwnerId != Context.User.Id))
         {
             await RespondAsync($"You are not allowed to delete this player character.", ephemeral: true);
         }
 
-        await RespondAsync($"Are you sure you want to delete {pc.Name}?\nMomentum: {pc.Momentum}, xp: {pc.XpGained}\nPlayer id: {pc.Id}, last known message id: {pc.MessageId}",
+        await RespondAsync($"Are you sure you want to delete {pcData.Name}?\nMomentum: {pcData.Momentum}, xp: {pcData.XpGained}\nPlayer id: {pcData.Id}, last known message id: {pcData.MessageId}",
             components: new ComponentBuilder()
             .WithButton(GenericComponents.CancelButton())
-            .WithButton("Delete", $"delete-player-{pc.Id}", style: ButtonStyle.Danger)
+            .WithButton("Delete", $"delete-player-{pcData.Id}", style: ButtonStyle.Danger)
             .Build());
     }
 }

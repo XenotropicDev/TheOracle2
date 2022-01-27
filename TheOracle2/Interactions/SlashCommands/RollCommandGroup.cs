@@ -207,16 +207,16 @@ public class PCRollComponents : InteractionModuleBase<SocketInteractionContext<S
             return;
         }
 
-        var pc = EfContext.PlayerCharacters.Find(Id);
+        var pcData = EfContext.PlayerCharacters.Find(Id);
 
-        var roll = new ActionRoll(Random, embed, pc.Momentum);
+        var roll = new ActionRoll(Random, embed, pcData.Momentum);
 
-        pc.BurnMomentum(roll);
+        pcData.BurnMomentum(roll);
 
-        GetGuildPlayer().LastUsedPcId = pc.Id;
+        GetGuildPlayer().LastUsedPcId = pcData.Id;
         await EfContext.SaveChangesAsync();
 
-        if (pc.ChannelId == 0 || pc.MessageId == 0)
+        if (pcData.ChannelId == 0 || pcData.MessageId == 0)
         {
             //Modify the message, but don't use FollowupAsync so we can reply with the ephemeral message
             await Context.Interaction.ModifyOriginalResponseAsync(msg =>
@@ -228,10 +228,10 @@ public class PCRollComponents : InteractionModuleBase<SocketInteractionContext<S
             return;
         }
 
-        var pcEntity = new PlayerCharacterEntity(EfContext, pc);
+        var pcEntity = new PlayerCharacterEntity(EfContext, pcData);
 
-        IMessageChannel channel = (pc.ChannelId == Context.Channel.Id) ? Context.Channel : await Context.Client.Rest.GetChannelAsync(pc.ChannelId) as IMessageChannel;
-        await channel.ModifyMessageAsync(pc.MessageId, msg => msg.Embeds = pcEntity.GetEmbeds());
+        IMessageChannel channel = (pcData.ChannelId == Context.Channel.Id) ? Context.Channel : await Context.Client.Rest.GetChannelAsync(pcData.ChannelId) as IMessageChannel;
+        await channel.ModifyMessageAsync(pcData.MessageId, msg => msg.Embeds = pcEntity.GetEmbeds());
 
         await Context.Interaction.ModifyOriginalResponseAsync(msg =>
         {

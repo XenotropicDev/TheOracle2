@@ -36,10 +36,10 @@ public class ReferencedMessageCommandHandler
             var embed = (message.ReferencedMessage as IUserMessage).Embeds.First();
             await message.ReferencedMessage.ModifyAsync(msg => msg.Embed = embed.ToEmbedBuilder().WithThumbnailUrl(url.ToString()).Build());
 
-            var pc = DbContext.PlayerCharacters.FirstOrDefault(pc => pc.MessageId == message.ReferencedMessage.Id);
-            if (pc != null)
+            var pcData = DbContext.PlayerCharacters.FirstOrDefault(pcData => pcData.MessageId == message.ReferencedMessage.Id);
+            if (pcData != null)
             {
-                pc.Image = url.ToString();
+                pcData.Image = url.ToString();
                 await DbContext.SaveChangesAsync();
             }
 

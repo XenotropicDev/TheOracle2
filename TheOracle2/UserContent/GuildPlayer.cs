@@ -108,9 +108,9 @@ public class GuildPlayer
     {
         if (guildId == null)
         {
-            return DbContext.PlayerCharacters.Where(pc => pc.UserId == UserId);
+            return DbContext.PlayerCharacters.Where(pcData => pcData.UserId == UserId);
         }
-        return DbContext.PlayerCharacters.Where(pc => pc.UserId == UserId && pc.DiscordGuildId == guildId);
+        return DbContext.PlayerCharacters.Where(pcData => pcData.UserId == UserId && pcData.DiscordGuildId == guildId);
     }
 
     public void CleanupLastUsedPc()

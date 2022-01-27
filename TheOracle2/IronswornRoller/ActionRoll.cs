@@ -186,20 +186,20 @@ public class ActionRoll : IronswornRoll
     /// <summary>
     /// Attempts to burn the  momentum on this ActionRoll; sets momentum on the PlayerCharacter if it succeeds, and returns the PlayerCharacter.
     /// </summary>
-    public PlayerCharacter BurnMomentum(PlayerCharacter pc)
+    public PlayerCharacter BurnMomentum(PlayerCharacter pcData)
     {
-        Momentum = pc.Momentum;
+        Momentum = pcData.Momentum;
         if (!IsBurnable)
         {
             throw new Exception($"Unable to burn {Momentum} momentum because it does not beat any challenge dice values ({ChallengeDice})");
         }
         // this shouldn't happen normally, but if something goes wrong it might make it easier to diagnose where the math is incorrect.
-        if (!pc.ResetMomentum())
+        if (!pcData.ResetMomentum())
         {
             throw new Exception($"Unable to burn {Momentum} momentum. Momentum of less than {PlayerCharacter.MinMomentumToBurn} can't cancel any challenge die result.");
         }
         IsBurnt = true;
-        return pc;
+        return pcData;
     }
     public override EmbedBuilder ToEmbed()
     {
