@@ -3,11 +3,11 @@ using TheOracle2.GameObjects;
 
 namespace TheOracle2;
 
-public class OracleAskPaths : InteractionModuleBase
+public class AskTheOracleCommand : InteractionModuleBase
 {
     private readonly Random random;
 
-    public OracleAskPaths(Random random)
+    public AskTheOracleCommand(Random random)
     {
         this.random = random;
     }
