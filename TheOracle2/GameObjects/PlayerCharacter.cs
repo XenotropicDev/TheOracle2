@@ -67,15 +67,20 @@ public class PlayerCharacter
     /// </summary>
     public string JumpUrl => DiscordGuildId != 0 && ChannelId != 0 && MessageId != 0 ? $"https://discord.com/channels/{DiscordGuildId}/{ChannelId}/{MessageId}" : string.Empty;
     public string Name { get; set; }
-    public int Edge { get => edge; set => edge = (value >= 4) ? 4 : (value <= 1) ? 1 : value; }
-    public int Heart { get => heart; set => heart = (value >= 4) ? 4 : (value <= 1) ? 1 : value; }
-    public int Iron { get => iron; set => iron = (value >= 4) ? 4 : (value <= 1) ? 1 : value; }
-    public int Shadow { get => shadow; set => shadow = (value >= 4) ? 4 : (value <= 1) ? 1 : value; }
-    public int Wits { get => wits; set => wits = (value >= 4) ? 4 : (value <= 1) ? 1 : value; }
 
-    public int Health { get => health; set => health = (value >= 5) ? 5 : (value <= 0) ? 0 : value; }
-    public int Spirit { get => spirit; set => spirit = (value >= 5) ? 5 : (value <= 0) ? 0 : value; }
-    public int Supply { get => supply; set => supply = (value >= 5) ? 5 : (value <= 0) ? 0 : value; }
+    private int StatMax = 4;
+    private int StatMin = 1;
+    public int Edge { get => edge; set => edge = (value >= StatMax) ? StatMax : (value <= StatMin) ? StatMin : value; }
+    public int Heart { get => heart; set => heart = (value >= StatMax) ? StatMax : (value <= StatMin) ? StatMin : value; }
+    public int Iron { get => iron; set => iron = (value >= StatMax) ? StatMax : (value <= StatMin) ? StatMin : value; }
+    public int Shadow { get => shadow; set => shadow = (value >= StatMax) ? StatMax : (value <= StatMin) ? StatMin : value; }
+    public int Wits { get => wits; set => wits = (value >= StatMax) ? StatMax : (value <= StatMin) ? StatMin : value; }
+
+    private const int ConditionMeterMax = 5;
+    private const int ConditionMeterMin = 0;
+    public int Health { get => health; set => health = (value >= ConditionMeterMax) ? ConditionMeterMax : (value <= ConditionMeterMin) ? ConditionMeterMin : value; }
+    public int Spirit { get => spirit; set => spirit = (value >= ConditionMeterMax) ? ConditionMeterMax : (value <= ConditionMeterMin) ? ConditionMeterMin : value; }
+    public int Supply { get => supply; set => supply = (value >= ConditionMeterMax) ? ConditionMeterMax : (value <= ConditionMeterMin) ? ConditionMeterMin : value; }
     public IList<string> Impacts { get; set; }
     private const int MomentumResetBase = 2;
     private const int MomentumResetMin = 0;
