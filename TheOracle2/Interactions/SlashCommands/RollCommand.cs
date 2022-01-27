@@ -8,7 +8,6 @@ using TheOracle2.UserContent;
 namespace TheOracle2;
 
 [Group("roll", "Make an action roll (p. 28) or progress roll (p. 39). For oracle tables, use '/oracle'")]
-
 public class RollCommand : InteractionModuleBase
 {
     public RollCommand(Random random, EFContext efContext)
@@ -16,6 +15,7 @@ public class RollCommand : InteractionModuleBase
         Random = random;
         EfContext = efContext;
     }
+
     public Random Random { get; }
     public EFContext EfContext { get; }
     public GuildPlayer GuildPlayer => GuildPlayer.GetAndAddIfMissing(EfContext, Context);
@@ -108,7 +108,6 @@ public class RollCommand : InteractionModuleBase
         }
         await RespondAsync(errorMessage, components: components?.Build(), ephemeral: true).ConfigureAwait(false);
     }
-
     [SlashCommand("action", "Make an action roll (p. 28) by setting a stat value.")]
     public async Task RollAction(
         [Summary(description: "The stat value to use for the roll")] int stat,
