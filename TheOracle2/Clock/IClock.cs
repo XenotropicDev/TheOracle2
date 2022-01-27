@@ -8,11 +8,13 @@ public interface IClock : ILogWidget
     public int Filled { get; set; }
     public bool IsFull { get; }
     public string ClockFillMessage { get; }
+
     public static EmbedBuilder AlertStub(IClock clock)
     {
         EmbedBuilder embed = AddClockTemplate(ILogWidget.AlertStub(clock), clock);
         return embed;
     }
+
     public static SelectMenuOptionBuilder ResetOption()
     {
         return new SelectMenuOptionBuilder()

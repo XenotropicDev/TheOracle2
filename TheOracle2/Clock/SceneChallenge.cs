@@ -23,6 +23,7 @@ public class SceneChallenge : ProgressTrack, IClock
         Filled = filledSegments;
         Segments = (int)segments;
     }
+
     public SceneChallenge(EFContext dbContext, ClockSize segments = (ClockSize)6, int filledSegments = 0, int ticks = 0, string title = "", string description = "", ChallengeRank rank = ChallengeRank.Formidable, bool alerts = false) : base(dbContext, rank, ticks, title, description, alerts)
     {
         Filled = filledSegments;
@@ -38,6 +39,7 @@ public class SceneChallenge : ProgressTrack, IClock
     public int Filled { get; set; }
     public bool IsFull => Filled >= Segments;
     public string ClockFillMessage => "Time is up. You must resolve the encounter by making a progress roll.";
+
     public override EmbedBuilder ToEmbed()
     {
         return IClock.AddClockTemplate(base.ToEmbed(), this);
@@ -63,7 +65,6 @@ public class SceneChallenge : ProgressTrack, IClock
             .WithSelectMenu(MakeSelectMenu())
             // .WithButton(ILogWidget.ToggleAlertButton(LogOnIncrement))
             ;
-
         return embed;
     }
 
@@ -72,7 +73,6 @@ public class SceneChallenge : ProgressTrack, IClock
         var embed = IClock.AlertStub(this);
         if (IsFull)
         { embed.WithDescription(ClockFillMessage); }
-
         return embed;
     }
 
