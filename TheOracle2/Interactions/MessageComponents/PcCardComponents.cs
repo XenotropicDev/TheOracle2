@@ -16,7 +16,7 @@ public class PcCardComponents : InteractionModuleBase<SocketInteractionContext<S
         DbContext = dbContext;
     }
 
-    public GuildPlayer GuildPlayer => GuildPlayer.GetAndAddIfMissing(DbContext, Context);
+    public GuildPlayer GetGuildPlayer() => GuildPlayer.GetAndAddIfMissing(DbContext, Context);
     public EFContext DbContext { get; }
 
     public override async Task AfterExecuteAsync(ICommandInfo command)
@@ -153,7 +153,7 @@ public class PcCardComponents : InteractionModuleBase<SocketInteractionContext<S
             pcData.ChannelId = Context.Interaction.Channel.Id;
         }
         change(pcData);
-        GuildPlayer.LastUsedPcId = Id;
+        GetGuildPlayer().LastUsedPcId = Id;
         var pcEntity = new PlayerCharacterEntity(DbContext, pcData);
         await Context.Interaction.UpdateAsync(msg =>
         {

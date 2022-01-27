@@ -38,14 +38,14 @@ public class RollCommandGroup : InteractionModuleBase
         [Summary(description: "A preset value for the second Challenge Die (d10) to use instead of rolling.")][MinValue(1)][MaxValue(10)] int? challengeDie2 = null)
     {
         PlayerCharacter pcData = null;
-        GuildPlayer GuildPlayer = this.GetGuildPlayer();
+        GuildPlayer guildPlayer = this.GetGuildPlayer();
 
         if (!int.TryParse(character, out var id))
         {
             await RespondAsync($"Unknown character ID: {character}", ephemeral: true);
             throw new ArgumentException($"Unable to parse PlayerCharacter ID from {character}.");
         }
-        pcData = id == -1 ? GuildPlayer.LastUsedPc() : EfContext.PlayerCharacters.Find(id);
+        pcData = id == -1 ? guildPlayer.LastUsedPc() : EfContext.PlayerCharacters.Find(id);
         if (pcData == null)
         {
             await OfferActionRollFallbackPcs(id, stat, adds, description, actionDie, challengeDie1, challengeDie2);
@@ -53,7 +53,7 @@ public class RollCommandGroup : InteractionModuleBase
         }
         var pcEntity = new PlayerCharacterEntity(EfContext, pcData);
         var roll = await pcEntity.RollAction(Context, this.Random, stat, adds, description, actionDie, challengeDie1, challengeDie2);
-        GuildPlayer.LastUsedPcId = pcData.Id;
+        guildPlayer.LastUsedPcId = pcData.Id;
         await RespondAsync(embed: roll.ToEmbed().Build(), components: roll.MakeComponents(pcData.Id)?.Build()).ConfigureAwait(false);
     }
 
