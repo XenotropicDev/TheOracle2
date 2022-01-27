@@ -31,7 +31,6 @@ namespace TheOracle2.UserContent
             }
             return embed;
         }
-
         public MessageComponent GetComponents() => new ComponentBuilder()
                 .WithButton("+Hp", $"add-health-{Pc.Id}", row: 0, style: ButtonStyle.Success)
                 .WithButton("-Hp", $"lose-health-{Pc.Id}", row: 1, style: ButtonStyle.Secondary)
@@ -43,6 +42,7 @@ namespace TheOracle2.UserContent
                 .WithButton("-Mo", $"lose-momentum-{Pc.Id}", row: 1, style: ButtonStyle.Secondary)
                 .WithButton("Burn", $"burn-momentum-{Pc.Id}", row: 0, style: ButtonStyle.Danger, emote: new Emoji("🔥"))
                 .WithButton("...", $"player-more-{Pc.Id}", row: 0, style: ButtonStyle.Primary).Build();
+
         public async Task<IMessage> GetMessageAsync(IDiscordClient client)
         {
             var channel = await GetChannelAsync(client);

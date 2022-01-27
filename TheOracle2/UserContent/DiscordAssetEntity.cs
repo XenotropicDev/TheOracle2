@@ -91,6 +91,7 @@ namespace TheOracle2.UserContent
         public MessageComponent GetComponents() => compBuilder.Build();
 
         public bool IsEphemeral { get; set; } = false;
+
         public async Task<IMessage> GetMessageAsync(IInteractionContext context)
         {
             return null;

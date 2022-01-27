@@ -26,6 +26,7 @@ namespace TheOracle2.UserContent
             option.WithDescription(triggerString);
             return option;
         }
+
         // commented out until there's a sensible way to implement ephemeral-reveal. probably inessential anyways.
         public MessageComponent GetComponents()
         {
@@ -54,6 +55,7 @@ namespace TheOracle2.UserContent
                 .WithTitle(Move.Name)
                 .WithDescription(Move.Text).Build() };
         }
+
         public IEmote GetEmoji()
         {
             if (Emoji.ContainsKey(Move.Name)) { return Emoji[Move.Name]; }

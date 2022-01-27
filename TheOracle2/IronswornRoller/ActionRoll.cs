@@ -74,6 +74,7 @@ public class ActionRoll : IronswornRoll
         {
             return "Your action die was canceled by your negative momentum (see p. 34).";
         }
+
         var momentumOutcomeString = IronswornRoll.ToOutcomeString(MomentumBurnOutcome, IsMatch);
         if (IsBurnable && !IsBurnt)
         {
@@ -97,7 +98,6 @@ public class ActionRoll : IronswornRoll
     private string ActionDieString => IsActionDieCanceled ? $"~~{ActionDie}~~" : $"{ActionDie}";
 
     /// <inheritdoc/>
-
     public EmbedFieldBuilder MomentumBurnScoreField()
     {
         return new EmbedFieldBuilder().WithName("Action Score").WithValue($"**{Momentum}**");
@@ -112,6 +112,7 @@ public class ActionRoll : IronswornRoll
         }
         return $"{arithmetic} = {base.ToScoreString()}";
     }
+
     public override EmbedFieldBuilder ScoreField()
     {
         if (IsBurnt)
@@ -132,7 +133,9 @@ public class ActionRoll : IronswornRoll
             return Stat + Adds + ActionDie;
         }
     }
+
     private const string ActionScorePattern = @"([0-9]+)";
+
     public static int[] ParseActionScore(string actionScoreString)
     {
         if (Regex.IsMatch(actionScoreString, ActionScorePattern))

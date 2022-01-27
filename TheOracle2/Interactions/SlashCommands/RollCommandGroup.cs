@@ -135,6 +135,7 @@ public class PcRollComponents : InteractionModuleBase<SocketInteractionContext<S
         EfContext = efContext;
         Random = random;
     }
+
     public GuildPlayer GetGuildPlayer() => GuildPlayer.GetAndAddIfMissing(EfContext, Context);
     public Random Random { get; }
     public EFContext EfContext { get; }
@@ -212,7 +213,6 @@ public class PcRollComponents : InteractionModuleBase<SocketInteractionContext<S
         var roll = new ActionRoll(Random, embed, pcData.Momentum);
 
         pcData.BurnMomentum(roll);
-
         GetGuildPlayer().LastUsedPcId = pcData.Id;
         await EfContext.SaveChangesAsync();
 

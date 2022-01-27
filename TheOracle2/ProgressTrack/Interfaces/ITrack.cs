@@ -22,6 +22,7 @@ public interface ITrack
     public int Ticks { get; set; }
     public int Score { get; }
     public ProgressRoll Roll(Random random);
+
     /// <summary>
     /// Calculates a progress score from a given number of ticks, capped by TrackSize.
     /// </summary>
