@@ -39,6 +39,7 @@ public abstract class ProgressTrack : IProgressTrack, IMoveRef
     public bool LogOnDecrement { get; set; }
     public bool AlertOnIncrement { get; set; } = false;
     public bool AlertOnDecrement { get; set; }
+
     public virtual EmbedBuilder AlertEmbed()
     {
         return new EmbedBuilder();
