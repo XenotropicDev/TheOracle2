@@ -142,8 +142,10 @@ public class PcCardComponents : InteractionModuleBase<SocketInteractionContext<S
 
     private async Task UpdatePCValue(string pcId, Action<PlayerCharacter> change)
     {
-        if (!int.TryParse(pcId, out var Id)) return;
-
+        if (!int.TryParse(pcId, out var Id))
+        {
+            throw new ArgumentException($"Unable to parse integer from {pcId}");
+        }
         var pc = await DbContext.PlayerCharacters.FindAsync(Id);
         if (pc.MessageId != Context.Interaction.Message.Id)
         {
@@ -152,9 +154,6 @@ public class PcCardComponents : InteractionModuleBase<SocketInteractionContext<S
         }
         change(pc);
         GuildPlayer.LastUsedPcId = Id;
-        // await DbContext.SaveChangesAsync();
-        // TODO: commenting out the above to see what breaks.
-
         var entity = new PlayerCharacterEntity(pc);
         await Context.Interaction.UpdateAsync(msg =>
         {
