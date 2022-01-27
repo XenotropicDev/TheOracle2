@@ -2,7 +2,9 @@
 using Discord.WebSocket;
 using TheOracle2.GameObjects;
 using TheOracle2.UserContent;
+
 namespace TheOracle2;
+
 /// <summary>
 /// Progress and clock message components that are used by multiple slash commands.
 /// </summary>
@@ -13,30 +15,39 @@ public class CounterComponents : InteractionModuleBase<SocketInteractionContext<
         Random = random;
         DbContext = dbContext;
     }
+
     public string ParentUrl => Interaction.Message.GetJumpUrl();
     public SocketMessageComponent Interaction => Context.Interaction as SocketMessageComponent;
+
     public Embed PrimaryEmbed => Interaction.Message.Embeds.FirstOrDefault();
     public bool SendAlerts => ILogWidget.ParseAlertStatus(Context.Interaction.Message.Components);
+
     private readonly Random Random;
     public EFContext DbContext { get; set; }
+
     [ComponentInteraction("progress-mark:*,*")]
     public async Task MarkProgress(string addTicksString, string currentTicksString)
     {
         if (!int.TryParse(currentTicksString, out int currentTicks)) { throw new ArgumentException($"Unable to parse current ticks from {currentTicksString}"); }
+
         if (!int.TryParse(addTicksString, out int addedTicks)) { throw new ArgumentException($"Unable to parse added ticks from {addedTicks}"); }
         ProgressTrack progressTrack = IProgressTrack.FromEmbed(DbContext, PrimaryEmbed, currentTicks, alerts: SendAlerts) as ProgressTrack;
+
         // EmbedBuilder alert = progressTrack.Mark(addedTicks);
         progressTrack.Mark(addedTicks);
+
         await Interaction.UpdateAsync(msg =>
         {
             msg.Components = progressTrack.MakeComponents().Build();
             msg.Embed = progressTrack.ToEmbed().Build();
         }).ConfigureAwait(false);
+
         // if (SendAlerts)
         // {
         //     await Interaction.FollowupAsync(embed: alert.Build()).ConfigureAwait(false);
         // }
     }
+
     [ComponentInteraction("progress-clear:*,*")]
     public async Task ClearProgress(string subtractedTickString, string currentTicksString
     )
@@ -57,6 +68,7 @@ public class CounterComponents : InteractionModuleBase<SocketInteractionContext<
             msg.Embed = progressTrack.ToEmbed().Build();
         }).ConfigureAwait(false);
     }
+
     [ComponentInteraction("progress-recommit:*,*")]
     public async Task RecommitProgress(string rankString, string currentTicksString)
     {
@@ -75,6 +87,7 @@ public class CounterComponents : InteractionModuleBase<SocketInteractionContext<
         // this sends an alert even if alerts are turned off because it involves displaying a roll result
         await Interaction.FollowupAsync(embed: recommitAlert.Build()).ConfigureAwait(false);
     }
+
     [ComponentInteraction("progress-roll:*,*")]
     public async Task RollProgress(string ticksString, string moveName)
     {
@@ -91,6 +104,7 @@ public class CounterComponents : InteractionModuleBase<SocketInteractionContext<
           components: roll.MakeComponents().Build()
         ).ConfigureAwait(false);
     }
+
     [ComponentInteraction("progress-menu:*,*")]
     public async Task ProgressMenu(string rankString, string currentTicks, string[] values)
     {
@@ -105,18 +119,21 @@ public class CounterComponents : InteractionModuleBase<SocketInteractionContext<
                     subtractedTickString: arguments[0],
                     currentTicksString: currentTicks).ConfigureAwait(false);
                 break;
+
             case "progress-mark":
                 await MarkProgress(
                     addTicksString: arguments[0],
                     currentTicksString: currentTicks)
                 .ConfigureAwait(false);
                 break;
+
             case "progress-roll":
                 await RollProgress(
                     ticksString: currentTicks,
                     moveName: optionLabel)
                     .ConfigureAwait(false);
                 break;
+
             case "progress-recommit":
                 await RecommitProgress(
                     rankString: rankString,
@@ -126,6 +143,7 @@ public class CounterComponents : InteractionModuleBase<SocketInteractionContext<
         }
         return;
     }
+
     [ComponentInteraction("clock-reset")]
     public async Task ResetClock()
     {
@@ -137,6 +155,7 @@ public class CounterComponents : InteractionModuleBase<SocketInteractionContext<
             msg.Embed = clock.ToEmbed().Build();
         }).ConfigureAwait(false);
     }
+
     [ComponentInteraction("clock-advance")]
     public async Task AdvanceClock()
     {
@@ -152,6 +171,7 @@ public class CounterComponents : InteractionModuleBase<SocketInteractionContext<
         //     await Interaction.FollowupAsync(embed: clock.AlertEmbed().Build()).ConfigureAwait(false);
         // }
     }
+
     [ComponentInteraction("clock-advance:*")]
     public async Task AdvanceClock(string oddsString)
     {
@@ -160,6 +180,7 @@ public class CounterComponents : InteractionModuleBase<SocketInteractionContext<
             throw new Exception($"Unable to parse odds from {oddsString}");
         }
         var clock = IClock.FromEmbed(DbContext, PrimaryEmbed, alerts: SendAlerts);
+
         OracleAnswer answer = new(Random, odds, $"Does the clock *{clock.Title}* advance?");
         EmbedBuilder answerEmbed = answer.ToEmbed();
         string resultString = "";
@@ -191,8 +212,10 @@ public class CounterComponents : InteractionModuleBase<SocketInteractionContext<
             msg.Components = clock.MakeComponents().Build();
             msg.Embed = clock.ToEmbed().Build();
         }).ConfigureAwait(false);
+
         await Interaction.FollowupAsync(embed: answerEmbed.Build()).ConfigureAwait(false);
     }
+
     // TODO: refactor in same style as progress menu
     [ComponentInteraction("clock-menu")]
     public async Task ClockMenu(string[] values)
@@ -209,11 +232,13 @@ public class CounterComponents : InteractionModuleBase<SocketInteractionContext<
             case "clock-reset":
                 await ResetClock().ConfigureAwait(false);
                 return;
+
             case "clock-advance":
                 await AdvanceClock().ConfigureAwait(false);
                 return;
         }
     }
+
     [ComponentInteraction("scene-challenge-menu:*,*")]
     public async Task SceneChallengeMenu(string rankString, string ticksString, string[] values)
     {

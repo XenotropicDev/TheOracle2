@@ -1,5 +1,7 @@
 ﻿namespace TheOracle2.GameObjects;
+
 using TheOracle2.UserContent;
+
 public class SceneChallenge : ProgressTrack, IClock
 {
     public SceneChallenge(EFContext dbContext, Embed embed, bool alerts = false) : base(dbContext, embed, alerts)
@@ -8,12 +10,14 @@ public class SceneChallenge : ProgressTrack, IClock
         Filled = clockData.Item1;
         Segments = clockData.Item2;
     }
+
     public SceneChallenge(EFContext dbContext, Embed embed, int ticks, bool alerts = false) : base(dbContext, embed, ticks, alerts)
     {
         Tuple<int, int> clockData = IClock.ParseClock(embed);
         Filled = clockData.Item1;
         Segments = clockData.Item2;
     }
+
     public SceneChallenge(EFContext dbContext, SceneChallengeClockSize segments = (SceneChallengeClockSize)6, int filledSegments = 0, int ticks = 0, string title = "", string description = "", ChallengeRank rank = ChallengeRank.Formidable, bool alerts = false) : base(dbContext, rank, ticks, title, description, alerts)
     {
         Filled = filledSegments;
@@ -38,6 +42,7 @@ public class SceneChallenge : ProgressTrack, IClock
     {
         return IClock.AddClockTemplate(base.ToEmbed(), this);
     }
+
     public SelectMenuBuilder MakeSelectMenu()
     {
         SelectMenuBuilder menu = ProgressTrack.MenuStub(this, "scene-challenge-");
@@ -51,21 +56,26 @@ public class SceneChallenge : ProgressTrack, IClock
         if (Filled > 0) { menu = menu.AddOption(IClock.ResetOption()); }
         return menu;
     }
+
     public override ComponentBuilder MakeComponents()
     {
         var embed = new ComponentBuilder()
             .WithSelectMenu(MakeSelectMenu())
             // .WithButton(ILogWidget.ToggleAlertButton(LogOnIncrement))
             ;
+
         return embed;
     }
+
     public override EmbedBuilder AlertEmbed()
     {
         var embed = IClock.AlertStub(this);
         if (IsFull)
         { embed.WithDescription(ClockFillMessage); }
+
         return embed;
     }
+
     // TODO: this should probably return the scene challenge specific versions of the FS and SaA moves, meaning rsek needs to include them in Dataforged. while no formal move exists for progress resolution, its rules ought to be included in some way as well.
     public override string[] MoveReferences => Array.Empty<string>();
 }
