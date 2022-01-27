@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using Discord.WebSocket;
+using TheOracle2.ActionRoller;
 
 namespace TheOracle2.UserContent;
 
@@ -11,16 +12,34 @@ public interface IOracleGameObjectTemplate
  * Action buttons for oracles
  * Action buttons for trackers?
  * Action rows
- * drop down lists?
+ * drop down lists
  * Fields with oracle names
  */
+
+public class TempNPCContainer //TODO: remove this class
+{
+    public TempNPCContainer()
+    {
+        var NPC = new OracleGameObjectTemplate();
+
+        NPC.Title = "oracle:nameId";
+        NPC.Author = "oracle:npcTypeId";
+
+        var field1 = new GameObjectFieldInfo();
+        field1.Value = "oracle:npcDispositionId";
+        field1.LookupMethod = LookupMethod.UseFirst;
+
+        NPC.Fields.Add(field1);
+    }
+}
 
 public class OracleGameObjectTemplate
 {
     public string Title { get; set; }
     public string Author { get; set; }
-    public List<FieldInfo> Fields { get; set; } = new();
-    public List<IGameButton> Buttons { get; set; }
+    public string Footer { get; set; }
+    public List<GameObjectFieldInfo> Fields { get; set; } = new();
+    public List<IGameButton> Buttons { get; set; } = new();
 
     public async Task CreateMessage(SocketSlashCommand context)
     {
@@ -41,28 +60,40 @@ public class OracleGameObjectTemplate
     }
 }
 
-public class FieldInfo : EmbedFieldBuilder
+public class OracleGameObjectBuilder
 {
-    private string title;
-    private string text;
-    private static Regex embededIdRegex = new(@"({\d+})");
-
-    public new string Name { get => title; set => title = value; }
-    public new string Value { get => text; set => text = value; }
-    public new bool IsInline { get; set; } = true;
-
-    private string ParseText(string input)
+    public OracleGameObjectBuilder(TableRollerFactory rollerFactory)
     {
-        var ids = embededIdRegex.Matches(input)
-            .Select(m =>
-            {
-                int.TryParse(m.Groups[1].Value, out int temp);
-                return temp;
-            })
-            .Where(i => i != 0);
-
-        return "Todo";
+        RollFactory = rollerFactory;
     }
+
+    public IDiscordEntity Build()
+    {
+        var roller = RollFactory.GetRoller()
+    }
+
+    public TableRollerFactory RollFactory { get; }
+}
+
+public class GameObjectFieldInfo
+{
+    private static Regex oracleRollerRegex = new(@"((oracle:|subcat:|tables:)?\d+)", RegexOptions.IgnoreCase);
+
+    public GameObjectFieldInfo()
+    {
+    }
+
+    public string Value { get; set; }
+    public LookupMethod LookupMethod { get; set; } = LookupMethod.UseFirst;
+    public bool IsInline { get; set; } = true;
+    public string Title { get; set; }
+}
+
+public enum LookupMethod
+{
+    UseFirst,
+    UseLast,
+    UseAll,
 }
 
 public interface IGameButton

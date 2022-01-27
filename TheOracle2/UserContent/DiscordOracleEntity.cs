@@ -32,11 +32,6 @@ namespace TheOracle2.UserContent
             return ob.ComponentBuilder.Build();
         }
 
-        public async Task<IMessage> GetDiscordMessage(IInteractionContext context)
-        {
-            return null;
-        }
-
         public Embed[] GetEmbeds()
         {
             return new Embed[] { ob.EmbedBuilder.Build() };
