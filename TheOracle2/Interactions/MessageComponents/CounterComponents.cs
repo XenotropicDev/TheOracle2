@@ -28,6 +28,7 @@ public class CounterComponents : InteractionModuleBase<SocketInteractionContext<
     [ComponentInteraction("progress-mark:*,*")]
     public async Task MarkProgress(string addTicksString, string currentTicksString)
     {
+
         if (!int.TryParse(currentTicksString, out int currentTicks)) { throw new ArgumentException($"Unable to parse current ticks from {currentTicksString}"); }
 
         if (!int.TryParse(addTicksString, out int addedTicks)) { throw new ArgumentException($"Unable to parse added ticks from {addedTicks}"); }
@@ -212,7 +213,7 @@ public class CounterComponents : InteractionModuleBase<SocketInteractionContext<
             msg.Components = clock.MakeComponents().Build();
             msg.Embed = clock.ToEmbed().Build();
         }).ConfigureAwait(false);
-
+        // this is intentionally left insensitive to IWidget.ParseAlertStatus, because it's an oracle answer, not simply an increment alert
         await Interaction.FollowupAsync(embed: answerEmbed.Build()).ConfigureAwait(false);
     }
 

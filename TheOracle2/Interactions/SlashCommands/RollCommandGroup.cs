@@ -8,14 +8,14 @@ using TheOracle2.UserContent;
 namespace TheOracle2;
 
 [Group("roll", "Make an action roll (p. 28) or progress roll (p. 39). For oracle tables, use '/oracle'")]
-
-public class RollCommand : InteractionModuleBase
+public class RollCommandGroup : InteractionModuleBase
 {
-    public RollCommand(Random random, EFContext efContext)
+    public RollCommandGroup(Random random, EFContext efContext)
     {
         Random = random;
         EfContext = efContext;
     }
+
     public Random Random { get; }
     public EFContext EfContext { get; }
     public GuildPlayer GetGuildPlayer() => GuildPlayer.GetAndAddIfMissing(EfContext, Context);

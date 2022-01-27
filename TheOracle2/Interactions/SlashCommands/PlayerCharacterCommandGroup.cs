@@ -9,9 +9,9 @@ using TheOracle2.UserContent;
 namespace TheOracle2;
 
 [Group("player-character", "Create and manage player characters.")]
-public class EditPlayerPaths : InteractionModuleBase
+public class PlayerCharacterCommandGroup : InteractionModuleBase
 {
-    public EditPlayerPaths(EFContext dbContext)
+    public PlayerCharacterCommandGroup(EFContext dbContext)
     {
         DbContext = dbContext;
     }
