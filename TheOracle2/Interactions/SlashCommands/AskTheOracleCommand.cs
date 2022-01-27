@@ -14,7 +14,6 @@ public class OracleAskPaths : InteractionModuleBase
 
     [SlashCommand("ask", "Ask the Oracle a yes/no question (p. 225). To roll on a specific oracle table, use /oracle.")]
     public async Task AskTheOracle(
-
         [Summary(description: "The question to ask the oracle.")]
         string question,
         [Summary(description: "The odds of receiving a 'yes' answer.")]
