@@ -53,9 +53,7 @@ public class RollCommandGroup : InteractionModuleBase
         }
         var pcEntity = new PlayerCharacterEntity(EfContext, pcData);
         var roll = await pcEntity.RollAction(Context, this.Random, stat, adds, description, actionDie, challengeDie1, challengeDie2);
-
         GuildPlayer.LastUsedPcId = pcData.Id;
-
         await RespondAsync(embed: roll.ToEmbed().Build(), components: roll.MakeComponents(pcData.Id)?.Build()).ConfigureAwait(false);
     }
 

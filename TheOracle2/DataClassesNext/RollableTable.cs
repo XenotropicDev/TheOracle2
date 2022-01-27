@@ -6,10 +6,12 @@ public class RollableTable : List<RollableTableRow>
     {
         return Find(row => row.RollIsInRange(roll));
     }
+
     public RollableTableRow LookupResult(string result)
     {
         return Find(row => row.Result == result);
     }
+
     public override string ToString()
     {
         return string.Join("\n", this.Select(row => row.ToString()));

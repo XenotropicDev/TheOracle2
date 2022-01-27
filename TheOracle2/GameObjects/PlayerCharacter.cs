@@ -82,7 +82,6 @@ public class PlayerCharacter
     public int MomentumReset => Math.Max(MomentumResetBase - (ImpactCount), MomentumResetMin);
     public const int MomentumMin = -6;
     private const int MomentumMaxBase = 10;
-
     // seems silly, but it was throwing on empty lists and things like Any() didn't seem to work, maybe because the DB removes empty lists?
     public int ImpactCount => Impacts == null ? 0 : Impacts.Count;
     public int MomentumMax => MomentumMaxBase - (ImpactCount);

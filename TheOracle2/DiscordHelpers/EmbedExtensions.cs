@@ -34,6 +34,7 @@
         {
             return new EmbedAuthorBuilder().WithName(author.Name).WithUrl(author.Url).WithIconUrl(author.IconUrl);
         }
+
         /// <summary>
         /// Changes a numeric field on an embed
         /// </summary>
