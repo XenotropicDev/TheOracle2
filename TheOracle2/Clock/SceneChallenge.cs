@@ -67,7 +67,6 @@ public class SceneChallenge : ProgressTrack, IClock
             ;
         return embed;
     }
-
     public override EmbedBuilder AlertEmbed()
     {
         var embed = IClock.AlertStub(this);

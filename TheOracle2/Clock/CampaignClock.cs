@@ -12,6 +12,7 @@ public class CampaignClock : Clock
 
     public override string EmbedCategory => "Campaign Clock";
     public override string ClockFillMessage => "The event is triggered or the project is complete. Envision the outcome and the impact on your setting.";
+
     public override ComponentBuilder MakeComponents()
     {
         SelectMenuBuilder menu = new SelectMenuBuilder()
