@@ -28,6 +28,7 @@ public class EFContext : DbContext
     public DbSet<Subcategory> Subcategory { get; set; }
     public DbSet<ChanceTable> ChanceTables { get; set; }
     public DbSet<PlayerCharacter> PlayerCharacters { get; set; }
+    public DbSet<OracleObjectTemplate> OracleTemplates { get; set; }
 
     public async Task RecreateDB()
     {
@@ -153,5 +154,29 @@ public class EFContext : DbContext
             .UseSqlite("Data Source=GameContent.db;Cache=Shared")
             .UseLazyLoadingProxies();
         base.OnConfiguring(optionsBuilder);
+    }
+
+    internal async Task RecreateSafeTables()
+    {
+        Database.EnsureCreated();
+
+        OracleTemplates.RemoveRange(OracleTemplates);
+        await SaveChangesAsync();
+
+        var npc = new OracleObjectTemplate();
+        npc.EntityName = "NPC";
+        npc.Title = "oracle:1"; //name
+        npc.Author = "NPC, no oracle roll";
+        npc.Fields.Add(new GameObjectFieldInfo { Title = "Callsign", Value = "oracle:2" });
+        npc.Fields.Add(new GameObjectFieldInfo { Title = "Full Name", Value = "oracle:1 oracle:3" });
+
+        var oracleOption = new FollowUpOracle();
+        oracleOption.Label = "Random Table followup (I didn't look this up)";
+        oracleOption.Value = "oracle:15";
+        oracleOption.Description = "extra text";
+        npc.FollowupOracles.Add(oracleOption);
+
+        OracleTemplates.Add(npc);
+        await SaveChangesAsync();
     }
 }

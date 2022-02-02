@@ -188,6 +188,46 @@ public static class ComponentExtenstions
         return builder;
     }
 
+    public static void MergeComponents(this ComponentBuilder destinationBuilder, ComponentBuilder itemsToAdd)
+    {
+        if (itemsToAdd?.ActionRows == null) return;
+        
+        var existingButtons = destinationBuilder.ActionRows?.SelectMany(ar => ar.Components).OfType<ButtonComponent>();
+        var existingSelects = destinationBuilder.ActionRows?.SelectMany(ar => ar.Components).OfType<SelectMenuComponent>();
+        
+        foreach (var component in itemsToAdd.ActionRows.SelectMany(ar => ar.Components))
+        {
+            switch (component)
+            {
+                case ButtonComponent button:
+                    if (existingButtons?.Any(b => b.CustomId == button.CustomId) == true) break;
+
+                    destinationBuilder.WithButton(button.ToBuilder());
+                    break;
+                case SelectMenuComponent select:
+                    SelectMenuBuilder builder = null;
+
+                    var existing = existingSelects?.FirstOrDefault(s => s.CustomId == select.CustomId);
+                    if (existing != null)
+                    {
+                        builder = existing.ToBuilder();
+                        foreach (var o in select.Options)
+                        {
+                            if (existing.Options.Any(eo => eo.Value == o.Value)) continue;
+
+                            builder.AddOption(o.Label, o.Value, o.Description, o.Emote, o.IsDefault);
+                        }
+                    }
+
+                    destinationBuilder.WithSelectMenu(builder ?? select.ToBuilder());
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    }
+
     public static ComponentBuilder ReplaceComponentById(this ComponentBuilder builder, string id, IMessageComponent replacement)
     {
         var rows = builder.ActionRows.Where(r => r.Components.Any(c => c.CustomId == id));

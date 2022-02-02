@@ -227,6 +227,8 @@ internal class Program
 #if DEBUG
         Console.WriteLine($"You are debugging, do you want to recreate the database? (y/n)");
         if (Console.ReadKey(true).Key == ConsoleKey.Y) { Console.WriteLine("Rebuilding Database..."); await context.RecreateDB().ConfigureAwait(true); }
+
+        await context.RecreateSafeTables();
 #endif
 
         if (!context.HasTables())
