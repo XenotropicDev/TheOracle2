@@ -23,10 +23,10 @@ public class RecreateMessageCommand : InteractionModuleBase<SocketInteractionCon
         var content = msg.Content?.Length > 0 ? msg.Content : null;
         await FollowupAsync(content, embeds: msg.Embeds.OfType<Embed>().ToArray(), components: builder.Build()).ConfigureAwait(false);
 
-        var pc = DbContext.PlayerCharacters.FirstOrDefault(pc => pc.MessageId == msg.Id);
-        if (pc != null)
+        var pcData = DbContext.PlayerCharacters.FirstOrDefault(pcData => pcData.MessageId == msg.Id);
+        if (pcData != null)
         {
-            pc.MessageId = msg.Id;
+            pcData.MessageId = msg.Id;
             await DbContext.SaveChangesAsync();
         }
 

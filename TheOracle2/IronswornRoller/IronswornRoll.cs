@@ -44,6 +44,8 @@ public abstract class IronswornRoll : IWidget, IMatchable
         ChallengeDice = new ChallengeDice(random, embed);
         Description = embed.Description;
         EmbedCategory = embed.Author.ToString();
+        AuthorIcon = embed.Author.Value.IconUrl;
+        AuthorUrl = embed.Author.Value.Url;
     }
 
     public ChallengeDice ChallengeDice { get; set; }
@@ -144,12 +146,27 @@ public abstract class IronswornRoll : IWidget, IMatchable
         _ => IronswornRollResources.MissImageURL,
     };
 
-    public EmbedBuilder ToEmbed()
+    protected EmbedBuilder EmbedStub()
     {
-        return IWidget.EmbedStub(this)
+        var embed = IWidget.EmbedStub(this)
+            .WithColor(OutcomeColor())
+            .WithThumbnailUrl(OutcomeIcon());
+        if (!string.IsNullOrEmpty(AuthorUrl))
+        {
+            embed.Author.WithUrl(AuthorUrl);
+        }
+        if (!string.IsNullOrEmpty(AuthorIcon))
+        {
+            embed.Author.WithIconUrl(AuthorIcon);
+        }
+        return embed;
+    }
+    public virtual EmbedBuilder ToEmbed()
+    {
+        return EmbedStub()
           .WithColor(OutcomeColor())
           .WithThumbnailUrl(OutcomeIcon())
-          .AddField(ScoreField())
+          .AddField(ScoreField().WithIsInline(true))
           .AddField(ChallengeDice.ToEmbedField())
           ;
     }
@@ -191,4 +208,6 @@ public abstract class IronswornRoll : IWidget, IMatchable
     }
 
     public static readonly Dictionary<string, IEmote> Emoji = new() { { "roll", new Emoji("🎲") } };
+    public string AuthorUrl { get; set; }
+    public string AuthorIcon { get; set; }
 }

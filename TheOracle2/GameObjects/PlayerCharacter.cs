@@ -51,7 +51,7 @@ public class PlayerCharacter
         Health = 5;
         Spirit = 5;
         Supply = 5;
-        Momentum = 2;
+        Momentum = MomentumResetBase;
         XpGained = 0;
         XpSpent = 0;
         Impacts = new List<string>();
@@ -62,26 +62,71 @@ public class PlayerCharacter
     public ulong DiscordGuildId { get; set; }
     public ulong MessageId { get; set; }
     public ulong ChannelId { get; set; }
+    /// <summary>
+    /// Reconstructs the PC embed's jump URL from it's guild id, channel id, and message id, if possible. Otherwise returns an empty string. This will break if Discord changes its url structure (but that seems unlikely in the forseeable future).
+    /// </summary>
+    public string JumpUrl => DiscordGuildId != 0 && ChannelId != 0 && MessageId != 0 ? $"https://discord.com/channels/{DiscordGuildId}/{ChannelId}/{MessageId}" : string.Empty;
     public string Name { get; set; }
-    public int Edge { get => edge; set => edge = (value >= 4) ? 4 : (value <= 1) ? 1 : value; }
-    public int Heart { get => heart; set => heart = (value >= 4) ? 4 : (value <= 1) ? 1 : value; }
-    public int Iron { get => iron; set => iron = (value >= 4) ? 4 : (value <= 1) ? 1 : value; }
-    public int Shadow { get => shadow; set => shadow = (value >= 4) ? 4 : (value <= 1) ? 1 : value; }
-    public int Wits { get => wits; set => wits = (value >= 4) ? 4 : (value <= 1) ? 1 : value; }
 
-    public int Health { get => health; set => health = (value >= 5) ? 5 : (value <= 0) ? 0 : value; }
-    public int Spirit { get => spirit; set => spirit = (value >= 5) ? 5 : (value <= 0) ? 0 : value; }
-    public int Supply { get => supply; set => supply = (value >= 5) ? 5 : (value <= 0) ? 0 : value; }
-    public int Momentum { get => momentum; set => momentum = (value >= 10) ? 10 : (value <= -6) ? -6 : value; }
+    private int StatMax = 4;
+    private int StatMin = 1;
+    public int Edge { get => edge; set => edge = (value >= StatMax) ? StatMax : (value <= StatMin) ? StatMin : value; }
+    public int Heart { get => heart; set => heart = (value >= StatMax) ? StatMax : (value <= StatMin) ? StatMin : value; }
+    public int Iron { get => iron; set => iron = (value >= StatMax) ? StatMax : (value <= StatMin) ? StatMin : value; }
+    public int Shadow { get => shadow; set => shadow = (value >= StatMax) ? StatMax : (value <= StatMin) ? StatMin : value; }
+    public int Wits { get => wits; set => wits = (value >= StatMax) ? StatMax : (value <= StatMin) ? StatMin : value; }
+
+    private const int ConditionMeterMax = 5;
+    private const int ConditionMeterMin = 0;
+    public int Health { get => health; set => health = (value >= ConditionMeterMax) ? ConditionMeterMax : (value <= ConditionMeterMin) ? ConditionMeterMin : value; }
+    public int Spirit { get => spirit; set => spirit = (value >= ConditionMeterMax) ? ConditionMeterMax : (value <= ConditionMeterMin) ? ConditionMeterMin : value; }
+    public int Supply { get => supply; set => supply = (value >= ConditionMeterMax) ? ConditionMeterMax : (value <= ConditionMeterMin) ? ConditionMeterMin : value; }
+    public IList<string> Impacts { get; set; }
+    private const int MomentumResetBase = 2;
+    private const int MomentumResetMin = 0;
+    public int MomentumReset => Math.Max(MomentumResetBase - (ImpactCount), MomentumResetMin);
+    public const int MomentumMin = -6;
+    private const int MomentumMaxBase = 10;
+    // seems silly, but it was throwing on empty lists and things like Any() didn't seem to work, maybe because the DB removes empty lists?
+    public int ImpactCount => Impacts == null ? 0 : Impacts.Count;
+    public int MomentumMax => MomentumMaxBase - (ImpactCount);
+    public int Momentum { get => momentum; set => momentum = (value >= MomentumMax) ? MomentumMax : (value <= MomentumMin) ? MomentumMin : value; }
     public int XpGained { get; set; }
     public int XpSpent { get; set; }
     public string Image { get; set; }
 
-    public IList<string> Impacts { get; set; }
+    // this is mathematically required by the dice anyways, but is included as an extra safeguard against stuff getting weird.
+    public const int MinMomentumToBurn = 2;
 
-    internal void BurnMomentum()
+    /// <summary>
+    /// Attempts to reset momentum to a PC's momentum reset value, generally only used by momentum burn (but see BurnMomentum() for a more complete option). Returns true if it succeeds, and false if it fails.
+    /// </summary>
+    public bool ResetMomentum()
     {
-        Momentum = Math.Max(2 - Impacts.Count, 0);
+        if (Momentum >= MinMomentumToBurn)
+        {
+            Momentum = MomentumReset;
+            return true;
+        }
+        return false;
+    }
+    /// <summary>
+    /// Attempts to burn momentum on an ActionRoll; sets momentum on the PlayerCharacter if it succeeds, and returns the new ActionRoll result.
+    /// </summary>
+    public ActionRoll BurnMomentum(ActionRoll roll)
+    {
+        roll.Momentum = Momentum;
+        if (!roll.IsBurnable)
+        {
+            throw new Exception($"Unable to burn {Momentum} momentum because it does not beat any challenge dice values ({roll.ChallengeDice})");
+        }
+        // this shouldn't happen normally, but if something goes wrong it might make it easier to diagnose where the math is incorrect.
+        if (!ResetMomentum())
+        {
+            throw new Exception($"Unable to burn {Momentum} momentum. Momentum of less than {MinMomentumToBurn} can't cancel any challenge die result.");
+        }
+        roll.IsBurnt = true;
+        return roll;
     }
 
     public GuildPlayer GetLastGuildPlayer(EFContext dbContext)

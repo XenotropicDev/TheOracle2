@@ -26,15 +26,15 @@ public class EditPcComponents : InteractionModuleBase<SocketInteractionContext<S
         await DeferAsync();
 
         if (!int.TryParse(pcId, out var id)) return;
-        var pc = await EfContext.PlayerCharacters.FindAsync(id);
+        var pcData = await EfContext.PlayerCharacters.FindAsync(id);
 
-        if (pc == null)
+        if (pcData == null)
         {
             await RespondAsync($"I couldn't find that character, is it maybe already deleted?", ephemeral: true);
             return;
         }
 
-        if (pc.DiscordGuildId != Context.Guild.Id || (pc.UserId != Context.User.Id && Context.Guild.OwnerId != Context.User.Id))
+        if (pcData.DiscordGuildId != Context.Guild.Id || (pcData.UserId != Context.User.Id && Context.Guild.OwnerId != Context.User.Id))
         {
             await RespondAsync($"You are not allowed to delete this player character.", ephemeral: true);
             return;
@@ -43,21 +43,21 @@ public class EditPcComponents : InteractionModuleBase<SocketInteractionContext<S
         var errors = new List<string>();
         try
         {
-            EfContext.PlayerCharacters.Remove(pc);
+            EfContext.PlayerCharacters.Remove(pcData);
             await EfContext.SaveChangesAsync();
         }
         catch (Exception ex)
         {
             logger.LogError($"Unable to delete player from database. Id: {pcId}\n{ex}");
-            await FollowupAsync($"Unable to delete player {pc.Name} from the player database. Please try again, then make an issue on github, or post on the Ironsworn discord.", ephemeral: true);
+            await FollowupAsync($"Unable to delete player {pcData.Name} from the player database. Please try again, then make an issue on github, or post on the Ironsworn discord.", ephemeral: true);
             return;
         }
 
-        if (pc.MessageId > 0)
+        if (pcData.MessageId > 0)
         {
             try
             {
-                var msg = await ((await Context.Client.GetChannelAsync(pc.ChannelId)) as IMessageChannel)?.GetMessageAsync(pc.MessageId);
+                var msg = await ((await Context.Client.GetChannelAsync(pcData.ChannelId)) as IMessageChannel)?.GetMessageAsync(pcData.MessageId);
                 await msg?.DeleteAsync(); //The message could've been deleted by the user.
             }
             catch (Exception ex)
@@ -73,7 +73,7 @@ public class EditPcComponents : InteractionModuleBase<SocketInteractionContext<S
 
         await Context.Interaction.Message.DeleteAsync();
 
-        string message = (errors.Count == 0) ? $"Deleted {pc.Name}" : $"Finished with error(s):\n{string.Join('\n', errors)}";
+        string message = (errors.Count == 0) ? $"Deleted {pcData.Name}" : $"Finished with error(s):\n{string.Join('\n', errors)}";
         await FollowupAsync(message, ephemeral: true);
     }
 }

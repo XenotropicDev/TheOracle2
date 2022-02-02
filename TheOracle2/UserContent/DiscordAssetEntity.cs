@@ -88,12 +88,11 @@ namespace TheOracle2.UserContent
         public Asset Asset { get; }
 
         public Embed[] GetEmbeds() => new Embed[] { builder.Build() };
-
         public MessageComponent GetComponents() => compBuilder.Build();
 
         public bool IsEphemeral { get; set; } = false;
 
-        public async Task<IMessage> GetDiscordMessage(IInteractionContext context)
+        public async Task<IMessage> GetMessageAsync(IInteractionContext context)
         {
             return null;
         }

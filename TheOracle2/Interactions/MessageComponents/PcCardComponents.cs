@@ -16,7 +16,7 @@ public class PcCardComponents : InteractionModuleBase<SocketInteractionContext<S
         DbContext = dbContext;
     }
 
-    public GuildPlayer GuildPlayer => GuildPlayer.GetAndAddIfMissing(DbContext, Context);
+    public GuildPlayer GetGuildPlayer() => GuildPlayer.GetAndAddIfMissing(DbContext, Context);
     public EFContext DbContext { get; }
 
     public override async Task AfterExecuteAsync(ICommandInfo command)
@@ -27,67 +27,67 @@ public class PcCardComponents : InteractionModuleBase<SocketInteractionContext<S
     [ComponentInteraction("add-momentum-*")]
     public async Task AddMomentum(string pcId)
     {
-        await UpdatePCValue(pcId, pc => pc.Momentum++).ConfigureAwait(false);
+        await UpdatePCValue(pcId, pcData => pcData.Momentum++).ConfigureAwait(false);
     }
 
     [ComponentInteraction("lose-momentum-*")]
     public async Task LoseMomentum(string pcId)
     {
-        await UpdatePCValue(pcId, pc => pc.Momentum--).ConfigureAwait(false);
+        await UpdatePCValue(pcId, pcData => pcData.Momentum--).ConfigureAwait(false);
     }
 
     [ComponentInteraction("lose-supply-*")]
     public async Task loseSupply(string pcId)
     {
-        await UpdatePCValue(pcId, pc => pc.Supply--).ConfigureAwait(false);
+        await UpdatePCValue(pcId, pcData => pcData.Supply--).ConfigureAwait(false);
     }
 
     [ComponentInteraction("add-supply-*")]
     public async Task addSupply(string pcId)
     {
-        await UpdatePCValue(pcId, pc => pc.Supply++).ConfigureAwait(false);
+        await UpdatePCValue(pcId, pcData => pcData.Supply++).ConfigureAwait(false);
     }
 
     [ComponentInteraction("lose-health-*")]
     public async Task loseHealth(string pcId)
     {
-        await UpdatePCValue(pcId, pc => pc.Health--).ConfigureAwait(false);
+        await UpdatePCValue(pcId, pcData => pcData.Health--).ConfigureAwait(false);
     }
 
     [ComponentInteraction("add-health-*")]
     public async Task addHealth(string pcId)
     {
-        await UpdatePCValue(pcId, pc => pc.Health++).ConfigureAwait(false);
+        await UpdatePCValue(pcId, pcData => pcData.Health++).ConfigureAwait(false);
     }
 
     [ComponentInteraction("lose-spirit-*")]
     public async Task loseSpirit(string pcId)
     {
-        await UpdatePCValue(pcId, pc => pc.Spirit--).ConfigureAwait(false);
+        await UpdatePCValue(pcId, pcData => pcData.Spirit--).ConfigureAwait(false);
     }
 
     [ComponentInteraction("add-spirit-*")]
     public async Task addSpirit(string pcId)
     {
-        await UpdatePCValue(pcId, pc => pc.Spirit++).ConfigureAwait(false);
+        await UpdatePCValue(pcId, pcData => pcData.Spirit++).ConfigureAwait(false);
     }
 
     [ComponentInteraction("add-xp-*")]
     public async Task addXp(string pcId)
     {
-        await UpdatePCValue(pcId, pc => pc.XpGained++).ConfigureAwait(false);
+        await UpdatePCValue(pcId, pcData => pcData.XpGained++).ConfigureAwait(false);
     }
 
     [ComponentInteraction("lose-xp-*")]
     public async Task loseXp(string pcId)
     {
-        await UpdatePCValue(pcId, pc => pc.XpGained--).ConfigureAwait(false);
+        await UpdatePCValue(pcId, pcData => pcData.XpGained--).ConfigureAwait(false);
     }
 
     [ComponentInteraction("burn-momentum-*")]
     public async Task burn(string pcId)
     {
-        await UpdatePCValue(pcId, pc => pc.BurnMomentum()).ConfigureAwait(false);
+        await UpdatePCValue(pcId, pcData => pcData.ResetMomentum()).ConfigureAwait(false);
     }
 
     [ComponentInteraction("player-more-*")]
@@ -146,18 +146,18 @@ public class PcCardComponents : InteractionModuleBase<SocketInteractionContext<S
         {
             throw new ArgumentException($"Unable to parse integer from {pcId}");
         }
-        var pc = await DbContext.PlayerCharacters.FindAsync(Id);
-        if (pc.MessageId != Context.Interaction.Message.Id)
+        var pcData = await DbContext.PlayerCharacters.FindAsync(Id);
+        if (pcData.MessageId != Context.Interaction.Message.Id)
         {
-            pc.MessageId = Context.Interaction.Message.Id;
-            pc.ChannelId = Context.Interaction.Channel.Id;
+            pcData.MessageId = Context.Interaction.Message.Id;
+            pcData.ChannelId = Context.Interaction.Channel.Id;
         }
-        change(pc);
-        GuildPlayer.LastUsedPcId = Id;
-        var entity = new PlayerCharacterEntity(pc);
+        change(pcData);
+        GetGuildPlayer().LastUsedPcId = Id;
+        var pcEntity = new PlayerCharacterEntity(DbContext, pcData);
         await Context.Interaction.UpdateAsync(msg =>
         {
-            msg.Embeds = entity.GetEmbeds();
+            msg.Embeds = pcEntity.GetEmbeds();
         }).ConfigureAwait(false);
     }
 }

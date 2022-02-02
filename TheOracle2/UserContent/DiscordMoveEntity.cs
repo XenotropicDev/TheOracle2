@@ -43,7 +43,7 @@ namespace TheOracle2.UserContent
             return null;
         }
 
-        public async Task<IMessage> GetDiscordMessage(IInteractionContext context)
+        public async Task<IMessage> GetMessageAsync(IInteractionContext context)
         {
             return null;
         }
@@ -62,7 +62,6 @@ namespace TheOracle2.UserContent
             if (Emoji.ContainsKey(Move.Category)) { return Emoji[Move.Category]; }
             return new Emoji("📖");
         }
-
         public static readonly Dictionary<string, IEmote> Emoji = new Dictionary<string, IEmote>(){
     {"Quest", new Emoji("✴️")},
     {"Combat", new Emoji("⚔️")},

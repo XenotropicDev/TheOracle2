@@ -156,20 +156,4 @@ public interface ITrack
         if (ticks > 1) { tickAutoPlural += "s"; }
         return $"{ticks} {tickAutoPlural}";
     }
-    public static EmbedFieldBuilder StrikeField(EmbedFieldBuilder field)
-    {
-        field = StrikeFieldName(field);
-        field = StrikeFieldValue(field);
-        return field;
-    }
-    public static EmbedFieldBuilder StrikeFieldName(EmbedFieldBuilder field)
-    {
-        field.Name = "~~" + field.Name + "~~";
-        return field;
-    }
-    public static EmbedFieldBuilder StrikeFieldValue(EmbedFieldBuilder field)
-    {
-        field.Value = "~~" + field.Value + "~~";
-        return field;
-    }
 }

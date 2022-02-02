@@ -18,7 +18,7 @@ public class RollCommandGroup : InteractionModuleBase
 
     public Random Random { get; }
     public EFContext EfContext { get; }
-    public GuildPlayer GuildPlayer => GuildPlayer.GetAndAddIfMissing(EfContext, Context);
+    public GuildPlayer GetGuildPlayer() => GuildPlayer.GetAndAddIfMissing(EfContext, Context);
 
     public override async Task AfterExecuteAsync(ICommandInfo command)
     {
@@ -38,27 +38,22 @@ public class RollCommandGroup : InteractionModuleBase
         [Summary(description: "A preset value for the second Challenge Die (d10) to use instead of rolling.")][MinValue(1)][MaxValue(10)] int? challengeDie2 = null)
     {
         PlayerCharacter pcData = null;
+        GuildPlayer guildPlayer = this.GetGuildPlayer();
 
         if (!int.TryParse(character, out var id))
         {
             await RespondAsync($"Unknown character ID: {character}", ephemeral: true);
             throw new ArgumentException($"Unable to parse PlayerCharacter ID from {character}.");
         }
-        pcData = id == -1 ? GuildPlayer.LastUsedPc() : EfContext.PlayerCharacters.Find(id);
+        pcData = id == -1 ? guildPlayer.LastUsedPc() : EfContext.PlayerCharacters.Find(id);
         if (pcData == null)
         {
             await OfferActionRollFallbackPcs(id, stat, adds, description, actionDie, challengeDie1, challengeDie2);
             return;
         }
-        var pcEntity = new PlayerCharacterEntity(pcData);
-        var roll = pcEntity.RollAction(this.Random, stat, adds, description, actionDie, challengeDie1, challengeDie2);
-        var embed = roll.ToEmbed();
-        if (pcData.MessageId > 0)
-        {
-            var characterSheet = await pcEntity.GetDiscordMessage(Context);
-            embed.Author.Url = characterSheet?.GetJumpUrl();
-        }
-        GuildPlayer.LastUsedPcId = pcData.Id;
+        var pcEntity = new PlayerCharacterEntity(EfContext, pcData);
+        var roll = await pcEntity.RollAction(Context, this.Random, stat, adds, description, actionDie, challengeDie1, challengeDie2);
+        guildPlayer.LastUsedPcId = pcData.Id;
         await RespondAsync(embed: roll.ToEmbed().Build(), components: roll.MakeComponents(pcData.Id)?.Build()).ConfigureAwait(false);
     }
 
@@ -76,7 +71,7 @@ public class RollCommandGroup : InteractionModuleBase
 
         errorMessage += "If you want to create a character, use the `/player` command.";
 
-        var fallbackPcs = GuildPlayer.GetPcs();
+        var fallbackPcs = GetGuildPlayer().GetPcs();
         ComponentBuilder components = null;
         if (fallbackPcs.Any())
         {
@@ -133,15 +128,15 @@ public class RollCommandGroup : InteractionModuleBase
     }
 }
 
-public class PCRollComponents : InteractionModuleBase<SocketInteractionContext<SocketMessageComponent>>
+public class PcRollComponents : InteractionModuleBase<SocketInteractionContext<SocketMessageComponent>>
 {
-    public PCRollComponents(Random random, EFContext efContext)
+    public PcRollComponents(Random random, EFContext efContext)
     {
         EfContext = efContext;
         Random = random;
     }
 
-    public GuildPlayer GuildPlayer => GuildPlayer.GetAndAddIfMissing(EfContext, Context);
+    public GuildPlayer GetGuildPlayer() => GuildPlayer.GetAndAddIfMissing(EfContext, Context);
     public Random Random { get; }
     public EFContext EfContext { get; }
 
@@ -163,7 +158,7 @@ public class PCRollComponents : InteractionModuleBase<SocketInteractionContext<S
             throw new ArgumentException($"Unable to parse entity ID from {Context.Interaction.Data.CustomId}");
         }
         var pcData = await EfContext.PlayerCharacters.FindAsync(pcId);
-        var pcEntity = new PlayerCharacterEntity(pcData);
+        var pcEntity = new PlayerCharacterEntity(EfContext, pcData);
 
         var description = Context.Interaction.Message.Content;
         description = Regex.Match(description, @"\((.*)\):$")?.Groups[1].Value ?? "";
@@ -174,18 +169,13 @@ public class PCRollComponents : InteractionModuleBase<SocketInteractionContext<S
         int? challengeDie1 = !string.IsNullOrEmpty(challengeDie1String) ? int.Parse(challengeDie1String) : null;
         int? challengeDie2 = !string.IsNullOrEmpty(challengeDie2String) ? int.Parse(challengeDie2String) : null;
 
-        var roll = pcEntity.RollAction(this.Random, stat, adds, description, actionDie, challengeDie1, challengeDie2);
+        var roll = await pcEntity.RollAction(Context, this.Random, stat, adds, description, actionDie, challengeDie1, challengeDie2);
 
-        var embed = roll.ToEmbed();
-        if (pcData.MessageId > 0)
-        {
-            var characterSheet = await pcEntity.GetDiscordMessage(Context);
-            embed.Author.Url = characterSheet.GetJumpUrl();
-        }
+        var rollEmbed = roll.ToEmbed();
 
-        GuildPlayer.LastUsedPcId = pcEntity.Pc.Id;
+        GetGuildPlayer().LastUsedPcId = pcEntity.Pc.Id;
 
-        await FollowupAsync(embed: roll.ToEmbed().Build(), components: roll.MakeComponents().Build()).ConfigureAwait(false);
+        await FollowupAsync(embed: rollEmbed.Build(), components: roll.MakeComponents().Build()).ConfigureAwait(false);
         return;
     }
 
@@ -218,37 +208,35 @@ public class PCRollComponents : InteractionModuleBase<SocketInteractionContext<S
             return;
         }
 
-        var pc = EfContext.PlayerCharacters.Find(Id);
+        var pcData = EfContext.PlayerCharacters.Find(Id);
 
-        var roll = new ActionRoll(Random, 0, 0, 0, $"{embed.Description}\n{pc.Name} burned {pc.Momentum} momentum to change this roll result", 1, die1Val, die2Val)
-        {
-            ActionDie = new Die(Random, 10, pc.Momentum)
-        };
+        var roll = new ActionRoll(Random, embed, pcData.Momentum);
 
-        pc.BurnMomentum();
-        GuildPlayer.LastUsedPcId = pc.Id;
+        pcData.BurnMomentum(roll);
+        GetGuildPlayer().LastUsedPcId = pcData.Id;
         await EfContext.SaveChangesAsync();
 
-        if (pc.ChannelId == 0 || pc.MessageId == 0)
+        if (pcData.ChannelId == 0 || pcData.MessageId == 0)
         {
             //Modify the message, but don't use FollowupAsync so we can reply with the ephemeral message
             await Context.Interaction.ModifyOriginalResponseAsync(msg =>
             {
-                msg.Embed = roll.ToEmbed().WithAuthor(embed.Author?.ToEmbedAuthorBuilder()).Build();
-                msg.Components = new ComponentBuilder().Build();
+                msg.Embed = roll.ToEmbed().Build();
+                msg.Components = roll.MakeComponents().Build();
             });
             await FollowupAsync($"I couldn't find the character card to update, but it should update the next time you click a button on that card", ephemeral: true);
             return;
         }
 
-        var entity = new PlayerCharacterEntity(pc);
+        var pcEntity = new PlayerCharacterEntity(EfContext, pcData);
 
-        IMessageChannel channel = (pc.ChannelId == Context.Channel.Id) ? Context.Channel : await Context.Client.Rest.GetChannelAsync(pc.ChannelId) as IMessageChannel;
-        await channel.ModifyMessageAsync(pc.MessageId, msg => msg.Embeds = entity.GetEmbeds());
+        IMessageChannel channel = (pcData.ChannelId == Context.Channel.Id) ? Context.Channel : await Context.Client.Rest.GetChannelAsync(pcData.ChannelId) as IMessageChannel;
+        await channel.ModifyMessageAsync(pcData.MessageId, msg => msg.Embeds = pcEntity.GetEmbeds());
 
-        await FollowupAsync(
-            embed: roll.ToEmbed().WithAuthor(embed.Author?.ToEmbedAuthorBuilder()).Build(),
-            components: new ComponentBuilder().Build()
-        );
+        await Context.Interaction.ModifyOriginalResponseAsync(msg =>
+        {
+            msg.Embed = roll.ToEmbed().Build();
+            msg.Components = roll.MakeComponents().Build();
+        });
     }
 }
