@@ -13,7 +13,7 @@ public class MoveReferenceCommand : InteractionModuleBase
 
     public EFContext DbContext { get; }
 
-    [SlashCommand("move", "Posts the game text for a move. To make a move, use /action")]
+    [SlashCommand("move", "Posts the game text for a move. To roll a move, use /roll.")]
     public async Task PostAsset([Autocomplete(typeof(MoveAutocomplete))] string move, bool ephemeral = false, bool keepMessage = false)
     {
         var movedata = DbContext.Moves.Find(move);

@@ -24,6 +24,11 @@ public class SceneChallenge : ProgressTrack, IClock
         Segments = (int)segments;
     }
 
+    public SceneChallenge(EFContext dbContext, ClockSize segments = (ClockSize)6, int filledSegments = 0, int ticks = 0, string title = "", string description = "", ChallengeRank rank = ChallengeRank.Formidable, bool alerts = false) : base(dbContext, rank, ticks, title, description, alerts)
+    {
+        Filled = filledSegments;
+        Segments = (int)segments;
+    }
     public override string EmbedCategory => "Scene Challenge";
     public string FooterMessage { get; set; } = "When the tension clock is filled, time is up. You must resolve the encounter by making a progress roll.";
     public override string ResolveMoveName => "Resolve Scene Challenge";
@@ -33,6 +38,7 @@ public class SceneChallenge : ProgressTrack, IClock
     public int Segments { get; }
     public int Filled { get; set; }
     public bool IsFull => Filled >= Segments;
+    public string ClockFillMessage => "Time is up. You must resolve the encounter by making a progress roll.";
 
     public override EmbedBuilder ToEmbed()
     {
@@ -55,9 +61,18 @@ public class SceneChallenge : ProgressTrack, IClock
 
     public override ComponentBuilder MakeComponents()
     {
-        return new ComponentBuilder()
-          .WithSelectMenu(MakeSelectMenu())
-          ;
+        var embed = new ComponentBuilder()
+            .WithSelectMenu(MakeSelectMenu())
+            // .WithButton(ILogWidget.ToggleAlertButton(LogOnIncrement))
+            ;
+        return embed;
+    }
+    public override EmbedBuilder AlertEmbed()
+    {
+        var embed = IClock.AlertStub(this);
+        if (IsFull)
+        { embed.WithDescription(ClockFillMessage); }
+        return embed;
     }
 
     // TODO: this should probably return the scene challenge specific versions of the FS and SaA moves, meaning rsek needs to include them in Dataforged. while no formal move exists for progress resolution, its rules ought to be included in some way as well.

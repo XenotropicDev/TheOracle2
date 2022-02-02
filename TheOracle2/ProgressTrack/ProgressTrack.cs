@@ -40,7 +40,7 @@ public abstract class ProgressTrack : IProgressTrack, IMoveRef
     public bool AlertOnIncrement { get; set; } = false;
     public bool AlertOnDecrement { get; set; }
 
-    public EmbedBuilder AlertEmbed()
+    public virtual EmbedBuilder AlertEmbed()
     {
         return new EmbedBuilder();
     }
@@ -177,7 +177,9 @@ public abstract class ProgressTrack : IProgressTrack, IMoveRef
             components.WithSelectMenu(MoveRefMenu());
         }
         /// alert button
-        components.WithButton(ILogWidget.ToggleAlertButton(true));
+        // components.WithButton(ILogWidget.ToggleAlertButton(
+        //     AlertOnIncrement
+        // ));
         return components;
     }
 
@@ -187,8 +189,9 @@ public abstract class ProgressTrack : IProgressTrack, IMoveRef
     public virtual EmbedBuilder Recommit(Random random)
     {
         EmbedBuilder embed = new EmbedBuilder()
-        .WithAuthor(ResolveMoveName + ": " + Title)
-        .WithTitle("Recommit");
+        .WithAuthor(ResolveMoveName + ": Miss")
+        .WithTitle("Recommit")
+        .WithDescription(Title);
         string oldRank = Rank.ToString();
         ChallengeDice dice = new(random);
         embed.AddField(dice.ToEmbedField().WithIsInline(true));

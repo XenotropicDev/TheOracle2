@@ -11,7 +11,7 @@ public class CampaignClock : Clock
     }
 
     public override string EmbedCategory => "Campaign Clock";
-    public override string LogMessage => "The event is triggered or the project is complete. Envision the outcome and the impact on your setting.";
+    public override string ClockFillMessage => "The event is triggered or the project is complete. Envision the outcome and the impact on your setting.";
 
     public override ComponentBuilder MakeComponents()
     {
@@ -30,6 +30,9 @@ public class CampaignClock : Clock
         {
             menu.AddOption(IClock.ResetOption());
         }
-        return new ComponentBuilder().WithSelectMenu(menu);
+        return new ComponentBuilder()
+            .WithSelectMenu(menu)
+            // .WithButton(ILogWidget.ToggleAlertButton(AlertOnIncrement))
+            ;
     }
 }

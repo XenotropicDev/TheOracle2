@@ -1,48 +1,17 @@
-﻿using Discord.Interactions;
+using Discord.Interactions;
 using Discord.Net;
 using Discord.WebSocket;
+using Microsoft.Extensions.Logging;
+using TheOracle2.Commands;
 using TheOracle2.GameObjects;
 using TheOracle2.UserContent;
 
+
 namespace TheOracle2;
 
-public class PlayerCardCommand : InteractionModuleBase<SocketInteractionContext>
+public class PcCardComponents : InteractionModuleBase<SocketInteractionContext<SocketMessageComponent>>
 {
-    public PlayerCardCommand(EFContext dbContext)
-    {
-        DbContext = dbContext;
-    }
-
-    public EFContext DbContext { get; }
-
-    public GuildPlayer GuildPlayer => GuildPlayer.GetAndAddIfMissing(DbContext, Context);
-
-    public override async Task AfterExecuteAsync(ICommandInfo command)
-    {
-        await DbContext.SaveChangesAsync().ConfigureAwait(false);
-    }
-
-    [SlashCommand("player", "Generates a post to keep track of a player character's stats")]
-    public async Task BuildPlayerCard(string name, [MaxValue(4)][MinValue(1)] int edge, [MaxValue(4)][MinValue(1)] int heart, [MaxValue(4)][MinValue(1)] int iron, [MaxValue(4)][MinValue(1)] int shadow, [MaxValue(4)][MinValue(1)] int wits)
-    {
-        await DeferAsync();
-        var pcData = new PlayerCharacter(Context, name, edge, heart, iron, shadow, wits);
-        DbContext.PlayerCharacters.Add(pcData);
-
-        await DbContext.SaveChangesAsync();
-        // AfterExecute does SaveChanges, but the PC has to be saved to the DB to get an Id.
-        GuildPlayer.LastUsedPcId = pcData.Id;
-
-        var pcEntity = new PlayerCharacterEntity(pcData);
-        var characterSheet = await FollowupAsync(embeds: pcEntity.GetEmbeds(), components: pcEntity.GetComponents()).ConfigureAwait(false);
-        pcData.MessageId = characterSheet.Id;
-        return;
-    }
-}
-
-public class PlayerCardComponents : InteractionModuleBase<SocketInteractionContext<SocketMessageComponent>>
-{
-    public PlayerCardComponents(EFContext dbContext)
+    public PcCardComponents(EFContext dbContext)
     {
         DbContext = dbContext;
     }
@@ -178,13 +147,13 @@ public class PlayerCardComponents : InteractionModuleBase<SocketInteractionConte
             throw new ArgumentException($"Unable to parse integer from {pcId}");
         }
         var pc = await DbContext.PlayerCharacters.FindAsync(Id);
-        pc.MessageId = Context.Interaction.Message.Id;
-        pc.ChannelId = Context.Interaction.Channel.Id;
+        if (pc.MessageId != Context.Interaction.Message.Id)
+        {
+            pc.MessageId = Context.Interaction.Message.Id;
+            pc.ChannelId = Context.Interaction.Channel.Id;
+        }
         change(pc);
         GuildPlayer.LastUsedPcId = Id;
-        // await DbContext.SaveChangesAsync();
-        // TODO: commenting out the above to see what breaks.
-
         var entity = new PlayerCharacterEntity(pc);
         await Context.Interaction.UpdateAsync(msg =>
         {
