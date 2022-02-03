@@ -59,7 +59,7 @@ public class RollCommandGroup : InteractionModuleBase
             embed.Author.Url = characterSheet?.GetJumpUrl();
         }
         GuildPlayer.LastUsedPcId = pcData.Id;
-        await RespondAsync(embed: roll.ToEmbed().Build(), components: roll.MakeComponents(pcData.Id)?.Build()).ConfigureAwait(false);
+        await RespondAsync(embed: embed.Build(), components: roll.MakeComponents(pcData.Id)?.Build()).ConfigureAwait(false);
     }
 
     public async Task OfferActionRollFallbackPcs(
