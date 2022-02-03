@@ -10,8 +10,8 @@ public class OracleRollerResult
         FollowUpTables = new List<Oracle>();
     }
 
-    public ITableResult TableResult { get; private set; }
-    public int? Roll { get; private set; }
+    public ITableResult TableResult { get; internal set; }
+    public int? Roll { get; internal set; }
 
     public OracleRollerResult SetRollResult(int? roll, ITableResult chanceTable)
     {

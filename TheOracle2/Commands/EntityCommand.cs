@@ -27,7 +27,7 @@ public class EntityCommand : InteractionModuleBase
         var rollerFactory = ActivatorUtilities.GetServiceOrCreateInstance<TableRollerFactory>(Services);
         var entityItem = template.Build(rollerFactory);
 
-        await RespondAsync(embeds: entityItem.GetEmbeds(), ephemeral: entityItem.IsEphemeral); //components: entityItem.GetComponents()
+        await RespondAsync(embeds: entityItem.GetEmbeds(), ephemeral: entityItem.IsEphemeral, components: entityItem.GetComponents());
     }
 }
 

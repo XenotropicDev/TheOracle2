@@ -41,6 +41,12 @@ namespace TheOracle2.ActionRoller
                 return new SubcategoryRoller(Random, Context, subcat);
             }
 
+            if (value.StartsWith("info:"))
+            {
+                var info = Context.OracleInfo.Find(id);
+                return new OracleInfoRoller(Random, Context, info);
+            }
+
             if (!strict || value.StartsWith("oracle:"))
             {
                 var oracle = Context.Oracles.Find(id);

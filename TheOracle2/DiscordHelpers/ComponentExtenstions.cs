@@ -43,13 +43,13 @@ public static class InteractionExtensions
     /// </summary>
     /// <param name="interaction">The interaction to get the select menus out of</param>
     /// <returns></returns>
-    public static SelectMenuOption[] GetTriggeringSelectMenuItems(this SocketMessageComponent interaction)
+    public static List<SelectMenuOption> GetTriggeringSelectMenuItems(this SocketMessageComponent interaction)
     {
         var component = GetTriggeringComponent(interaction);
         SelectMenuComponent menu = component as SelectMenuComponent;
         var values = interaction.Data.Values;
         var results = menu?.Options.OfType<SelectMenuOption>().Where(option => values.Contains(option.Value));
-        return results.ToArray();
+        return results.ToList();
     }
 
     /// <summary>
@@ -185,6 +185,27 @@ public static class ComponentExtenstions
                 builder.ActionRows.Remove(row);
             }
         }
+        return builder;
+    }
+
+    public static ComponentBuilder RemoveSelectionOptions(this ComponentBuilder builder, string[] valuesToRemove)
+    {
+        for (var i = builder.ActionRows.Count - 1; i >= 0; i--)
+        {
+            var component = builder.ActionRows[i].Components.FirstOrDefault();
+            if (component == null || component is not SelectMenuComponent select) continue;
+
+            var selectBuilder = select.ToBuilder();
+            selectBuilder.Options.RemoveAll(o => valuesToRemove.Contains(o.Value));
+            if (selectBuilder.Options.Count == 0)
+            {
+                builder.ActionRows.RemoveAt(i);
+                continue;
+            }
+
+            builder.ActionRows[i].WithComponents(new List<IMessageComponent> { selectBuilder.Build() });
+        }
+
         return builder;
     }
 

@@ -76,6 +76,17 @@ public class EFContext : DbContext
             OracleInfo.Add(oi);
             await SaveChangesAsync();
         }
+
+        file = baseDir.GetFiles("entities.json").FirstOrDefault();
+
+        text = file.OpenText().ReadToEnd();
+        var entities = JsonConvert.DeserializeObject<List<OracleObjectTemplate>>(text);
+
+        foreach (var entity in entities)
+        {
+            OracleTemplates.Add(entity);
+        }
+        await SaveChangesAsync();
     }
 
     public bool HasTables() => Database.GetService<IRelationalDatabaseCreator>().HasTables();
@@ -154,29 +165,5 @@ public class EFContext : DbContext
             .UseSqlite("Data Source=GameContent.db;Cache=Shared")
             .UseLazyLoadingProxies();
         base.OnConfiguring(optionsBuilder);
-    }
-
-    internal async Task RecreateSafeTables()
-    {
-        Database.EnsureCreated();
-
-        OracleTemplates.RemoveRange(OracleTemplates);
-        await SaveChangesAsync();
-
-        var npc = new OracleObjectTemplate();
-        npc.EntityName = "NPC";
-        npc.Title = "oracle:1"; //name
-        npc.Author = "NPC, no oracle roll";
-        npc.Fields.Add(new GameObjectFieldInfo { Title = "Callsign", Value = "oracle:2" });
-        npc.Fields.Add(new GameObjectFieldInfo { Title = "Full Name", Value = "oracle:1 oracle:3" });
-
-        var oracleOption = new FollowUpOracle();
-        oracleOption.Label = "Random Table followup (I didn't look this up)";
-        oracleOption.Value = "oracle:15";
-        oracleOption.Description = "extra text";
-        npc.FollowupOracles.Add(oracleOption);
-
-        OracleTemplates.Add(npc);
-        await SaveChangesAsync();
     }
 }

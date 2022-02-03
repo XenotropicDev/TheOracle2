@@ -5,6 +5,7 @@ global using Newtonsoft.Json;
 using System.Reflection;
 using Discord.Commands;
 using Discord.Interactions;
+using Discord.Net;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -160,7 +161,8 @@ internal class Program
                     break;
 
                 case LogSeverity.Error:
-                    logger.LogError(message, msg.Exception);
+                    var httpEx = msg.Exception as HttpException;
+                    logger.LogError(message, httpEx ?? msg.Exception);
                     break;
 
                 case LogSeverity.Warning:
@@ -227,8 +229,6 @@ internal class Program
 #if DEBUG
         Console.WriteLine($"You are debugging, do you want to recreate the database? (y/n)");
         if (Console.ReadKey(true).Key == ConsoleKey.Y) { Console.WriteLine("Rebuilding Database..."); await context.RecreateDB().ConfigureAwait(true); }
-
-        await context.RecreateSafeTables();
 #endif
 
         if (!context.HasTables())

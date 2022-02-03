@@ -1,4 +1,5 @@
-﻿using TheOracle2.DataClasses;
+﻿using System.ComponentModel;
+using TheOracle2.DataClasses;
 using TheOracle2.UserContent;
 
 namespace TheOracle2;
@@ -76,18 +77,13 @@ public class OracleRoller : ITableRoller
         if (oracle != null)
             parent.ChildResults.Add(MakeChild().WithOracle(oracle).Build());
 
-        var tables = oracleInfo?.Subcategories?.FirstOrDefault(sub => sub.Name == stub.Name)?.Oracles;
-        if (tables != null)
+        var subcat = oracleInfo?.Subcategories?.FirstOrDefault(sub => sub.Name == stub.Name);
+        if (subcat != null)
         {
-            foreach (var table in tables)
-            {
-                if (table.Initial)
-                {
-                    var subroll = MakeChild().WithOracle(table).Build();
-                    parent.ChildResults.Add(subroll);
-                }
-                else parent.FollowUpTables.Add(table);
-            }
+            var temp = new SubcategoryRoller(Random, Context, subcat).Build();
+            parent.TableResult = temp.TableResult;
+            parent.ChildResults = temp.ChildResults;
+            parent.FollowUpTables = temp.FollowUpTables;          
         }
     }
 

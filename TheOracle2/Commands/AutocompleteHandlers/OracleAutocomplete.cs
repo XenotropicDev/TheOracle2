@@ -49,8 +49,11 @@ public class OracleAutocomplete : AutocompleteHandler
                 return emptyOraclesResult;
             }
 
+            var oracleInfos = Db.OracleInfo.Where(x => Regex.IsMatch(x.Name, $@"\b(?i){value}")).AsEnumerable();
+            successList = oracleInfos.Select(oi => new AutocompleteResult(oi.Name, $"info:{oi.Id}")).ToList();
+
             var oracles = Db.Oracles.Where(x => Regex.IsMatch(x.Name, $@"\b(?i){value}") || Regex.IsMatch(x.OracleInfo.Name, $@"\b(?i){value}")).AsEnumerable();
-            successList = oracles.SelectMany(x => GetOracleAutocompleteResults(x)).ToList();
+            successList.AddRange(oracles.SelectMany(x => GetOracleAutocompleteResults(x)));
 
             var subcategories = Db.Subcategory.Where(x => Regex.IsMatch(x.Name, $@"\b(?i){value}"));
             successList.AddRange(subcategories.Select(x => new AutocompleteResult(x.Name, $"subcat:{x.Id}")));

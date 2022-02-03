@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using Newtonsoft.Json.Converters;
 using TheOracle2.ActionRoller;
 
 namespace TheOracle2.UserContent;
@@ -11,11 +12,12 @@ public interface IGameObjectTemplate
 /* Things to solve/support:
  * Specific rows
  * Field names from results
- * Custom selects/buttons (from other handeled bot features)
+ * Custom selects/buttons (from other handled bot features)
  */
 
 public class OracleObjectTemplate : IGameObjectTemplate
 {
+    [JsonIgnore]
     public int Id { get; set; }
     public string EntityName { get; set; }
     public string Title { get; set; }
@@ -34,7 +36,7 @@ public class OracleObjectTemplate : IGameObjectTemplate
         embed.WithAuthor(RollValueFacade(rollerFactory, Author, LookupMethod.UseFirst).Item1);
         embed.WithTitle(RollValueFacade(rollerFactory, Title, LookupMethod.UseFirst).Item1);
 
-        comp.WithSelectMenu("add-oracle-select", FollowupOracles.Select(o => o.ToBuilder()).ToList());
+        comp.WithSelectMenu("add-oracle-select", FollowupOracles.Select(o => o.ToBuilder()).ToList(), "Follow up oracles");
 
         foreach (var field in this.Fields)
         {
@@ -101,28 +103,39 @@ public class OracleObjectTemplate : IGameObjectTemplate
 
 public class FollowUpOracle
 {
+    [JsonIgnore]
     public int Id { get; set; }
+    [JsonIgnore]
     public int TemplateId { get; set; }
+    [JsonIgnore]
     public virtual OracleObjectTemplate Template { get; set; }
 
     public string Label { get; set; }
     public string Value { get; set; }
     public string Description { get; set; }
     public string Emote { get; set; }
-    public bool? IsDefault { get; set; }
 
     public SelectMenuOptionBuilder ToBuilder()
     {
-        return new SelectMenuOptionBuilder().WithDescription(Description).WithValue(Value).WithLabel(Label).WithEmote(new Emoji(Emote)).WithDefault(IsDefault == true);
+        return new SelectMenuOptionBuilder()
+            .WithDescription(Description)
+            .WithValue(Value)
+            .WithLabel(Label)
+            .WithEmote(String.IsNullOrWhiteSpace(Emote) ? null : new Emoji(Emote));
     }
 }
 
 public class GameObjectFieldInfo
 {
+    [JsonIgnore]
     public int Id { get; set; }
+    [JsonIgnore]
     public int TemplateId { get; set; }
+    [JsonIgnore]
     public virtual OracleObjectTemplate Template { get; set; }
     public string Value { get; set; }
+    
+    [JsonConverter(typeof(StringEnumConverter))]
     public LookupMethod LookupMethod { get; set; } = LookupMethod.UseFirst;
     public bool IsInline { get; set; } = true;
     public string Title { get; set; }
