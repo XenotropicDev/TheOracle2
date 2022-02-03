@@ -24,7 +24,7 @@ namespace TheOracle2.ActionRoller
             return new OracleRoller(Random, Context, table.Oracle).WithTable(table.Id);
         }
 
-        public ITableRoller GetRoller(string value)
+        public ITableRoller GetRoller(string value, bool strict = false)
         {
             int.TryParse(value.AsSpan(value.IndexOf(":") + 1), out int id);
             if (id == default && !int.TryParse(value.AsSpan(value.IndexOf(":") + 1), out id)) throw new ArgumentException($"Unknown id {value}");
@@ -41,8 +41,19 @@ namespace TheOracle2.ActionRoller
                 return new SubcategoryRoller(Random, Context, subcat);
             }
 
-            var oracle = Context.Oracles.Find(id);
-            return new OracleRoller(Random, Context, oracle);
+            if (value.StartsWith("info:"))
+            {
+                var info = Context.OracleInfo.Find(id);
+                return new OracleInfoRoller(Random, Context, info);
+            }
+
+            if (!strict || value.StartsWith("oracle:"))
+            {
+                var oracle = Context.Oracles.Find(id);
+                return new OracleRoller(Random, Context, oracle);
+            }
+
+            return null;
         }
     }
 }

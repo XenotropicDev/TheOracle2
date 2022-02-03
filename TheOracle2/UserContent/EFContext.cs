@@ -28,6 +28,7 @@ public class EFContext : DbContext
     public DbSet<Subcategory> Subcategory { get; set; }
     public DbSet<ChanceTable> ChanceTables { get; set; }
     public DbSet<PlayerCharacter> PlayerCharacters { get; set; }
+    public DbSet<OracleObjectTemplate> OracleTemplates { get; set; }
 
     public async Task RecreateDB()
     {
@@ -75,6 +76,17 @@ public class EFContext : DbContext
             OracleInfo.Add(oi);
             await SaveChangesAsync();
         }
+
+        file = baseDir.GetFiles("entities.json").FirstOrDefault();
+
+        text = file.OpenText().ReadToEnd();
+        var entities = JsonConvert.DeserializeObject<List<OracleObjectTemplate>>(text);
+
+        foreach (var entity in entities)
+        {
+            OracleTemplates.Add(entity);
+        }
+        await SaveChangesAsync();
     }
 
     public bool HasTables() => Database.GetService<IRelationalDatabaseCreator>().HasTables();

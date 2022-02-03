@@ -1,12 +1,13 @@
 ﻿namespace TheOracle2
 {
-    internal interface IDiscordEntity
+    /// <summary>
+    /// An interface for adapting objects into postable discord messages
+    /// </summary>
+    public interface IDiscordEntity
     {
         Embed[] GetEmbeds();
 
         MessageComponent GetComponents();
-
-        public Task<IMessage> GetDiscordMessage(IInteractionContext context);
 
         bool IsEphemeral { get; set; }
     }

@@ -49,9 +49,13 @@ public class OracleComponents : InteractionModuleBase<SocketInteractionContext<S
             builder = DiscordOracleBuilder.AddFieldsToBuilder(roll, builder);
         }
 
+        var comp = ComponentBuilder.FromMessage(Context.Interaction.Message).RemoveSelectionOptions(values);
+
         await Context.Interaction.UpdateAsync(msg =>
         {
             msg.Embeds = new Embed[] { builder.Build() };
+            msg.Components = comp.Build();
+            
         }).ConfigureAwait(false);
     }
 

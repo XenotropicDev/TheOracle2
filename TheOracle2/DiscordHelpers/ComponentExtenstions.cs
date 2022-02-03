@@ -43,13 +43,13 @@ public static class InteractionExtensions
     /// </summary>
     /// <param name="interaction">The interaction to get the select menus out of</param>
     /// <returns></returns>
-    public static SelectMenuOption[] GetTriggeringSelectMenuItems(this SocketMessageComponent interaction)
+    public static List<SelectMenuOption> GetTriggeringSelectMenuItems(this SocketMessageComponent interaction)
     {
         var component = GetTriggeringComponent(interaction);
         SelectMenuComponent menu = component as SelectMenuComponent;
         var values = interaction.Data.Values;
         var results = menu?.Options.OfType<SelectMenuOption>().Where(option => values.Contains(option.Value));
-        return results.ToArray();
+        return results.ToList();
     }
 
     /// <summary>
@@ -186,6 +186,67 @@ public static class ComponentExtenstions
             }
         }
         return builder;
+    }
+
+    public static ComponentBuilder RemoveSelectionOptions(this ComponentBuilder builder, string[] valuesToRemove)
+    {
+        for (var i = builder.ActionRows.Count - 1; i >= 0; i--)
+        {
+            var component = builder.ActionRows[i].Components.FirstOrDefault();
+            if (component == null || component is not SelectMenuComponent select) continue;
+
+            var selectBuilder = select.ToBuilder();
+            selectBuilder.Options.RemoveAll(o => valuesToRemove.Contains(o.Value));
+            if (selectBuilder.Options.Count == 0)
+            {
+                builder.ActionRows.RemoveAt(i);
+                continue;
+            }
+
+            builder.ActionRows[i].WithComponents(new List<IMessageComponent> { selectBuilder.Build() });
+        }
+
+        return builder;
+    }
+
+    public static void MergeComponents(this ComponentBuilder destinationBuilder, ComponentBuilder itemsToAdd)
+    {
+        if (itemsToAdd?.ActionRows == null) return;
+        
+        var existingButtons = destinationBuilder.ActionRows?.SelectMany(ar => ar.Components).OfType<ButtonComponent>();
+        var existingSelects = destinationBuilder.ActionRows?.SelectMany(ar => ar.Components).OfType<SelectMenuComponent>();
+        
+        foreach (var component in itemsToAdd.ActionRows.SelectMany(ar => ar.Components))
+        {
+            switch (component)
+            {
+                case ButtonComponent button:
+                    if (existingButtons?.Any(b => b.CustomId == button.CustomId) == true) break;
+
+                    destinationBuilder.WithButton(button.ToBuilder());
+                    break;
+                case SelectMenuComponent select:
+                    SelectMenuBuilder builder = null;
+
+                    var existing = existingSelects?.FirstOrDefault(s => s.CustomId == select.CustomId);
+                    if (existing != null)
+                    {
+                        builder = existing.ToBuilder();
+                        foreach (var o in select.Options)
+                        {
+                            if (existing.Options.Any(eo => eo.Value == o.Value)) continue;
+
+                            builder.AddOption(o.Label, o.Value, o.Description, o.Emote, o.IsDefault);
+                        }
+                    }
+
+                    destinationBuilder.WithSelectMenu(builder ?? select.ToBuilder());
+                    break;
+
+                default:
+                    break;
+            }
+        }
     }
 
     public static ComponentBuilder ReplaceComponentById(this ComponentBuilder builder, string id, IMessageComponent replacement)

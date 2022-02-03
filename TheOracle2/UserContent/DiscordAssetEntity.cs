@@ -92,10 +92,5 @@ namespace TheOracle2.UserContent
         public MessageComponent GetComponents() => compBuilder.Build();
 
         public bool IsEphemeral { get; set; } = false;
-
-        public async Task<IMessage> GetDiscordMessage(IInteractionContext context)
-        {
-            return null;
-        }
     }
 }

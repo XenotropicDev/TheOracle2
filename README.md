@@ -1,3 +1,6 @@
+## Warning
+This branch is experimental, and at the time of writting this it isn't complete in anyway, will not compile, and probably doesn't do anything.
+
 ## About
 TheOracle2 is a complete rework of TheOracle using new discord bot features, and more integrated data features
 

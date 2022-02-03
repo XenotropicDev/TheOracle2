@@ -43,11 +43,6 @@ namespace TheOracle2.UserContent
             return null;
         }
 
-        public async Task<IMessage> GetDiscordMessage(IInteractionContext context)
-        {
-            return null;
-        }
-
         public Embed[] GetEmbeds()
         {
             return new Embed[] {new EmbedBuilder()
