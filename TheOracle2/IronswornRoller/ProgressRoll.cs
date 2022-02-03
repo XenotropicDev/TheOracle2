@@ -15,7 +15,7 @@ public class ProgressRoll : IronswornRoll
     }
 
     /// <inheritdoc/>
-    public override string EmbedCategory { get => "Progress Roll"; }
+    public override string EmbedCategory { get; set; } = "Progress Roll";
 
     public override string ScoreLabel { get => "Progress Score"; }
 

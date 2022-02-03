@@ -7,6 +7,7 @@ public interface IClock : ILogWidget
     public int Segments { get; }
     public int Filled { get; set; }
     public bool IsFull { get; }
+    public string ClockFillMessage { get; }
 
     public static EmbedBuilder AlertStub(IClock clock)
     {

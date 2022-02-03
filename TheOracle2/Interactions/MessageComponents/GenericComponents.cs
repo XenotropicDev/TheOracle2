@@ -4,13 +4,17 @@ using Discord.WebSocket;
 using Microsoft.Extensions.Logging;
 using TheOracle2.GameObjects;
 
-namespace TheOracle2.Commands;
+namespace TheOracle2;
 
-public class GenericComponentHandlers : InteractionModuleBase<SocketInteractionContext<SocketMessageComponent>>
+/// <summary>
+/// General-purpose components for managing messages.
+/// </summary>
+
+public class GenericComponents : InteractionModuleBase<SocketInteractionContext<SocketMessageComponent>>
 {
-    private readonly ILogger<GenericComponentHandlers> logger;
+    private readonly ILogger<GenericComponents> logger;
 
-    public GenericComponentHandlers(ILogger<GenericComponentHandlers> logger)
+    public GenericComponents(ILogger<GenericComponents> logger)
     {
         this.logger = logger;
     }
@@ -48,5 +52,14 @@ public class GenericComponentHandlers : InteractionModuleBase<SocketInteractionC
             Console.WriteLine(json);
             throw;
         }
+    }
+    [ComponentInteraction("ephemeral-reveal")]
+    public async Task RevealEphemeral()
+    {
+        SocketMessageComponent interaction = Context.Interaction as SocketMessageComponent;
+        SocketUserMessage message = interaction.Message;
+        ComponentBuilder components = ComponentBuilder.FromComponents(message.Components);
+        components.RemoveComponentById("ephemeral-reveal");
+        await RespondAsync(ephemeral: false, embeds: message.Embeds as Embed[], components: components.Build());
     }
 }
