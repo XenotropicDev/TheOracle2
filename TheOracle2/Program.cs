@@ -97,7 +97,8 @@ internal class Program
             switch (arg)
             {
                 case SocketSlashCommand slash:
-                    logger.LogInformation($"{slash.User.Username} triggered slash command: {slash.CommandName}");
+                    string optionsValue = " " + getOptionStringRecursive(slash.Data.Options);
+                    logger.LogInformation($"{slash.User.Username} triggered slash command: {slash.CommandName}{optionsValue}");
                     if (!interactionService.SlashCommands.Any(cmd => cmd.Name == slash.CommandName || cmd.Module.SlashGroupName == slash.CommandName))
                     {
                         await oracleCommandHandler.ExecuteAsync(slash, _services);
@@ -110,8 +111,10 @@ internal class Program
                     break;
 
                 case SocketMessageComponent component:
-                    logger.LogInformation($"{component.User.Username} triggered message component: {component.Data.CustomId}");
                     var msgCtx = new SocketInteractionContext<SocketMessageComponent>(client, component);
+                    string valuesMsg = msgCtx.Interaction.Data.Values?.Count > 0 ? ", Values: " + string.Join(" & ", msgCtx.Interaction.Data.Values) : string.Empty;
+                    logger.LogInformation($"{component.User.Username} triggered message component: {component.Data.CustomId}{valuesMsg}");
+
                     await interactionService.ExecuteCommandAsync(msgCtx, _services).ConfigureAwait(false);
                     break;
 
@@ -128,6 +131,19 @@ internal class Program
                     break;
             }
         };
+    }
+
+    private string getOptionStringRecursive(IEnumerable<SocketSlashCommandDataOption> options)
+    {
+        if (options == null || !options.Any()) return String.Empty;
+
+        var returnValue = String.Empty;
+        foreach(var option in options)
+        {
+            returnValue += $"{option.Name} {option.Value} {getOptionStringRecursive(option.Options)} ";
+        }
+
+        return returnValue;
     }
 
     private async Task RegisterCommands(SlashCommandHandler oracleCommandHandler)
