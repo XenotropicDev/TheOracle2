@@ -11,7 +11,7 @@ namespace TheOracle2.UserContent;
 
 public class EFContext : DbContext
 {
-    public EFContext(DbContextOptions<EFContext> options) : base(options)
+    public EFContext()
     {
         //Database.EnsureCreated();
     }
