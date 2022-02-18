@@ -1,4 +1,5 @@
-﻿using TheOracle2.DataClasses;
+﻿using System.Text.RegularExpressions;
+using TheOracle2.DataClasses;
 using TheOracle2.UserContent;
 
 namespace TheOracle2.ActionRoller
@@ -26,8 +27,15 @@ namespace TheOracle2.ActionRoller
 
         public ITableRoller GetRoller(string value, bool strict = false)
         {
-            int.TryParse(value.AsSpan(value.IndexOf(":") + 1), out int id);
-            if (id == default && !int.TryParse(value.AsSpan(value.IndexOf(":") + 1), out id)) throw new ArgumentException($"Unknown id {value}");
+            if (!int.TryParse(value.AsSpan(value.IndexOf(":") + 1), out int id))
+            {
+                var matches = Context.Oracles.Where(o => Regex.IsMatch(o.Name, $@"\b(?i){value}"));
+
+                if (matches.Count() != 1) throw new ArgumentException($"Unknown id {value}");
+
+                id = matches.FirstOrDefault().Id;
+                value = $"oracle:{id}";
+            }
 
             if (value.StartsWith("tables:"))
             {
