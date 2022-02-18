@@ -41,7 +41,6 @@ public class AssetComponents : InteractionModuleBase<SocketInteractionContext<So
     [ComponentInteraction("asset-condition-select:*")]
     public async Task ConditionSelection(string assetId, string[] values)
     {
-        // if (!int.TryParse(assetId, out var id)) throw new ArgumentException($"Unknown asset id {assetId}");
         var asset = DbContext.Assets.Find(assetId);
 
         var embed = Context.Interaction.Message.Embeds.FirstOrDefault().ToEmbedBuilder();
@@ -99,7 +98,6 @@ public class AssetComponents : InteractionModuleBase<SocketInteractionContext<So
     [ComponentInteraction("asset-counter-select:*")]
     public async Task CounterSelection(string assetId, string[] values)
     {
-        // if (!int.TryParse(assetId, out var id)) throw new ArgumentException($"Unknown asset id {assetId}");
         var asset = DbContext.Assets.Find(assetId);
 
         var embed = Context.Interaction.Message.Embeds.FirstOrDefault().ToEmbedBuilder();
@@ -130,33 +128,28 @@ public class AssetComponents : InteractionModuleBase<SocketInteractionContext<So
     [ComponentInteraction("asset-ability-select:*")]
     public async Task AbilitySelection(string idStr, string[] selections)
     {
-        //await DeferAsync();
-        // if (!int.TryParse(idStr, out int id)) throw new ArgumentException($"Unknown id '{idStr}'");
         var asset = DbContext.Assets.Find(idStr);
 
         var embed = Context.Interaction.Message?.Embeds?.FirstOrDefault()?.ToEmbedBuilder();
         var component = ComponentBuilder.FromMessage(Context.Interaction.Message);
 
-        if (embed != null)
+        if (embed == null) throw new MissingFieldException(nameof(embed));
+
+        string desc = string.Empty;
+        foreach (var v in selections)
         {
-            string desc = string.Empty;
-            foreach (var v in selections)
-            {
-                // if (!int.TryParse(v, out var abilityId)) throw new ArgumentException($"Unknown {nameof(Ability)} with Id {v}");
-                // var ability = DbContext.AssetAbilities.Find(abilityId);
-                var ability = DbContext.AssetAbilities.Find(v);
+            var ability = DbContext.AssetAbilities.Find(v);
 
-                desc += $"⬢ {ability.Text}\n\n";
+            desc += $"⬢ {ability.Text}\n\n";
 
-                component.MarkSelectionByOptionId(v);
-            }
-            embed.WithDescription(desc);
-
-            await Context.Interaction.UpdateAsync(msg =>
-            {
-                msg.Embeds = new Embed[] { embed.Build() };
-                msg.Components = component.Build();
-            }).ConfigureAwait(false);
+            component.MarkSelectionByOptionId(v);
         }
+        embed.WithDescription(desc);
+
+        await Context.Interaction.UpdateAsync(msg =>
+        {
+            msg.Embeds = new Embed[] { embed.Build() };
+            msg.Components = component.Build();
+        }).ConfigureAwait(false);
     }
 }
