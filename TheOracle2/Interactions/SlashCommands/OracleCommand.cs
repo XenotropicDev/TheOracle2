@@ -18,9 +18,20 @@ public class OracleCommand : InteractionModuleBase
     public Random Random { get; }
 
     [SlashCommand("oracle", "Roll on an oracle table. To ask a yes/no question, use /ask.")]
-    public async Task RollOracle([Autocomplete(typeof(OracleAutocomplete))] string oracle)
+    public async Task RollOracle([Autocomplete(typeof(OracleAutocomplete))] string oracle, 
+        [Summary(description: "Optional second oracle to roll")]
+        [Autocomplete(typeof(OracleAutocomplete))] string secondOracle = null)
     {
-        var entityItem = new DiscordOracleEntity(oracle, DbContext, Random);
+        DiscordOracleEntity entityItem;
+
+        if (secondOracle != null)
+        {
+            entityItem = new DiscordOracleEntity(new List<string> {oracle, secondOracle }, DbContext, Random);
+        }
+        else
+        {
+            entityItem = new DiscordOracleEntity(oracle, DbContext, Random);
+        }
 
         await RespondAsync(embeds: entityItem.GetEmbeds(), ephemeral: entityItem.IsEphemeral, components: entityItem.GetComponents());
     }

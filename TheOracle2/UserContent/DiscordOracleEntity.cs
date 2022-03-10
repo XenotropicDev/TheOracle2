@@ -25,6 +25,22 @@ namespace TheOracle2.UserContent
             ob = new DiscordOracleBuilder(rollResult).Build();
         }
 
+        public DiscordOracleEntity(List<string> oracleQueryList, EFContext dbContext, Random random)
+        {
+            var RollerFactory = new TableRollerFactory(dbContext, random);
+
+            OracleRollerResult rollResult = new OracleRollerResult();
+
+            foreach (string oracleQuery in oracleQueryList)
+            {
+                if (rollResult.TableResult == default) rollResult = RollerFactory.GetRoller(oracleQuery).Build();
+                else rollResult.ChildResults.Add(RollerFactory.GetRoller(oracleQuery).Build());
+            }
+            rollResult.CleanFollowupItems(); //Because we hacked in the child result we need to re-clean the followup results
+
+            ob = new DiscordOracleBuilder(rollResult).Build();
+        }
+
         public bool IsEphemeral { get; set; } = false;
 
         public MessageComponent GetComponents()

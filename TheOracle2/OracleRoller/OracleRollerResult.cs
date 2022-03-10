@@ -36,6 +36,42 @@ public class OracleRollerResult
 
         return list;
     }
+
+    public bool HasResultTable(string TableName)
+    {
+        if (TableResult.Name == TableName) return true;
+        foreach (var child in ChildResults)
+        {
+            if (child.HasResultTable(TableName)) return true;
+        }
+
+        return false;
+    }
+
+    public void CleanFollowupItems()
+    {
+        RemoveFollowUpItems(GetAllRolledTables());
+    }
+
+    public IEnumerable<string> GetAllRolledTables()
+    {
+        var rolledTables = new List<string>();
+        rolledTables.Add(TableResult.Name);
+        foreach(var child in ChildResults)
+        {
+            rolledTables.AddRange(child.GetAllRolledTables());
+        }
+        return rolledTables;
+    }
+
+    private void RemoveFollowUpItems(IEnumerable<string> tablesToRemove)
+    {
+        FollowUpTables.RemoveAll(t => tablesToRemove.Contains(t.Name));
+        foreach(var child in ChildResults)
+        {
+            child.RemoveFollowUpItems(tablesToRemove);
+        }
+    }
 }
 
 public interface IRollResult

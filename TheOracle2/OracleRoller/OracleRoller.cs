@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using Microsoft.EntityFrameworkCore;
 using TheOracle2.DataClasses;
 using TheOracle2.UserContent;
 
@@ -62,6 +63,19 @@ public class OracleRoller : ITableRoller
                 AddStubRoll(stub, resultRoot);
             }
         }
+
+        //Add any use with oracles that might be needed
+        if (Oracle.UseWith?.Count > 0)
+        {
+            foreach (var useWith in Oracle.UseWith)
+            {
+                var useWithOracle = Context.Oracles.FirstOrDefault(o => o.Name == useWith.Name && o.OracleInfo.Name == useWith.Category);
+                if (useWithOracle != null) resultRoot.FollowUpTables.Add(useWithOracle);
+            }
+        }
+
+        //Remove all the follow up tables we already rolled
+        resultRoot.CleanFollowupItems();
 
         return resultRoot;
     }

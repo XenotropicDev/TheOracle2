@@ -243,6 +243,11 @@ public partial class Oracle
     public IList<string> ContentTags { get; set; }
 
     public string Group { get; set; }
+
+    public override string ToString()
+    {
+        return Name;
+    }
 }
 
 public class OracleInfo
