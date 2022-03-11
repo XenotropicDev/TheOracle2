@@ -72,13 +72,16 @@ public class DiscordOracleBuilder
     {
         foreach (var item in node.FollowUpTables)
         {
-            if ((item.Tables?.Count ?? 0) == 0 && item.Table != null)
+            if ((item.Tables?.Count ?? 0) == 0 && item.Table != null && !AddOracleSelect.Options.Any(o => o.Value == $"oracle:{item.Id}"))
+            {
                 AddOracleSelect.AddOption(item.Name, $"oracle:{item.Id}");
+            }
 
             if (item.Tables != null)
             {
                 foreach (var table in item.Tables)
                 {
+                    if (AddOracleSelect.Options.Any(o => o.Value == $"tables:{item.Id}")) continue;
                     AddOracleSelect.AddOption($"{item.Name} > {table.Name}", $"tables:{table.Id}");
                 }
             }
@@ -89,8 +92,9 @@ public class DiscordOracleBuilder
             foreach (var useWith in ct.Oracle.UseWith)
             {
                 if (IsInResultSet(root, useWith.Oracle)) continue;
+                if (AddOracleSelect.Options.Any(o => o.Value == $"oracle:{useWith.Oracle.Id}")) continue;
 
-                AddOracleSelect.AddOption(useWith.Name, useWith.Oracle.Id.ToString(), emote: new Emoji("🧦"));
+                AddOracleSelect.AddOption(useWith.Name, $"oracle:{useWith.Oracle.Id}", emote: new Emoji("🧦"));
             }
         }
 
