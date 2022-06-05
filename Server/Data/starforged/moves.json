@@ -5,21 +5,23 @@
     "Description": "The **session moves** fit into the flow of mechanics and fiction before, during, and after play. They provide methods for setting up content boundaries, adjusting content in the midst of play, and starting and ending your Starforged sessions. They are intended for solo, co-op, and guided modes.\n\nUnlike most other moves, these session moves function primarily from the perspective of the players instead of your characters. They are a tool to moderate and facilitate safe and enjoyable play.",
     "Source": {
       "Title": "Ironsworn: Starforged Rulebook",
-      "Date": "040122",
+      "Date": "050622",
       "Page": 140
     },
     "Display": { "Title": "Session Moves", "Color": "#00B3C8" },
+    "Optional": false,
     "Moves": [
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 141
         },
+        "Category": "Starforged/Moves/Session",
         "$id": "Starforged/Moves/Session/Begin_a_Session",
         "Name": "Begin a Session",
-        "Category": "Starforged/Moves/Session",
-        "Display": { "Title": "Begin a Session" },
+        "Optional": false,
+        "Display": { "Title": "Begin a Session", "Color": "#00B3C8" },
         "Trigger": {
           "$id": "Starforged/Moves/Session/Begin_a_Session/Trigger",
           "Text": "When you begin a significant session or chapter of play..."
@@ -30,13 +32,14 @@
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 142
         },
+        "Category": "Starforged/Moves/Session",
         "$id": "Starforged/Moves/Session/Set_a_Flag",
         "Name": "Set a Flag",
-        "Category": "Starforged/Moves/Session",
-        "Display": { "Title": "Set a Flag" },
+        "Optional": false,
+        "Display": { "Title": "Set a Flag", "Color": "#00B3C8" },
         "Trigger": {
           "$id": "Starforged/Moves/Session/Set_a_Flag/Trigger",
           "Text": "When you identify situations or topics you don’t want to include, don’t want to envision in detail, or otherwise may need mindfulness when approaching..."
@@ -46,13 +49,14 @@
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 143
         },
+        "Category": "Starforged/Moves/Session",
         "$id": "Starforged/Moves/Session/Change_Your_Fate",
         "Name": "Change Your Fate",
-        "Category": "Starforged/Moves/Session",
-        "Display": { "Title": "Change Your Fate" },
+        "Optional": false,
+        "Display": { "Title": "Change Your Fate", "Color": "#00B3C8" },
         "Trigger": {
           "$id": "Starforged/Moves/Session/Change_Your_Fate/Trigger",
           "Text": "When you encounter flagged content, reject an oracle, resist a consequence, or otherwise need to shift your circumstances within the game for your comfort or enjoyment..."
@@ -62,13 +66,14 @@
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 144
         },
+        "Category": "Starforged/Moves/Session",
         "$id": "Starforged/Moves/Session/Take_a_Break",
         "Name": "Take a Break",
-        "Category": "Starforged/Moves/Session",
-        "Display": { "Title": "Take a Break" },
+        "Optional": false,
+        "Display": { "Title": "Take a Break", "Color": "#00B3C8" },
         "Trigger": {
           "$id": "Starforged/Moves/Session/Take_a_Break/Trigger",
           "Text": "When you resolve a progress move or complete an intense scenario..."
@@ -78,13 +83,14 @@
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
-          "Page": 140
+          "Date": "050622",
+          "Page": 145
         },
+        "Category": "Starforged/Moves/Session",
         "$id": "Starforged/Moves/Session/End_a_Session",
         "Name": "End a Session",
-        "Category": "Starforged/Moves/Session",
-        "Display": { "Title": "End a Session" },
+        "Optional": false,
+        "Display": { "Title": "End a Session", "Color": "#00B3C8" },
         "Trigger": {
           "$id": "Starforged/Moves/Session/End_a_Session/Trigger",
           "Text": "When you end a significant session or chapter of play..."
@@ -99,21 +105,23 @@
     "Description": "The **adventure moves** encompass broadly useful actions to overcome obstacles, reinforce your position, conduct investigations, influence others, and support your fellow protagonists. When you face a peril or try to gain leverage, and another move does not apply, you'll likely find your answer among these moves.",
     "Source": {
       "Title": "Ironsworn: Starforged Rulebook",
-      "Date": "040122",
+      "Date": "050622",
       "Page": 146
     },
     "Display": { "Title": "Adventure Moves", "Color": "#3C70A4" },
+    "Optional": false,
     "Moves": [
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 147
         },
+        "Category": "Starforged/Moves/Adventure",
         "$id": "Starforged/Moves/Adventure/Face_Danger",
         "Name": "Face Danger",
-        "Category": "Starforged/Moves/Adventure",
-        "Display": { "Title": "Face Danger" },
+        "Optional": false,
+        "Display": { "Title": "Face Danger", "Color": "#3C70A4" },
         "Trigger": {
           "$id": "Starforged/Moves/Adventure/Face_Danger/Trigger",
           "Text": "When you attempt something risky or react to an imminent threat...",
@@ -175,13 +183,14 @@
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 148
         },
+        "Category": "Starforged/Moves/Adventure",
         "$id": "Starforged/Moves/Adventure/Secure_an_Advantage",
         "Name": "Secure an Advantage",
-        "Category": "Starforged/Moves/Adventure",
-        "Display": { "Title": "Secure an Advantage" },
+        "Optional": false,
+        "Display": { "Title": "Secure an Advantage", "Color": "#3C70A4" },
         "Trigger": {
           "$id": "Starforged/Moves/Adventure/Secure_an_Advantage/Trigger",
           "Text": "When you assess a situation, make preparations, or attempt to gain leverage...",
@@ -243,13 +252,14 @@
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 149
         },
+        "Category": "Starforged/Moves/Adventure",
         "$id": "Starforged/Moves/Adventure/Gather_Information",
         "Name": "Gather Information",
-        "Category": "Starforged/Moves/Adventure",
-        "Display": { "Title": "Gather Information" },
+        "Optional": false,
+        "Display": { "Title": "Gather Information", "Color": "#3C70A4" },
         "Trigger": {
           "$id": "Starforged/Moves/Adventure/Gather_Information/Trigger",
           "Text": "When you search for clues, conduct an investigation, analyze evidence, or do research...",
@@ -283,13 +293,14 @@
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 150
         },
+        "Category": "Starforged/Moves/Adventure",
         "$id": "Starforged/Moves/Adventure/Compel",
         "Name": "Compel",
-        "Category": "Starforged/Moves/Adventure",
-        "Display": { "Title": "Compel" },
+        "Optional": false,
+        "Display": { "Title": "Compel", "Color": "#3C70A4" },
         "Trigger": {
           "$id": "Starforged/Moves/Adventure/Compel/Trigger",
           "Text": "When you try to persuade someone or make them an offer...",
@@ -337,13 +348,14 @@
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 152
         },
+        "Category": "Starforged/Moves/Adventure",
         "$id": "Starforged/Moves/Adventure/Aid_Your_Ally",
         "Name": "Aid Your Ally",
-        "Category": "Starforged/Moves/Adventure",
-        "Display": { "Title": "Aid Your Ally" },
+        "Optional": false,
+        "Display": { "Title": "Aid Your Ally", "Color": "#3C70A4" },
         "Trigger": {
           "$id": "Starforged/Moves/Adventure/Aid_Your_Ally/Trigger",
           "Text": "When you act in direct support of an ally..."
@@ -353,13 +365,14 @@
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 153
         },
+        "Category": "Starforged/Moves/Adventure",
         "$id": "Starforged/Moves/Adventure/Check_Your_Gear",
         "Name": "Check Your Gear",
-        "Category": "Starforged/Moves/Adventure",
-        "Display": { "Title": "Check Your Gear" },
+        "Optional": false,
+        "Display": { "Title": "Check Your Gear", "Color": "#3C70A4" },
         "Trigger": {
           "$id": "Starforged/Moves/Adventure/Check_Your_Gear/Trigger",
           "Text": "When you check to see if you have a specific helpful item or resource...",
@@ -397,21 +410,23 @@
     "Description": "In the fiction of the *Starforged* setting, those who swear vows are the Ironsworn, and their promises are binding. Vows can be made to yourself, as a solemn representation of your personal commitment, or as a promise to someone else. Some vows might be made grudgingly—out of duty, necessity, or tradition. Others will be made with your whole heart.\n\nMake these **quest moves** when you swear vows, make progress on your quests, and resolve vows.",
     "Source": {
       "Title": "Ironsworn: Starforged Rulebook",
-      "Date": "040122",
+      "Date": "050622",
       "Page": 154
     },
     "Display": { "Title": "Quest Moves", "Color": "#2F9236" },
+    "Optional": false,
     "Moves": [
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 156
         },
+        "Category": "Starforged/Moves/Quest",
         "$id": "Starforged/Moves/Quest/Swear_an_Iron_Vow",
         "Name": "Swear an Iron Vow",
-        "Category": "Starforged/Moves/Quest",
-        "Display": { "Title": "Swear an Iron Vow" },
+        "Optional": false,
+        "Display": { "Title": "Swear an Iron Vow", "Color": "#2F9236" },
         "Trigger": {
           "$id": "Starforged/Moves/Quest/Swear_an_Iron_Vow/Trigger",
           "Text": "When you swear upon iron to complete a quest...",
@@ -444,13 +459,14 @@
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 157
         },
+        "Category": "Starforged/Moves/Quest",
         "$id": "Starforged/Moves/Quest/Reach_a_Milestone",
         "Name": "Reach a Milestone",
-        "Category": "Starforged/Moves/Quest",
-        "Display": { "Title": "Reach a Milestone" },
+        "Optional": false,
+        "Display": { "Title": "Reach a Milestone", "Color": "#2F9236" },
         "Trigger": {
           "$id": "Starforged/Moves/Quest/Reach_a_Milestone/Trigger",
           "Text": "When you make headway in your quest..."
@@ -460,14 +476,15 @@
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 158
         },
+        "Category": "Starforged/Moves/Quest",
         "$id": "Starforged/Moves/Quest/Fulfill_Your_Vow",
         "Name": "Fulfill Your Vow",
-        "Category": "Starforged/Moves/Quest",
+        "Optional": false,
         "Progress Move": true,
-        "Display": { "Title": "Fulfill Your Vow" },
+        "Display": { "Title": "Fulfill Your Vow", "Color": "#2F9236" },
         "Trigger": {
           "$id": "Starforged/Moves/Quest/Fulfill_Your_Vow/Trigger",
           "Text": "When you reach the end of your quest...",
@@ -476,7 +493,7 @@
               "$id": "Starforged/Moves/Quest/Fulfill_Your_Vow/Trigger/Options/1",
               "Roll type": "Progress roll",
               "Method": "Any",
-              "Using": ["Vow Progress"]
+              "Using": ["Vow"]
             }
           ]
         },
@@ -500,13 +517,14 @@
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 160
         },
+        "Category": "Starforged/Moves/Quest",
         "$id": "Starforged/Moves/Quest/Forsake_Your_Vow",
         "Name": "Forsake Your Vow",
-        "Category": "Starforged/Moves/Quest",
-        "Display": { "Title": "Forsake Your Vow" },
+        "Optional": false,
+        "Display": { "Title": "Forsake Your Vow", "Color": "#2F9236" },
         "Trigger": {
           "$id": "Starforged/Moves/Quest/Forsake_Your_Vow/Trigger",
           "Text": "When you renounce your quest, betray your promise, or the goal is lost to you..."
@@ -521,21 +539,23 @@
     "Description": "**Connections** are NPCs (non-player characters) who represent a deep, vital, or interesting relationship in your story. They are your tethers to the people and places of the Forge.\n\nMake these **connection moves** when you introduce connections and as you build influence or understanding with them.",
     "Source": {
       "Title": "Ironsworn: Starforged Rulebook",
-      "Date": "040122",
+      "Date": "050622",
       "Page": 162
     },
     "Display": { "Title": "Connection Moves", "Color": "#4053C9" },
+    "Optional": false,
     "Moves": [
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 163
         },
+        "Category": "Starforged/Moves/Connection",
         "$id": "Starforged/Moves/Connection/Make_a_Connection",
         "Name": "Make a Connection",
-        "Category": "Starforged/Moves/Connection",
-        "Display": { "Title": "Make a Connection" },
+        "Optional": false,
+        "Display": { "Title": "Make a Connection", "Color": "#4053C9" },
         "Trigger": {
           "$id": "Starforged/Moves/Connection/Make_a_Connection/Trigger",
           "Text": "When you search out a new relationship or give focus to an existing relationship (not an ally or companion)...",
@@ -568,13 +588,14 @@
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 164
         },
+        "Category": "Starforged/Moves/Connection",
         "$id": "Starforged/Moves/Connection/Develop_Your_Relationship",
         "Name": "Develop Your Relationship",
-        "Category": "Starforged/Moves/Connection",
-        "Display": { "Title": "Develop Your Relationship" },
+        "Optional": false,
+        "Display": { "Title": "Develop Your Relationship", "Color": "#4053C9" },
         "Trigger": {
           "$id": "Starforged/Moves/Connection/Develop_Your_Relationship/Trigger",
           "Text": "When you reinforce your relationship with a connection...",
@@ -583,7 +604,9 @@
               "$id": "Starforged/Moves/Connection/Develop_Your_Relationship/Trigger/Options/1",
               "Roll type": "Action roll",
               "Method": "Any",
-              "Using": ["${{Custom_stat}}"],
+              "Using": [
+                "Starforged/Moves/Connection/Develop_Your_Relationship/Trigger/Options/1/Custom_stat"
+              ],
               "Custom stat": {
                 "$id": "Starforged/Moves/Connection/Develop_Your_Relationship/Trigger/Options/1/Custom_stat",
                 "Name": "Challenge Rank",
@@ -642,13 +665,14 @@
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 165
         },
+        "Category": "Starforged/Moves/Connection",
         "$id": "Starforged/Moves/Connection/Test_Your_Relationship",
         "Name": "Test Your Relationship",
-        "Category": "Starforged/Moves/Connection",
-        "Display": { "Title": "Test Your Relationship" },
+        "Optional": false,
+        "Display": { "Title": "Test Your Relationship", "Color": "#4053C9" },
         "Trigger": {
           "$id": "Starforged/Moves/Connection/Test_Your_Relationship/Trigger",
           "Text": "When your relationship with a connection is tested through conflict, betrayal, or circumstance...",
@@ -681,14 +705,15 @@
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 166
         },
+        "Category": "Starforged/Moves/Connection",
         "$id": "Starforged/Moves/Connection/Forge_a_Bond",
         "Name": "Forge a Bond",
-        "Category": "Starforged/Moves/Connection",
+        "Optional": false,
         "Progress Move": true,
-        "Display": { "Title": "Forge a Bond" },
+        "Display": { "Title": "Forge a Bond", "Color": "#4053C9" },
         "Trigger": {
           "$id": "Starforged/Moves/Connection/Forge_a_Bond/Trigger",
           "Text": "When your relationship with a connection is ready to evolve...",
@@ -697,7 +722,7 @@
               "$id": "Starforged/Moves/Connection/Forge_a_Bond/Trigger/Options/1",
               "Roll type": "Progress roll",
               "Method": "Any",
-              "Using": ["Connection Progress"]
+              "Using": ["Connection"]
             }
           ]
         },
@@ -726,21 +751,23 @@
     "Description": "The Forge is a vast, chaotic, and largely unexplored galaxy. Your sworn vows will take you through uncharted space, across the surface of inhospitable planets, and into the depths of foreboding derelicts, enigmatic alien vaults, and other perilous sites.\n\nWill you survive these expeditions? What will they cost you? What wonders and horrors will you face? Use the **exploration moves** to find out.",
     "Source": {
       "Title": "Ironsworn: Starforged Rulebook",
-      "Date": "040122",
+      "Date": "050622",
       "Page": 168
     },
     "Display": { "Title": "Exploration Moves", "Color": "#7438B8" },
+    "Optional": false,
     "Moves": [
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 169
         },
+        "Category": "Starforged/Moves/Exploration",
         "$id": "Starforged/Moves/Exploration/Undertake_an_Expedition",
         "Name": "Undertake an Expedition",
-        "Category": "Starforged/Moves/Exploration",
-        "Display": { "Title": "Undertake an Expedition" },
+        "Optional": false,
+        "Display": { "Title": "Undertake an Expedition", "Color": "#7438B8" },
         "Trigger": {
           "$id": "Starforged/Moves/Exploration/Undertake_an_Expedition/Trigger",
           "Text": "When you trailblaze a route through perilous space, journey over hazardous terrain, or survey a mysterious site...",
@@ -788,13 +815,14 @@
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 174
         },
+        "Category": "Starforged/Moves/Exploration",
         "$id": "Starforged/Moves/Exploration/Explore_a_Waypoint",
         "Name": "Explore a Waypoint",
-        "Category": "Starforged/Moves/Exploration",
-        "Display": { "Title": "Explore a Waypoint" },
+        "Optional": false,
+        "Display": { "Title": "Explore a Waypoint", "Color": "#7438B8" },
         "Trigger": {
           "$id": "Starforged/Moves/Exploration/Explore_a_Waypoint/Trigger",
           "Text": "When you divert from an expedition to examine a notable location...",
@@ -835,13 +863,14 @@
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 176
         },
+        "Category": "Starforged/Moves/Exploration",
         "$id": "Starforged/Moves/Exploration/Make_a_Discovery",
         "Name": "Make a Discovery",
-        "Category": "Starforged/Moves/Exploration",
-        "Display": { "Title": "Make a Discovery" },
+        "Optional": false,
+        "Display": { "Title": "Make a Discovery", "Color": "#7438B8" },
         "Trigger": {
           "$id": "Starforged/Moves/Exploration/Make_a_Discovery/Trigger",
           "Text": "When your exploration of a waypoint uncovers something wondrous"
@@ -852,13 +881,14 @@
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 177
         },
+        "Category": "Starforged/Moves/Exploration",
         "$id": "Starforged/Moves/Exploration/Confront_Chaos",
         "Name": "Confront Chaos",
-        "Category": "Starforged/Moves/Exploration",
-        "Display": { "Title": "Confront Chaos" },
+        "Optional": false,
+        "Display": { "Title": "Confront Chaos", "Color": "#7438B8" },
         "Trigger": {
           "$id": "Starforged/Moves/Exploration/Confront_Chaos/Trigger",
           "Text": "When your exploration of a waypoint uncovers something dreadful..."
@@ -869,14 +899,15 @@
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 178
         },
+        "Category": "Starforged/Moves/Exploration",
         "$id": "Starforged/Moves/Exploration/Finish_an_Expedition",
         "Name": "Finish an Expedition",
-        "Category": "Starforged/Moves/Exploration",
+        "Optional": false,
         "Progress Move": true,
-        "Display": { "Title": "Finish an Expedition" },
+        "Display": { "Title": "Finish an Expedition", "Color": "#7438B8" },
         "Trigger": {
           "$id": "Starforged/Moves/Exploration/Finish_an_Expedition/Trigger",
           "Text": "When your expedition comes to an end...",
@@ -885,7 +916,7 @@
               "$id": "Starforged/Moves/Exploration/Finish_an_Expedition/Trigger/Options/1",
               "Roll type": "Progress roll",
               "Method": "Any",
-              "Using": ["Expedition Progress"]
+              "Using": ["Expedition"]
             }
           ]
         },
@@ -909,13 +940,14 @@
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 180
         },
+        "Category": "Starforged/Moves/Exploration",
         "$id": "Starforged/Moves/Exploration/Set_a_Course",
         "Name": "Set a Course",
-        "Category": "Starforged/Moves/Exploration",
-        "Display": { "Title": "Set a Course" },
+        "Optional": false,
+        "Display": { "Title": "Set a Course", "Color": "#7438B8" },
         "Trigger": {
           "$id": "Starforged/Moves/Exploration/Set_a_Course/Trigger",
           "Text": "When you follow a known route through perilous space, across hazardous terrain, or within a mysterious site...",
@@ -953,21 +985,23 @@
     "Description": "The Forge is a perilous galaxy. Factions fight for control. Pirates hunt the spaceways. Raiders prey on vulnerable settlements. Dangerous creatures and chaotic terrors stalk the unwary. Dreaded foes and powerful forces will oppose your sworn quests. Eventually, you'll be forced to fight.\n\nWhen you face one or more foes in high-stakes, action-oriented conflict, use the **combat moves**. These moves encompass on-foot action and vehicle sorties—or both as part of the same challenge.",
     "Source": {
       "Title": "Ironsworn: Starforged Rulebook",
-      "Date": "040122",
+      "Date": "050622",
       "Page": 182
     },
     "Display": { "Title": "Combat Moves", "Color": "#D68F00" },
+    "Optional": false,
     "Moves": [
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 188
         },
+        "Category": "Starforged/Moves/Combat",
         "$id": "Starforged/Moves/Combat/Enter_the_Fray",
         "Name": "Enter the Fray",
-        "Category": "Starforged/Moves/Combat",
-        "Display": { "Title": "Enter the Fray" },
+        "Optional": false,
+        "Display": { "Title": "Enter the Fray", "Color": "#D68F00" },
         "Trigger": {
           "$id": "Starforged/Moves/Combat/Enter_the_Fray/Trigger",
           "Text": "When you initiate combat or are forced into a fight...",
@@ -1029,13 +1063,14 @@
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 190
         },
+        "Category": "Starforged/Moves/Combat",
         "$id": "Starforged/Moves/Combat/Gain_Ground",
         "Name": "Gain Ground",
-        "Category": "Starforged/Moves/Combat",
-        "Display": { "Title": "Gain Ground" },
+        "Optional": false,
+        "Display": { "Title": "Gain Ground", "Color": "#D68F00" },
         "Trigger": {
           "$id": "Starforged/Moves/Combat/Gain_Ground/Trigger",
           "Text": "When you are in control and take action in a fight to reinforce your position or move toward an objective...",
@@ -1097,13 +1132,14 @@
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 191
         },
+        "Category": "Starforged/Moves/Combat",
         "$id": "Starforged/Moves/Combat/React_Under_Fire",
         "Name": "React Under Fire",
-        "Category": "Starforged/Moves/Combat",
-        "Display": { "Title": "React Under Fire" },
+        "Optional": false,
+        "Display": { "Title": "React Under Fire", "Color": "#D68F00" },
         "Trigger": {
           "$id": "Starforged/Moves/Combat/React_Under_Fire/Trigger",
           "Text": "When you are in a bad spot and take action in a fight to avoid danger or overcome an obstacle...",
@@ -1165,13 +1201,14 @@
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 192
         },
+        "Category": "Starforged/Moves/Combat",
         "$id": "Starforged/Moves/Combat/Strike",
         "Name": "Strike",
-        "Category": "Starforged/Moves/Combat",
-        "Display": { "Title": "Strike" },
+        "Optional": false,
+        "Display": { "Title": "Strike", "Color": "#D68F00" },
         "Trigger": {
           "$id": "Starforged/Moves/Combat/Strike/Trigger",
           "Text": "When you are in control and assault a foe at close quarters, or when you attack at a distance...",
@@ -1212,13 +1249,14 @@
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 193
         },
+        "Category": "Starforged/Moves/Combat",
         "$id": "Starforged/Moves/Combat/Clash",
         "Name": "Clash",
-        "Category": "Starforged/Moves/Combat",
-        "Display": { "Title": "Clash" },
+        "Optional": false,
+        "Display": { "Title": "Clash", "Color": "#D68F00" },
         "Trigger": {
           "$id": "Starforged/Moves/Combat/Clash/Trigger",
           "Text": "When you are in a bad spot and fight back against a foe at close quarters, or when you exchange fire at a distance...",
@@ -1259,14 +1297,15 @@
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 194
         },
+        "Category": "Starforged/Moves/Combat",
         "$id": "Starforged/Moves/Combat/Take_Decisive_Action",
         "Name": "Take Decisive Action",
-        "Category": "Starforged/Moves/Combat",
+        "Optional": false,
         "Progress Move": true,
-        "Display": { "Title": "Take Decisive Action" },
+        "Display": { "Title": "Take Decisive Action", "Color": "#D68F00" },
         "Trigger": {
           "$id": "Starforged/Moves/Combat/Take_Decisive_Action/Trigger",
           "Text": "When you seize an objective in a fight...",
@@ -1275,7 +1314,7 @@
               "$id": "Starforged/Moves/Combat/Take_Decisive_Action/Trigger/Options/1",
               "Roll type": "Progress roll",
               "Method": "Any",
-              "Using": ["Combat Progress"]
+              "Using": ["Combat"]
             }
           ]
         },
@@ -1300,13 +1339,14 @@
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 196
         },
+        "Category": "Starforged/Moves/Combat",
         "$id": "Starforged/Moves/Combat/Face_Defeat",
         "Name": "Face Defeat",
-        "Category": "Starforged/Moves/Combat",
-        "Display": { "Title": "Face Defeat" },
+        "Optional": false,
+        "Display": { "Title": "Face Defeat", "Color": "#D68F00" },
         "Trigger": {
           "$id": "Starforged/Moves/Combat/Face_Defeat/Trigger",
           "Text": "When you abandon or are deprived of an objective..."
@@ -1316,13 +1356,14 @@
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 197
         },
+        "Category": "Starforged/Moves/Combat",
         "$id": "Starforged/Moves/Combat/Battle",
         "Name": "Battle",
-        "Category": "Starforged/Moves/Combat",
-        "Display": { "Title": "Battle" },
+        "Optional": false,
+        "Display": { "Title": "Battle", "Color": "#D68F00" },
         "Trigger": {
           "$id": "Starforged/Moves/Combat/Battle/Trigger",
           "Text": "When you fight a battle and it happens in a blur...",
@@ -1389,21 +1430,23 @@
     "Description": "When you bear the brunt of a failed action or make a concession, the suffer moves help resolve the cost. These moves are typically made when you must [Pay the Price](Starforged/Moves/Fate/Pay_the_Price) and face a hardship that directly impacts your well-being and readiness, or as prompted by a move or asset.",
     "Source": {
       "Title": "Ironsworn: Starforged Rulebook",
-      "Date": "040122",
+      "Date": "050622",
       "Page": 198
     },
     "Display": { "Title": "Suffer Moves", "Color": "#C50000" },
+    "Optional": false,
     "Moves": [
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 199
         },
+        "Category": "Starforged/Moves/Suffer",
         "$id": "Starforged/Moves/Suffer/Lose_Momentum",
         "Name": "Lose Momentum",
-        "Category": "Starforged/Moves/Suffer",
-        "Display": { "Title": "Lose Momentum" },
+        "Optional": false,
+        "Display": { "Title": "Lose Momentum", "Color": "#C50000" },
         "Trigger": {
           "$id": "Starforged/Moves/Suffer/Lose_Momentum/Trigger",
           "Text": "When you are delayed or disadvantaged"
@@ -1413,13 +1456,14 @@
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 200
         },
+        "Category": "Starforged/Moves/Suffer",
         "$id": "Starforged/Moves/Suffer/Endure_Harm",
         "Name": "Endure Harm",
-        "Category": "Starforged/Moves/Suffer",
-        "Display": { "Title": "Endure Harm" },
+        "Optional": false,
+        "Display": { "Title": "Endure Harm", "Color": "#C50000" },
         "Trigger": {
           "$id": "Starforged/Moves/Suffer/Endure_Harm/Trigger",
           "Text": "When you face physical injury, fatigue, or illness...",
@@ -1453,13 +1497,14 @@
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 202
         },
+        "Category": "Starforged/Moves/Suffer",
         "$id": "Starforged/Moves/Suffer/Endure_Stress",
         "Name": "Endure Stress",
-        "Category": "Starforged/Moves/Suffer",
-        "Display": { "Title": "Endure Stress" },
+        "Optional": false,
+        "Display": { "Title": "Endure Stress", "Color": "#C50000" },
         "Trigger": {
           "$id": "Starforged/Moves/Suffer/Endure_Stress/Trigger",
           "Text": "When you face mental strain, shock, or despair...",
@@ -1493,13 +1538,14 @@
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 204
         },
+        "Category": "Starforged/Moves/Suffer",
         "$id": "Starforged/Moves/Suffer/Companion_Takes_a_Hit",
         "Name": "Companion Takes a Hit",
-        "Category": "Starforged/Moves/Suffer",
-        "Display": { "Title": "Companion Takes a Hit" },
+        "Optional": false,
+        "Display": { "Title": "Companion Takes a Hit", "Color": "#C50000" },
         "Trigger": {
           "$id": "Starforged/Moves/Suffer/Companion_Takes_a_Hit/Trigger",
           "Text": "When your companion faces physical hardship...",
@@ -1536,13 +1582,14 @@
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 205
         },
+        "Category": "Starforged/Moves/Suffer",
         "$id": "Starforged/Moves/Suffer/Sacrifice_Resources",
         "Name": "Sacrifice Resources",
-        "Category": "Starforged/Moves/Suffer",
-        "Display": { "Title": "Sacrifice Resources" },
+        "Optional": false,
+        "Display": { "Title": "Sacrifice Resources", "Color": "#C50000" },
         "Trigger": {
           "$id": "Starforged/Moves/Suffer/Sacrifice_Resources/Trigger",
           "Text": "When you lose or consume resources..."
@@ -1552,13 +1599,14 @@
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 206
         },
+        "Category": "Starforged/Moves/Suffer",
         "$id": "Starforged/Moves/Suffer/Withstand_Damage",
         "Name": "Withstand Damage",
-        "Category": "Starforged/Moves/Suffer",
-        "Display": { "Title": "Withstand Damage" },
+        "Optional": false,
+        "Display": { "Title": "Withstand Damage", "Color": "#C50000" },
         "Trigger": {
           "$id": "Starforged/Moves/Suffer/Withstand_Damage/Trigger",
           "Text": "When your vehicle faces a damaging situation or environment...",
@@ -1597,21 +1645,23 @@
     "Description": "Life as an Ironsworn is not easy or comfortable. When your resources are strained, your health and spirit ebbing, your equipment and vehicles in disrepair, you'll need to find relief from the perils of the Forge and the burdens of your sworn oaths.\n\nMake these **recover moves** when you attempt to rest, recover, or refit.",
     "Source": {
       "Title": "Ironsworn: Starforged Rulebook",
-      "Date": "040122",
+      "Date": "050622",
       "Page": 208
     },
     "Display": { "Title": "Recover Moves", "Color": "#179F0E" },
+    "Optional": false,
     "Moves": [
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 209
         },
+        "Category": "Starforged/Moves/Recover",
         "$id": "Starforged/Moves/Recover/Sojourn",
         "Name": "Sojourn",
-        "Category": "Starforged/Moves/Recover",
-        "Display": { "Title": "Sojourn" },
+        "Optional": false,
+        "Display": { "Title": "Sojourn", "Color": "#179F0E" },
         "Trigger": {
           "$id": "Starforged/Moves/Recover/Sojourn/Trigger",
           "Text": "When you spend time recovering within a community...",
@@ -1644,13 +1694,14 @@
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 210
         },
+        "Category": "Starforged/Moves/Recover",
         "$id": "Starforged/Moves/Recover/Heal",
         "Name": "Heal",
-        "Category": "Starforged/Moves/Recover",
-        "Display": { "Title": "Heal" },
+        "Optional": false,
+        "Display": { "Title": "Heal", "Color": "#179F0E" },
         "Trigger": {
           "$id": "Starforged/Moves/Recover/Heal/Trigger",
           "Text": "When you receive medical care or provide treatment...",
@@ -1705,13 +1756,14 @@
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 211
         },
+        "Category": "Starforged/Moves/Recover",
         "$id": "Starforged/Moves/Recover/Hearten",
         "Name": "Hearten",
-        "Category": "Starforged/Moves/Recover",
-        "Display": { "Title": "Hearten" },
+        "Optional": false,
+        "Display": { "Title": "Hearten", "Color": "#179F0E" },
         "Trigger": {
           "$id": "Starforged/Moves/Recover/Hearten/Trigger",
           "Text": "When you socialize, share intimacy, or find a moment of peace...",
@@ -1744,13 +1796,14 @@
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 212
         },
+        "Category": "Starforged/Moves/Recover",
         "$id": "Starforged/Moves/Recover/Resupply",
         "Name": "Resupply",
-        "Category": "Starforged/Moves/Recover",
-        "Display": { "Title": "Resupply" },
+        "Optional": false,
+        "Display": { "Title": "Resupply", "Color": "#179F0E" },
         "Trigger": {
           "$id": "Starforged/Moves/Recover/Resupply/Trigger",
           "Text": "When you attempt to bolster your readiness...",
@@ -1805,13 +1858,14 @@
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 214
         },
+        "Category": "Starforged/Moves/Recover",
         "$id": "Starforged/Moves/Recover/Repair",
         "Name": "Repair",
-        "Category": "Starforged/Moves/Recover",
-        "Display": { "Title": "Repair" },
+        "Optional": false,
+        "Display": { "Title": "Repair", "Color": "#179F0E" },
         "Trigger": {
           "$id": "Starforged/Moves/Recover/Repair/Trigger",
           "Text": "When you make repairs to your vehicles, modules, mechanical companions, or other devices...",
@@ -1857,21 +1911,23 @@
     "Description": "Despite your best efforts to overcome the perils of the Forge, calamitous events may bring you to the precipice of life and death, redemption and desolation, perseverance and destruction.\n\nIn these moments you face your greatest tests. What will become of you when all seems lost? Will you see your character undone, or find yourself on a path of renewed purpose? Make these **threshold moves** to find out.",
     "Source": {
       "Title": "Ironsworn: Starforged Rulebook",
-      "Date": "040122",
+      "Date": "050622",
       "Page": 216
     },
     "Display": { "Title": "Threshold Moves", "Color": "#676767" },
+    "Optional": false,
     "Moves": [
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 217
         },
+        "Category": "Starforged/Moves/Threshold",
         "$id": "Starforged/Moves/Threshold/Face_Death",
         "Name": "Face Death",
-        "Category": "Starforged/Moves/Threshold",
-        "Display": { "Title": "Face Death" },
+        "Optional": false,
+        "Display": { "Title": "Face Death", "Color": "#676767" },
         "Trigger": {
           "$id": "Starforged/Moves/Threshold/Face_Death/Trigger",
           "Text": "When you are brought to the brink of death with a chance for recovery or redemption...",
@@ -1904,13 +1960,14 @@
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 218
         },
+        "Category": "Starforged/Moves/Threshold",
         "$id": "Starforged/Moves/Threshold/Face_Desolation",
         "Name": "Face Desolation",
-        "Category": "Starforged/Moves/Threshold",
-        "Display": { "Title": "Face Desolation" },
+        "Optional": false,
+        "Display": { "Title": "Face Desolation", "Color": "#676767" },
         "Trigger": {
           "$id": "Starforged/Moves/Threshold/Face_Desolation/Trigger",
           "Text": "When you are brought to the brink of desolation...",
@@ -1943,14 +2000,15 @@
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 220
         },
+        "Category": "Starforged/Moves/Threshold",
         "$id": "Starforged/Moves/Threshold/Overcome_Destruction",
         "Name": "Overcome Destruction",
-        "Category": "Starforged/Moves/Threshold",
+        "Optional": false,
         "Progress Move": true,
-        "Display": { "Title": "Overcome Destruction" },
+        "Display": { "Title": "Overcome Destruction", "Color": "#676767" },
         "Trigger": {
           "$id": "Starforged/Moves/Threshold/Overcome_Destruction/Trigger",
           "Text": "When your command vehicle is destroyed or irrevocably lost...",
@@ -1959,7 +2017,7 @@
               "$id": "Starforged/Moves/Threshold/Overcome_Destruction/Trigger/Options/1",
               "Roll type": "Progress roll",
               "Method": "Any",
-              "Using": ["Bonds Legacy"]
+              "Using": ["Bonds"]
             }
           ]
         },
@@ -1988,21 +2046,23 @@
     "Description": "The three **legacy tracks**—quests, bonds, and discoveries—are a special type of progress track to show the evolution of your character. As you fulfill vows, build relationships, and explore the Forge, you'll mark progress on these tracks and gain experience. This experience is then spent on character assets to represent your character's growing skills, influence, and resources.\nMake these **legacy moves** to gain and spend experience, and when you face a final test to learn how your accomplishments and failures will echo through time.",
     "Source": {
       "Title": "Ironsworn: Starforged Rulebook",
-      "Date": "040122",
+      "Date": "050622",
       "Page": 222
     },
     "Display": { "Title": "Legacy Moves", "Color": "#4D5769" },
+    "Optional": false,
     "Moves": [
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 224
         },
+        "Category": "Starforged/Moves/Legacy",
         "$id": "Starforged/Moves/Legacy/Earn_Experience",
         "Name": "Earn Experience",
-        "Category": "Starforged/Moves/Legacy",
-        "Display": { "Title": "Earn Experience" },
+        "Optional": false,
+        "Display": { "Title": "Earn Experience", "Color": "#4D5769" },
         "Trigger": {
           "$id": "Starforged/Moves/Legacy/Earn_Experience/Trigger",
           "Text": "When you fill a box (four ticks) on any legacy track..."
@@ -2012,13 +2072,14 @@
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 225
         },
+        "Category": "Starforged/Moves/Legacy",
         "$id": "Starforged/Moves/Legacy/Advance",
         "Name": "Advance",
-        "Category": "Starforged/Moves/Legacy",
-        "Display": { "Title": "Advance" },
+        "Optional": false,
+        "Display": { "Title": "Advance", "Color": "#4D5769" },
         "Trigger": {
           "$id": "Starforged/Moves/Legacy/Advance/Trigger",
           "Text": "When you develop your abilities, improve your resources, gain a reward, or boost your influence..."
@@ -2028,14 +2089,15 @@
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 226
         },
+        "Category": "Starforged/Moves/Legacy",
         "$id": "Starforged/Moves/Legacy/Continue_a_Legacy",
         "Name": "Continue a Legacy",
-        "Category": "Starforged/Moves/Legacy",
+        "Optional": false,
         "Progress Move": true,
-        "Display": { "Title": "Continue a Legacy" },
+        "Display": { "Title": "Continue a Legacy", "Color": "#4D5769" },
         "Trigger": {
           "$id": "Starforged/Moves/Legacy/Continue_a_Legacy/Trigger",
           "Text": "When you retire from your life as Ironsworn, or succumb to death or desolation...",
@@ -2073,21 +2135,23 @@
     "Description": "In solo and co-op play, the **fate moves** mediate the result of other moves or serve as inspirational prompts for your story. When you face the uncertain outcome of a move, want to know what happens next, or have a question about people, places, and events, these moves help reveal the answer.",
     "Source": {
       "Title": "Ironsworn: Starforged Rulebook",
-      "Date": "040122",
+      "Date": "050622",
       "Page": 228
     },
     "Display": { "Title": "Fate Moves", "Color": "#6B52EC" },
+    "Optional": false,
     "Moves": [
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 229
         },
+        "Category": "Starforged/Moves/Fate",
         "$id": "Starforged/Moves/Fate/Ask_the_Oracle",
         "Name": "Ask the Oracle",
-        "Category": "Starforged/Moves/Fate",
-        "Display": { "Title": "Ask the Oracle" },
+        "Optional": false,
+        "Display": { "Title": "Ask the Oracle", "Color": "#6B52EC" },
         "Trigger": {
           "$id": "Starforged/Moves/Fate/Ask_the_Oracle/Trigger",
           "Text": "When you seek to resolve questions, reveal details, discover locations, determine how other characters respond, or trigger encounters or events..."
@@ -2096,7 +2160,7 @@
         "Oracles": [
           "Starforged/Oracles/Moves/Ask_the_Oracle/Small_Chance",
           "Starforged/Oracles/Moves/Ask_the_Oracle/Unlikely",
-          "Starforged/Oracles/Moves/Ask_the_Oracle/50-50",
+          "Starforged/Oracles/Moves/Ask_the_Oracle/Fifty-fifty",
           "Starforged/Oracles/Moves/Ask_the_Oracle/Likely",
           "Starforged/Oracles/Moves/Ask_the_Oracle/Almost_Certain"
         ]
@@ -2104,13 +2168,14 @@
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 232
         },
+        "Category": "Starforged/Moves/Fate",
         "$id": "Starforged/Moves/Fate/Pay_the_Price",
         "Name": "Pay the Price",
-        "Category": "Starforged/Moves/Fate",
-        "Display": { "Title": "Pay the Price" },
+        "Optional": false,
+        "Display": { "Title": "Pay the Price", "Color": "#6B52EC" },
         "Trigger": {
           "$id": "Starforged/Moves/Fate/Pay_the_Price/Trigger",
           "Text": "When you suffer the outcome of an action..."
@@ -2126,21 +2191,23 @@
     "Description": "A **scene challenge** is an optional structured approach for resolving an extended non-combat scene against a threat or other characters, particularly when a time limit or looming danger adds extra urgency.\n\nExamples of a scene challenge include disarming a timed explosive, hacking a system while evading digital countermeasures, participating in a formal debate before a council, or competing in a hoverbike race.",
     "Source": {
       "Title": "Ironsworn: Starforged Rulebook",
-      "Date": "040122",
+      "Date": "050622",
       "Page": 239
     },
     "Display": { "Title": "Scene Challenge Moves", "Color": "#3C70A4" },
+    "Optional": false,
     "Moves": [
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 239
         },
+        "Category": "Starforged/Moves/Scene_Challenge",
         "$id": "Starforged/Moves/Scene_Challenge/Begin_the_Scene",
         "Name": "Begin the Scene",
-        "Category": "Starforged/Moves/Scene_Challenge",
-        "Display": { "Title": "Begin the Scene" },
+        "Optional": false,
+        "Display": { "Title": "Begin the Scene", "Color": "#3C70A4" },
         "Trigger": {
           "$id": "Starforged/Moves/Scene_Challenge/Begin_the_Scene/Trigger",
           "Text": "When you face an extended or complex challenge outside of a fight..."
@@ -2150,14 +2217,18 @@
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 240
         },
+        "Category": "Starforged/Moves/Scene_Challenge",
         "$id": "Starforged/Moves/Scene_Challenge/Face_Danger",
         "Name": "Face Danger",
-        "Category": "Starforged/Moves/Scene_Challenge",
+        "Optional": false,
         "Variant of": "Starforged/Moves/Adventure/Face_Danger",
-        "Display": { "Title": "Face Danger (Scene Challenge)" },
+        "Display": {
+          "Title": "Face Danger (Scene Challenge)",
+          "Color": "#3C70A4"
+        },
         "Trigger": {
           "$id": "Starforged/Moves/Scene_Challenge/Face_Danger/Trigger",
           "Text": "When you attempt something risky or react to an imminent threat within a scene challenge...",
@@ -2227,14 +2298,18 @@
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 240
         },
+        "Category": "Starforged/Moves/Scene_Challenge",
         "$id": "Starforged/Moves/Scene_Challenge/Secure_an_Advantage",
         "Name": "Secure an Advantage",
-        "Category": "Starforged/Moves/Scene_Challenge",
+        "Optional": false,
         "Variant of": "Starforged/Moves/Adventure/Secure_an_Advantage",
-        "Display": { "Title": "Secure an Advantage (Scene Challenge)" },
+        "Display": {
+          "Title": "Secure an Advantage (Scene Challenge)",
+          "Color": "#3C70A4"
+        },
         "Trigger": {
           "$id": "Starforged/Moves/Scene_Challenge/Secure_an_Advantage/Trigger",
           "Text": "When you assess a situation, make preparations, or attempt to gain leverage within a scene challenge...",
@@ -2304,13 +2379,15 @@
       {
         "Source": {
           "Title": "Ironsworn: Starforged Rulebook",
-          "Date": "040122",
+          "Date": "050622",
           "Page": 241
         },
+        "Category": "Starforged/Moves/Scene_Challenge",
         "$id": "Starforged/Moves/Scene_Challenge/Finish_the_Scene",
         "Name": "Finish the Scene",
-        "Category": "Starforged/Moves/Scene_Challenge",
-        "Display": { "Title": "Finish the Scene" },
+        "Optional": false,
+        "Progress Move": true,
+        "Display": { "Title": "Finish the Scene", "Color": "#3C70A4" },
         "Trigger": {
           "$id": "Starforged/Moves/Scene_Challenge/Finish_the_Scene/Trigger",
           "Text": "When the scene challenge tension clock or progress track is filled, or when events lead to the scene’s conclusion...",
@@ -2319,7 +2396,7 @@
               "$id": "Starforged/Moves/Scene_Challenge/Finish_the_Scene/Trigger/Options/1",
               "Roll type": "Progress roll",
               "Method": "Any",
-              "Using": ["Scene Challenge Progress"]
+              "Using": ["Scene Challenge"]
             }
           ]
         },

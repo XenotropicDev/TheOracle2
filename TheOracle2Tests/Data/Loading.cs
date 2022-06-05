@@ -1,40 +1,34 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json;
-//using NJsonSchema.CodeGeneration.CSharp;
-using OracleData;
-using System;
+﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using TheOracle2.DataClasses;
 
 namespace TheOracle2.UserContent.Tests
 {
 
+    public class Demo
+    {
+        public int MyProperty { get; set; }
+
+        public void DemoFunction() { }
+    }
+
 
     [TestClass()]
     public class DataLoading
     {
-        [TestMethod()]
-        public async Task CheckDBItems()
+        public DataLoading()
         {
-            IServiceProvider services = TestServices.GetServices();
-            var db = services.GetRequiredService<EFContext>();
-            await db.RecreateDB();
 
-            var planetClassOracle = db.Oracles.Find(112);
-            var furnaceWorld = planetClassOracle.Table[1];
-
-            Assert.IsNotNull(planetClassOracle);
         }
 
         [TestMethod()]
-        [DataRow(typeof(List<Asset>), "asset*.json")]
-        [DataRow(typeof(EncountersRoot), "encounter*.json")]
-        [DataRow(typeof(List<GlossaryRoot>), "glossary*.json")]
-        [DataRow(typeof(MovesInfo), "move*.json")]
-        [DataRow(typeof(List<OracleInfo>), "oracle*.json")]
-        [DataRow(typeof(TruthRoot), "*truth*.json")]
+        [DataRow(typeof(List<AssetRoot>), "asset*.json")]
+        //[DataRow(typeof(EncountersRoot), "encounter*.json")]
+        //[DataRow(typeof(List<GlossaryRoot>), "glossary*.json")]
+        //[DataRow(typeof(MovesInfo), "move*.json")]
+        //[DataRow(typeof(List<OracleInfo>), "oracle*.json")]
+        //[DataRow(typeof(TruthRoot), "*truth*.json")]
         public void LoadAndGenerateTest(Type T, string searchOption)
         {
             var baseDir = new DirectoryInfo(Path.Combine(Directory.GetCurrentDirectory(), "Data"));
@@ -54,10 +48,13 @@ namespace TheOracle2.UserContent.Tests
 
                 switch (root)
                 {
-                    case AssetRoot a:
-                        Console.WriteLine($"there are {a.Assets.Count} assets in {file.Name}");
+                    case List<Asset> a:
+                        Console.WriteLine($"there are {a.Count} assets in {file.Name}");
                         break;
-                    case MovesInfo m:
+                    case List<AssetRoot> ar:
+                        Console.WriteLine($"there are {ar.Count} root assets and {ar.SelectMany(r => r.Assets).Count()} assets in {file.Name}");
+                        break;
+                    case MoveRoot m:
                         Console.WriteLine($"there are {m.Moves.Count} moves in {file.Name}");
                         break;
                     case List<OracleInfo> o:
@@ -67,9 +64,6 @@ namespace TheOracle2.UserContent.Tests
                         break;
                 }
             }
-
-            //var schema = NJsonSchema.JsonSchema.FromType(T);
-            //File.WriteAllText(nameof(T) + ".schema.json", schema.ToJson());
         }
     }
 }
