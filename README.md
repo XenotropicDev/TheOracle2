@@ -1,5 +1,5 @@
 ## Warning
-This branch is experimental, and at the time of writting this it isn't complete in anyway, will not compile, and probably doesn't do anything.
+This branch is experimental, and at the time of writing this it isn't complete in anyway.
 
 ## About
 TheOracle2 is a complete rework of TheOracle using new discord bot features, and more integrated data features
@@ -33,3 +33,8 @@ Unfortunately discord doesn’t show all the options in a scrollable, or well so
 You can recreate a message, similar to the old ⏬ reaction method by right clicking a bot message and selecting recreate message from the apps menu.
 
 ![image](https://user-images.githubusercontent.com/6792312/147948167-a1b67087-5064-40e4-b4e5-9f3738ade82a.png)
+
+## Running the bot yourself
+note: This is for people that want to change the source code and run their own instance of the bot. It's not something most users will want/need to do.
+* Install PostgreSQL Server
+* Get a discord bot token from the discord developer portal

@@ -5,5 +5,5 @@
 /// </summary>
 public interface IMatchable
 {
-    public bool IsMatch { get; }
+    bool IsMatch { get; }
 }

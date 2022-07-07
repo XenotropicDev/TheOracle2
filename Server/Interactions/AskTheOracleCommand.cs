@@ -47,7 +47,7 @@ public enum AskOption
     SmallChance = 10
 }
 
-public class OracleAnswer : Die, IMatchable
+public class OracleAnswer : DieRandom, IMatchable
 {
     public OracleAnswer(Random random, AskOption odds, string question) : base(random, 100)
     {

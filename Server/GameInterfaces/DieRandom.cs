@@ -3,7 +3,7 @@
 /// <summary>
 /// Represents a single game die with an arbitrary number of sides and the number it currently shows.
 /// </summary>
-public class Die : IComparable<Die>, IComparable<int>
+public class DieRandom : IDie
 {
     /// <summary>
     /// Rolls or sets a game die.
@@ -11,7 +11,7 @@ public class Die : IComparable<Die>, IComparable<int>
     /// <param name="sides">The number of sides the die has (minimum 2)</param>
     /// <param name="value">A optional preset value for the die. If this is omitted, the die will be rolled and show a random side.</param>
     /// <exception cref="ArgumentOutOfRangeException">If sides is less than 2; if value is less than 1; if value exceeds sides</exception>
-    public Die(Random random, int sides, int? value = null)
+    public DieRandom(Random random, int sides, int? value = null)
     {
         if (sides < 2) { throw new ArgumentOutOfRangeException(nameof(sides), "Die must have at least 2 sides."); }
         if (value != null && (value > sides || value < 1)) { throw new ArgumentOutOfRangeException(nameof(value), "Value must be null, or a positive integer less than the number of sides on the die."); }
@@ -23,12 +23,12 @@ public class Die : IComparable<Die>, IComparable<int>
 
     private readonly Random random;
 
-    public static implicit operator int(Die die)
+    public static implicit operator int(DieRandom die)
     {
         return die.Value;
     }
 
-    public static implicit operator string(Die die)
+    public static implicit operator string(DieRandom die)
     {
         return die.Value.ToString();
     }
@@ -51,10 +51,15 @@ public class Die : IComparable<Die>, IComparable<int>
 
     public override string ToString()
     {
-        return $"{Value}";
+        return Value.ToString();
     }
 
-    public int CompareTo(Die? other)
+    public override bool Equals(object? obj)
+    {
+        return obj is IDie die && die.Sides == Sides && die.Value == Value;
+    }
+
+    public int CompareTo(IDie? other)
     {
         if (other == null) return 1;
         return this.Value.CompareTo(other.Value);

@@ -70,7 +70,7 @@ public class CommandHandler
     {
         try
         {
-            var ctx = new SocketInteractionContext(_discord, arg);
+            var ctx = CreateGeneric(arg, _discord);
             var result = await _commands.ExecuteCommandAsync(ctx, _services);
         }
         catch (Exception)
@@ -78,6 +78,17 @@ public class CommandHandler
             throw;
         }
     }
+
+    public static IInteractionContext CreateGeneric(SocketInteraction interaction, DiscordSocketClient client)
+    => interaction switch
+    {
+        SocketModal modal => new SocketInteractionContext<SocketModal>(client, modal),
+        SocketUserCommand user => new SocketInteractionContext<SocketUserCommand>(client, user),
+        SocketSlashCommand slash => new SocketInteractionContext<SocketSlashCommand>(client, slash),
+        SocketMessageCommand message => new SocketInteractionContext<SocketMessageCommand>(client, message),
+        SocketMessageComponent component => new SocketInteractionContext<SocketMessageComponent>(client, component),
+        _ => throw new InvalidOperationException("This interaction type is unsupported! Please report this.")
+    };
 
     private async Task RegisterCommands()
     {

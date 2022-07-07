@@ -6,11 +6,14 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8754D7F1-8057-4824-AE21-68061C99CFB5}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Server", "Server\Server.csproj", "{F10F5577-05FD-4B2F-A8CC-B9502F6AC07F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonClassGenerator", "JsonClassGenerator\JsonClassGenerator.csproj", "{89F2CD32-6F89-4FFD-BE7C-BC2B0999AF61}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JsonClassGenerator", "JsonClassGenerator\JsonClassGenerator.csproj", "{89F2CD32-6F89-4FFD-BE7C-BC2B0999AF61}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OracleTests", "OracleTests\OracleTests.csproj", "{CBF17423-4047-46C7-BD28-CADA2B231D9B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,6 +29,10 @@ Global
 		{89F2CD32-6F89-4FFD-BE7C-BC2B0999AF61}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{89F2CD32-6F89-4FFD-BE7C-BC2B0999AF61}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{89F2CD32-6F89-4FFD-BE7C-BC2B0999AF61}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBF17423-4047-46C7-BD28-CADA2B231D9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBF17423-4047-46C7-BD28-CADA2B231D9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBF17423-4047-46C7-BD28-CADA2B231D9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBF17423-4047-46C7-BD28-CADA2B231D9B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
