@@ -1,15 +1,23 @@
 [
   {
-    "Source": { "Title": "Ironsworn Rulebook", "Page": 174 },
+    "Source": {
+      "Title": "Ironsworn Rulebook",
+      "Authors": [ "Shawn Tomkin" ],
+      "Page": 174
+    },
     "$id": "Ironsworn/Oracles/Action_and_Theme",
     "Name": "Action and Theme",
     "Display": { "Title": "Action and Theme" },
     "Oracles": [
       {
-        "Source": { "Title": "Ironsworn Rulebook", "Page": 174 },
+        "Source": {
+          "Title": "Ironsworn Rulebook",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 174
+        },
         "$id": "Ironsworn/Oracles/Action_and_Theme/Action",
         "Name": "Action",
-        "Aliases": ["1", "Oracle 1"],
+        "Aliases": [ "1", "Oracle 1" ],
         "Category": "Ironsworn/Oracles/Action_and_Theme",
         "Description": "Use this table to inspire a discovery, event, character goal, or situation. A roll on this table can be combined with a Theme to provide an action and a subject. Then, interpret the result based on the context of the question and your current situation.",
         "Display": {
@@ -33,7 +41,7 @@
         "Usage": {
           "Allow duplicates": false,
           "Suggestions": {
-            "Oracle rolls": ["Ironsworn/Oracles/Action_and_Theme/Theme"]
+            "Oracle rolls": [ "Ironsworn/Oracles/Action_and_Theme/Theme" ]
           }
         },
         "Table": [
@@ -640,10 +648,14 @@
         ]
       },
       {
-        "Source": { "Title": "Ironsworn Rulebook", "Page": 175 },
+        "Source": {
+          "Title": "Ironsworn Rulebook",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 175
+        },
         "$id": "Ironsworn/Oracles/Action_and_Theme/Theme",
         "Name": "Theme",
-        "Aliases": ["2", "Oracle 2"],
+        "Aliases": [ "2", "Oracle 2" ],
         "Category": "Ironsworn/Oracles/Action_and_Theme",
         "Description": "As with the Action oracle, this is an interpretative table which you can use to answer questions or generate new situations. Combined, the Action and Theme tables provide creative prompts suitable for most situations and questions. In fact, with some creative interpretations, it’s entirely possible to play with only these two tables.",
         "Display": {
@@ -667,7 +679,7 @@
         "Usage": {
           "Allow duplicates": false,
           "Suggestions": {
-            "Oracle rolls": ["Ironsworn/Oracles/Action_and_Theme/Action"]
+            "Oracle rolls": [ "Ironsworn/Oracles/Action_and_Theme/Action" ]
           }
         },
         "Table": [
@@ -1276,16 +1288,24 @@
     ]
   },
   {
-    "Source": { "Title": "Ironsworn Rulebook", "Page": 176 },
+    "Source": {
+      "Title": "Ironsworn Rulebook",
+      "Authors": [ "Shawn Tomkin" ],
+      "Page": 176
+    },
     "$id": "Ironsworn/Oracles/Place",
     "Name": "Place",
     "Display": { "Title": "Place" },
     "Oracles": [
       {
-        "Source": { "Title": "Ironsworn Rulebook", "Page": 176 },
+        "Source": {
+          "Title": "Ironsworn Rulebook",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 176
+        },
         "$id": "Ironsworn/Oracles/Place/Region",
         "Name": "Region",
-        "Aliases": ["3", "Oracle 3"],
+        "Aliases": [ "3", "Oracle 3" ],
         "Category": "Ironsworn/Oracles/Place",
         "Description": "Use this oracle when you want to randomly select a region with the Ironlands.",
         "Display": {
@@ -1370,10 +1390,14 @@
         ]
       },
       {
-        "Source": { "Title": "Ironsworn Rulebook", "Page": 176 },
+        "Source": {
+          "Title": "Ironsworn Rulebook",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 176
+        },
         "$id": "Ironsworn/Oracles/Place/Location",
         "Name": "Location",
-        "Aliases": ["4", "Oracle 4"],
+        "Aliases": [ "4", "Oracle 4" ],
         "Category": "Ironsworn/Oracles/Place",
         "Description": "Use this oracle when traveling to generate a point-of-interest or to answer a question about a place where someone or something can be found.",
         "Display": {
@@ -1704,10 +1728,14 @@
         ]
       },
       {
-        "Source": { "Title": "Ironsworn Rulebook", "Page": 176 },
+        "Source": {
+          "Title": "Ironsworn Rulebook",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 176
+        },
         "$id": "Ironsworn/Oracles/Place/Coastal_Waters_Location",
         "Name": "Coastal Waters Location",
-        "Aliases": ["5", "Oracle 5"],
+        "Aliases": [ "5", "Oracle 5" ],
         "Category": "Ironsworn/Oracles/Place",
         "Description": "Use this oracle to identify a point-of-interest or destination when you are traveling by ship or boat.",
         "Display": {
@@ -1834,10 +1862,14 @@
         ]
       },
       {
-        "Source": { "Title": "Ironsworn Rulebook", "Page": 177 },
+        "Source": {
+          "Title": "Ironsworn Rulebook",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 177
+        },
         "$id": "Ironsworn/Oracles/Place/Location_Description",
         "Name": "Location Description",
-        "Aliases": ["6", "Oracle 6"],
+        "Aliases": [ "6", "Oracle 6" ],
         "Category": "Ironsworn/Oracles/Place",
         "Description": "Use this oracle to add detail to the Location or Coastal Waters Location oracles, or by itself to generate a description of a location. Roll more than once for extra detail.",
         "Display": {
@@ -2164,16 +2196,24 @@
     ]
   },
   {
-    "Source": { "Title": "Ironsworn Rulebook", "Page": 178 },
+    "Source": {
+      "Title": "Ironsworn Rulebook",
+      "Authors": [ "Shawn Tomkin" ],
+      "Page": 178
+    },
     "$id": "Ironsworn/Oracles/Settlement",
     "Name": "Settlement",
     "Display": { "Title": "Settlement" },
     "Oracles": [
       {
-        "Source": { "Title": "Ironsworn Rulebook", "Page": 178 },
+        "Source": {
+          "Title": "Ironsworn Rulebook",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 178
+        },
         "$id": "Ironsworn/Oracles/Settlement/Name",
         "Name": "Name",
-        "Aliases": ["7", "Oracle 7", "Settlement Name"],
+        "Aliases": [ "7", "Oracle 7", "Settlement Name" ],
         "Category": "Ironsworn/Oracles/Settlement",
         "Display": {
           "Title": "Oracle 7: Settlement Name",
@@ -2217,7 +2257,7 @@
             "Ceiling": 45,
             "$id": "Ironsworn/Oracles/Settlement/Name/31-45",
             "Result": "**A creature.** Why have the people of this settlement chosen this creature as their totem? How is it represented in art or rituals?",
-            "Oracle rolls": ["Ironsworn/Oracles/Settlement/Name/Creature"]
+            "Oracle rolls": [ "Ironsworn/Oracles/Settlement/Name/Creature" ]
           },
           {
             "Floor": 46,
@@ -2251,12 +2291,16 @@
             "Ceiling": 100,
             "$id": "Ironsworn/Oracles/Settlement/Name/91-100",
             "Result": "Something Else...",
-            "Oracle rolls": ["Ironsworn/Oracles/Settlement/Name/Something_Else"]
+            "Oracle rolls": [ "Ironsworn/Oracles/Settlement/Name/Something_Else" ]
           }
         ],
         "Oracles": [
           {
-            "Source": { "Title": "Ironsworn Rulebook", "Page": 178 },
+            "Source": {
+              "Title": "Ironsworn Rulebook",
+              "Authors": [ "Shawn Tomkin" ],
+              "Page": 178
+            },
             "$id": "Ironsworn/Oracles/Settlement/Name/Landscape_Feature",
             "Name": "Landscape Feature",
             "Member of": "Ironsworn/Oracles/Settlement/Name",
@@ -2344,7 +2388,11 @@
             ]
           },
           {
-            "Source": { "Title": "Ironsworn Rulebook", "Page": 178 },
+            "Source": {
+              "Title": "Ironsworn Rulebook",
+              "Authors": [ "Shawn Tomkin" ],
+              "Page": 178
+            },
             "$id": "Ironsworn/Oracles/Settlement/Name/Manmade_Edifice",
             "Name": "Manmade Edifice",
             "Member of": "Ironsworn/Oracles/Settlement/Name",
@@ -2432,7 +2480,11 @@
             ]
           },
           {
-            "Source": { "Title": "Ironsworn Rulebook", "Page": 178 },
+            "Source": {
+              "Title": "Ironsworn Rulebook",
+              "Authors": [ "Shawn Tomkin" ],
+              "Page": 178
+            },
             "$id": "Ironsworn/Oracles/Settlement/Name/Creature",
             "Name": "Creature",
             "Member of": "Ironsworn/Oracles/Settlement/Name",
@@ -2520,7 +2572,11 @@
             ]
           },
           {
-            "Source": { "Title": "Ironsworn Rulebook", "Page": 178 },
+            "Source": {
+              "Title": "Ironsworn Rulebook",
+              "Authors": [ "Shawn Tomkin" ],
+              "Page": 178
+            },
             "$id": "Ironsworn/Oracles/Settlement/Name/Historical_Event",
             "Name": "Historical Event",
             "Member of": "Ironsworn/Oracles/Settlement/Name",
@@ -2608,7 +2664,11 @@
             ]
           },
           {
-            "Source": { "Title": "Ironsworn Rulebook", "Page": 178 },
+            "Source": {
+              "Title": "Ironsworn Rulebook",
+              "Authors": [ "Shawn Tomkin" ],
+              "Page": 178
+            },
             "$id": "Ironsworn/Oracles/Settlement/Name/Old_World_Language",
             "Name": "Old World Language",
             "Member of": "Ironsworn/Oracles/Settlement/Name",
@@ -2696,7 +2756,11 @@
             ]
           },
           {
-            "Source": { "Title": "Ironsworn Rulebook", "Page": 178 },
+            "Source": {
+              "Title": "Ironsworn Rulebook",
+              "Authors": [ "Shawn Tomkin" ],
+              "Page": 178
+            },
             "$id": "Ironsworn/Oracles/Settlement/Name/Environmental_Aspect",
             "Name": "Environmental Aspect",
             "Member of": "Ironsworn/Oracles/Settlement/Name",
@@ -2784,7 +2848,11 @@
             ]
           },
           {
-            "Source": { "Title": "Ironsworn Rulebook", "Page": 178 },
+            "Source": {
+              "Title": "Ironsworn Rulebook",
+              "Authors": [ "Shawn Tomkin" ],
+              "Page": 178
+            },
             "$id": "Ironsworn/Oracles/Settlement/Name/Something_Else",
             "Name": "Something Else",
             "Member of": "Ironsworn/Oracles/Settlement/Name",
@@ -2874,10 +2942,14 @@
         "Usage": {}
       },
       {
-        "Source": { "Title": "Ironsworn Rulebook", "Page": 180 },
+        "Source": {
+          "Title": "Ironsworn Rulebook",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 180
+        },
         "$id": "Ironsworn/Oracles/Settlement/Quick_Name",
         "Name": "Quick Name",
-        "Aliases": ["8", "Oracle 8", "Quick Settlement Name Generator"],
+        "Aliases": [ "8", "Oracle 8", "Quick Settlement Name Generator" ],
         "Category": "Ironsworn/Oracles/Settlement",
         "Description": "Use this oracle as a simpler alternative for settlement names. Roll once for the prefix, and once for the suffix. If the combination doesn’t quite work, look at adjacent rows or reverse the digits.",
         "Display": {
@@ -2901,7 +2973,11 @@
         "Usage": { "Allow duplicates": false },
         "Oracles": [
           {
-            "Source": { "Title": "Ironsworn Rulebook", "Page": 180 },
+            "Source": {
+              "Title": "Ironsworn Rulebook",
+              "Authors": [ "Shawn Tomkin" ],
+              "Page": 180
+            },
             "$id": "Ironsworn/Oracles/Settlement/Quick_Name/Prefix",
             "Name": "Prefix",
             "Member of": "Ironsworn/Oracles/Settlement/Quick_Name",
@@ -3079,7 +3155,11 @@
             ]
           },
           {
-            "Source": { "Title": "Ironsworn Rulebook", "Page": 180 },
+            "Source": {
+              "Title": "Ironsworn Rulebook",
+              "Authors": [ "Shawn Tomkin" ],
+              "Page": 180
+            },
             "$id": "Ironsworn/Oracles/Settlement/Quick_Name/Suffix",
             "Name": "Suffix",
             "Member of": "Ironsworn/Oracles/Settlement/Quick_Name",
@@ -3259,10 +3339,14 @@
         ]
       },
       {
-        "Source": { "Title": "Ironsworn Rulebook", "Page": 181 },
+        "Source": {
+          "Title": "Ironsworn Rulebook",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 181
+        },
         "$id": "Ironsworn/Oracles/Settlement/Trouble",
         "Name": "Trouble",
-        "Aliases": ["9", "Oracle 9", "Settlement Trouble"],
+        "Aliases": [ "9", "Oracle 9", "Settlement Trouble" ],
         "Category": "Ironsworn/Oracles/Settlement",
         "Description": "Use this table to generate a narrative hook for a problem faced by a community. This oracle can help inspire a vow for your character or serve as a prompt for a trouble you encounter when you interact with a settlement.",
         "Display": {
@@ -3570,16 +3654,24 @@
     ]
   },
   {
-    "Source": { "Title": "Ironsworn Rulebook", "Page": 182 },
+    "Source": {
+      "Title": "Ironsworn Rulebook",
+      "Authors": [ "Shawn Tomkin" ],
+      "Page": 182
+    },
     "$id": "Ironsworn/Oracles/Character",
     "Name": "Character",
     "Display": { "Title": "Character" },
     "Oracles": [
       {
-        "Source": { "Title": "Ironsworn Rulebook", "Page": 182 },
+        "Source": {
+          "Title": "Ironsworn Rulebook",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 182
+        },
         "$id": "Ironsworn/Oracles/Character/Role",
         "Name": "Role",
-        "Aliases": ["10", "Oracle 10", "Character Role"],
+        "Aliases": [ "10", "Oracle 10", "Character Role" ],
         "Category": "Ironsworn/Oracles/Character",
         "Description": "Use this oracle to define the background for a character, or to generate a random encounter.",
         "Display": {
@@ -3790,10 +3882,14 @@
         ]
       },
       {
-        "Source": { "Title": "Ironsworn Rulebook", "Page": 182 },
+        "Source": {
+          "Title": "Ironsworn Rulebook",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 182
+        },
         "$id": "Ironsworn/Oracles/Character/Goal",
         "Name": "Goal",
-        "Aliases": ["11", "Oracle 11", "Character Goal"],
+        "Aliases": [ "11", "Oracle 11", "Character Goal" ],
         "Category": "Ironsworn/Oracles/Character",
         "Description": "Use this oracle to define the primary motivation of an NPC or a faction. It can also be used to kick-off a personal quest for your own character.",
         "Display": {
@@ -4021,10 +4117,14 @@
         ]
       },
       {
-        "Source": { "Title": "Ironsworn Rulebook", "Page": 183 },
+        "Source": {
+          "Title": "Ironsworn Rulebook",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 183
+        },
         "$id": "Ironsworn/Oracles/Character/Descriptor",
         "Name": "Descriptor",
-        "Aliases": ["12", "Oracle 12", "Character Descriptor"],
+        "Aliases": [ "12", "Oracle 12", "Character Descriptor" ],
         "Category": "Ironsworn/Oracles/Character",
         "Description": "Use this oracle to help flesh out a character’s personality or physical characteristics. Roll more than once to add additional detail.",
         "Display": {
@@ -4045,7 +4145,10 @@
             ]
           }
         },
-        "Usage": { "Max rolls": 3, "Allow duplicates": false },
+        "Usage": {
+          "Max rolls": 3,
+          "Allow duplicates": false
+        },
         "Table": [
           {
             "Floor": 1,
@@ -4650,7 +4753,11 @@
         ]
       },
       {
-        "Source": { "Title": "Ironsworn: Delve", "Page": 213 },
+        "Source": {
+          "Title": "Ironsworn: Delve",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 213
+        },
         "$id": "Ironsworn/Oracles/Character/Activity",
         "Name": "Activity",
         "Category": "Ironsworn/Oracles/Character",
@@ -4986,7 +5093,11 @@
         ]
       },
       {
-        "Source": { "Title": "Ironsworn: Delve", "Page": 213 },
+        "Source": {
+          "Title": "Ironsworn: Delve",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 213
+        },
         "$id": "Ironsworn/Oracles/Character/Disposition",
         "Name": "Disposition",
         "Category": "Ironsworn/Oracles/Character",
@@ -5087,16 +5198,24 @@
     ]
   },
   {
-    "Source": { "Title": "Ironsworn Rulebook", "Page": 184 },
+    "Source": {
+      "Title": "Ironsworn Rulebook",
+      "Authors": [ "Shawn Tomkin" ],
+      "Page": 184
+    },
     "$id": "Ironsworn/Oracles/Name",
     "Name": "Name",
     "Display": { "Title": "Name" },
     "Oracles": [
       {
-        "Source": { "Title": "Ironsworn Rulebook", "Page": 184 },
+        "Source": {
+          "Title": "Ironsworn Rulebook",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 184
+        },
         "$id": "Ironsworn/Oracles/Name/Ironlander",
         "Name": "Ironlander",
-        "Aliases": ["13", "Oracle 13", "Ironlander Names"],
+        "Aliases": [ "13", "Oracle 13", "Ironlander Names" ],
         "Category": "Ironsworn/Oracles/Name",
         "Description": "Use this oracle to quickly generate a name for an Ironlander character. Roll on either table. Surnames are not used in the Ironlands, and names are often gender-neutral.",
         "Display": {
@@ -5119,7 +5238,11 @@
         },
         "Oracles": [
           {
-            "Source": { "Title": "Ironsworn Rulebook", "Page": 184 },
+            "Source": {
+              "Title": "Ironsworn Rulebook",
+              "Authors": [ "Shawn Tomkin" ],
+              "Page": 184
+            },
             "$id": "Ironsworn/Oracles/Name/Ironlander/A",
             "Name": "A",
             "Member of": "Ironsworn/Oracles/Name/Ironlander",
@@ -5746,7 +5869,11 @@
             ]
           },
           {
-            "Source": { "Title": "Ironsworn Rulebook", "Page": 184 },
+            "Source": {
+              "Title": "Ironsworn Rulebook",
+              "Authors": [ "Shawn Tomkin" ],
+              "Page": 184
+            },
             "$id": "Ironsworn/Oracles/Name/Ironlander/B",
             "Name": "B",
             "Member of": "Ironsworn/Oracles/Name/Ironlander",
@@ -6376,10 +6503,14 @@
         "Usage": {}
       },
       {
-        "Source": { "Title": "Ironsworn Rulebook", "Page": 186 },
+        "Source": {
+          "Title": "Ironsworn Rulebook",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 186
+        },
         "$id": "Ironsworn/Oracles/Name/Elf",
         "Name": "Elf",
-        "Aliases": ["14", "Oracle 14", "Elf Names"],
+        "Aliases": [ "14", "Oracle 14", "Elf Names" ],
         "Category": "Ironsworn/Oracles/Name",
         "Description": "Use this oracle to generate a name for an elf character.",
         "Display": {
@@ -6704,10 +6835,14 @@
         ]
       },
       {
-        "Source": { "Title": "Ironsworn Rulebook", "Page": 187 },
+        "Source": {
+          "Title": "Ironsworn Rulebook",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 187
+        },
         "$id": "Ironsworn/Oracles/Name/Other",
         "Name": "Other",
-        "Aliases": ["15", "Oracle 15", "Other Names"],
+        "Aliases": [ "15", "Oracle 15", "Other Names" ],
         "Category": "Ironsworn/Oracles/Name",
         "Description": "Use this oracle to generate names for other firstborn characters.",
         "Display": {
@@ -6740,7 +6875,11 @@
         },
         "Oracles": [
           {
-            "Source": { "Title": "Ironsworn Rulebook", "Page": 187 },
+            "Source": {
+              "Title": "Ironsworn Rulebook",
+              "Authors": [ "Shawn Tomkin" ],
+              "Page": 187
+            },
             "$id": "Ironsworn/Oracles/Name/Other/Giants",
             "Name": "Giants",
             "Member of": "Ironsworn/Oracles/Name/Other",
@@ -6918,7 +7057,11 @@
             ]
           },
           {
-            "Source": { "Title": "Ironsworn Rulebook", "Page": 187 },
+            "Source": {
+              "Title": "Ironsworn Rulebook",
+              "Authors": [ "Shawn Tomkin" ],
+              "Page": 187
+            },
             "$id": "Ironsworn/Oracles/Name/Other/Varou",
             "Name": "Varou",
             "Member of": "Ironsworn/Oracles/Name/Other",
@@ -7096,7 +7239,11 @@
             ]
           },
           {
-            "Source": { "Title": "Ironsworn Rulebook", "Page": 187 },
+            "Source": {
+              "Title": "Ironsworn Rulebook",
+              "Authors": [ "Shawn Tomkin" ],
+              "Page": 187
+            },
             "$id": "Ironsworn/Oracles/Name/Other/Trolls",
             "Name": "Trolls",
             "Member of": "Ironsworn/Oracles/Name/Other",
@@ -7279,16 +7426,24 @@
     ]
   },
   {
-    "Source": { "Title": "Ironsworn Rulebook", "Page": 188 },
+    "Source": {
+      "Title": "Ironsworn Rulebook",
+      "Authors": [ "Shawn Tomkin" ],
+      "Page": 188
+    },
     "$id": "Ironsworn/Oracles/Turning_Point",
     "Name": "Turning Point",
     "Display": { "Title": "Turning Point" },
     "Oracles": [
       {
-        "Source": { "Title": "Ironsworn Rulebook", "Page": 188 },
+        "Source": {
+          "Title": "Ironsworn Rulebook",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 188
+        },
         "$id": "Ironsworn/Oracles/Turning_Point/Combat_Action",
         "Name": "Combat Action",
-        "Aliases": ["16", "Oracle 16"],
+        "Aliases": [ "16", "Oracle 16" ],
         "Category": "Ironsworn/Oracles/Turning_Point",
         "Description": "Use this oracle to help inspire an action for an NPC in combat. When you’re not sure what your foe does next, particularly when they have initiative, roll on this table and interpret the result as appropriate to the situation.",
         "Display": {
@@ -7421,10 +7576,14 @@
         ]
       },
       {
-        "Source": { "Title": "Ironsworn Rulebook", "Page": 189 },
+        "Source": {
+          "Title": "Ironsworn Rulebook",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 189
+        },
         "$id": "Ironsworn/Oracles/Turning_Point/Mystic_Backlash",
         "Name": "Mystic Backlash",
-        "Aliases": ["17", "Oracle 17"],
+        "Aliases": [ "17", "Oracle 17" ],
         "Category": "Ironsworn/Oracles/Turning_Point",
         "Description": "Those who deal in magic may find themselves at the mercy of chaos. This oracle can supplement, or replace, the [Pay the Price](Ironsworn/Moves/Fate/Pay_the_Price) table when resolving the outcome of a failed ritual or other negative interaction with mystical forces. Use this oracle in dramatic moments, or to introduce an unexpected outcome triggered by a match.",
         "Display": {
@@ -7604,10 +7763,14 @@
         ]
       },
       {
-        "Source": { "Title": "Ironsworn Rulebook", "Page": 190 },
+        "Source": {
+          "Title": "Ironsworn Rulebook",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 190
+        },
         "$id": "Ironsworn/Oracles/Turning_Point/Major_Plot_Twist",
         "Name": "Major Plot Twist",
-        "Aliases": ["18", "Oracle 18"],
+        "Aliases": [ "18", "Oracle 18" ],
         "Category": "Ironsworn/Oracles/Turning_Point",
         "Description": "Use this oracle to introduce a narrative surprise or revelation. Most of these results have a negative implication, and can be used to resolve a match at a crucial moment in your story. In particular, this is an effective tool to leverage when you make a move with matched 10’s on the challenge dice.",
         "Display": {
@@ -7757,10 +7920,14 @@
         ]
       },
       {
-        "Source": { "Title": "Ironsworn Rulebook", "Page": 190 },
+        "Source": {
+          "Title": "Ironsworn Rulebook",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 190
+        },
         "$id": "Ironsworn/Oracles/Turning_Point/Challenge_Rank",
         "Name": "Challenge Rank",
-        "Aliases": ["19", "Oracle 19"],
+        "Aliases": [ "19", "Oracle 19" ],
         "Category": "Ironsworn/Oracles/Turning_Point",
         "Description": "Use this oracle when you want to randomly determine the challenge rank of a quest, journey, or foe.",
         "Display": {
@@ -7798,7 +7965,11 @@
         },
         "Oracles": [
           {
-            "Source": { "Title": "Ironsworn Rulebook", "Page": 190 },
+            "Source": {
+              "Title": "Ironsworn Rulebook",
+              "Authors": [ "Shawn Tomkin" ],
+              "Page": 190
+            },
             "$id": "Ironsworn/Oracles/Turning_Point/Challenge_Rank/Quest",
             "Name": "Quest",
             "Member of": "Ironsworn/Oracles/Turning_Point/Challenge_Rank",
@@ -7861,7 +8032,11 @@
             ]
           },
           {
-            "Source": { "Title": "Ironsworn Rulebook", "Page": 190 },
+            "Source": {
+              "Title": "Ironsworn Rulebook",
+              "Authors": [ "Shawn Tomkin" ],
+              "Page": 190
+            },
             "$id": "Ironsworn/Oracles/Turning_Point/Challenge_Rank/Journey",
             "Name": "Journey",
             "Member of": "Ironsworn/Oracles/Turning_Point/Challenge_Rank",
@@ -7924,7 +8099,11 @@
             ]
           },
           {
-            "Source": { "Title": "Ironsworn Rulebook", "Page": 190 },
+            "Source": {
+              "Title": "Ironsworn Rulebook",
+              "Authors": [ "Shawn Tomkin" ],
+              "Page": 190
+            },
             "$id": "Ironsworn/Oracles/Turning_Point/Challenge_Rank/Foes",
             "Name": "Foes",
             "Member of": "Ironsworn/Oracles/Turning_Point/Challenge_Rank",
@@ -7992,13 +8171,20 @@
     ]
   },
   {
-    "Source": { "Title": "Ironsworn Rulebook" },
+    "Source": {
+      "Title": "Ironsworn Rulebook",
+      "Authors": [ "Shawn Tomkin" ]
+    },
     "$id": "Ironsworn/Oracles/Moves",
     "Name": "Moves",
     "Display": { "Title": "Moves" },
     "Oracles": [
       {
-        "Source": { "Title": "Ironsworn Rulebook", "Page": 91 },
+        "Source": {
+          "Title": "Ironsworn Rulebook",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 91
+        },
         "$id": "Ironsworn/Oracles/Moves/Endure_Harm",
         "Name": "Endure Harm",
         "Category": "Ironsworn/Oracles/Moves",
@@ -8054,7 +8240,11 @@
         ]
       },
       {
-        "Source": { "Title": "Ironsworn Rulebook", "Page": 93 },
+        "Source": {
+          "Title": "Ironsworn Rulebook",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 93
+        },
         "$id": "Ironsworn/Oracles/Moves/Endure_Stress",
         "Name": "Endure Stress",
         "Category": "Ironsworn/Oracles/Moves",
@@ -8104,7 +8294,11 @@
         ]
       },
       {
-        "Source": { "Title": "Ironsworn Rulebook", "Page": 105 },
+        "Source": {
+          "Title": "Ironsworn Rulebook",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 105
+        },
         "$id": "Ironsworn/Oracles/Moves/Pay_the_Price",
         "Name": "Pay the Price",
         "Category": "Ironsworn/Oracles/Moves",
@@ -8231,10 +8425,14 @@
         ]
       },
       {
-        "Source": { "Title": "Ironsworn Rulebook", "Page": 107 },
+        "Source": {
+          "Title": "Ironsworn Rulebook",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 107
+        },
         "$id": "Ironsworn/Oracles/Moves/Ask_the_Oracle",
         "Name": "Ask the Oracle",
-        "Aliases": ["Ask"],
+        "Aliases": [ "Ask" ],
         "Category": "Ironsworn/Oracles/Moves",
         "Display": {
           "Title": "Ask the Oracle",
@@ -8256,10 +8454,14 @@
         },
         "Oracles": [
           {
-            "Source": { "Title": "Ironsworn Rulebook", "Page": 107 },
+            "Source": {
+              "Title": "Ironsworn Rulebook",
+              "Authors": [ "Shawn Tomkin" ],
+              "Page": 107
+            },
             "$id": "Ironsworn/Oracles/Moves/Ask_the_Oracle/Almost_Certain",
             "Name": "Almost Certain",
-            "Aliases": ["90"],
+            "Aliases": [ "90" ],
             "Member of": "Ironsworn/Oracles/Moves/Ask_the_Oracle",
             "Category": "Ironsworn/Oracles/Moves",
             "Display": {
@@ -8296,10 +8498,14 @@
             ]
           },
           {
-            "Source": { "Title": "Ironsworn Rulebook", "Page": 107 },
+            "Source": {
+              "Title": "Ironsworn Rulebook",
+              "Authors": [ "Shawn Tomkin" ],
+              "Page": 107
+            },
             "$id": "Ironsworn/Oracles/Moves/Ask_the_Oracle/Likely",
             "Name": "Likely",
-            "Aliases": ["75"],
+            "Aliases": [ "75" ],
             "Member of": "Ironsworn/Oracles/Moves/Ask_the_Oracle",
             "Category": "Ironsworn/Oracles/Moves",
             "Display": {
@@ -8336,10 +8542,14 @@
             ]
           },
           {
-            "Source": { "Title": "Ironsworn Rulebook", "Page": 107 },
+            "Source": {
+              "Title": "Ironsworn Rulebook",
+              "Authors": [ "Shawn Tomkin" ],
+              "Page": 107
+            },
             "$id": "Ironsworn/Oracles/Moves/Ask_the_Oracle/Fifty-fifty",
             "Name": "Fifty-fifty",
-            "Aliases": ["50", "5050", "Fifty-fifty", "50/50", "50-50"],
+            "Aliases": [ "50", "5050", "Fifty-fifty", "50/50", "50-50" ],
             "Member of": "Ironsworn/Oracles/Moves/Ask_the_Oracle",
             "Category": "Ironsworn/Oracles/Moves",
             "Display": {
@@ -8376,10 +8586,14 @@
             ]
           },
           {
-            "Source": { "Title": "Ironsworn Rulebook", "Page": 107 },
+            "Source": {
+              "Title": "Ironsworn Rulebook",
+              "Authors": [ "Shawn Tomkin" ],
+              "Page": 107
+            },
             "$id": "Ironsworn/Oracles/Moves/Ask_the_Oracle/Unlikely",
             "Name": "Unlikely",
-            "Aliases": ["25"],
+            "Aliases": [ "25" ],
             "Member of": "Ironsworn/Oracles/Moves/Ask_the_Oracle",
             "Category": "Ironsworn/Oracles/Moves",
             "Display": {
@@ -8416,10 +8630,14 @@
             ]
           },
           {
-            "Source": { "Title": "Ironsworn Rulebook", "Page": 107 },
+            "Source": {
+              "Title": "Ironsworn Rulebook",
+              "Authors": [ "Shawn Tomkin" ],
+              "Page": 107
+            },
             "$id": "Ironsworn/Oracles/Moves/Ask_the_Oracle/Small_Chance",
             "Name": "Small Chance",
-            "Aliases": ["10"],
+            "Aliases": [ "10" ],
             "Member of": "Ironsworn/Oracles/Moves/Ask_the_Oracle",
             "Category": "Ironsworn/Oracles/Moves",
             "Display": {
@@ -8459,7 +8677,11 @@
         "Usage": {}
       },
       {
-        "Source": { "Title": "Ironsworn: Delve", "Page": 21 },
+        "Source": {
+          "Title": "Ironsworn: Delve",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 21
+        },
         "$id": "Ironsworn/Oracles/Moves/Delve_the_Depths",
         "Name": "Delve the Depths",
         "Category": "Ironsworn/Oracles/Moves",
@@ -8483,7 +8705,11 @@
         },
         "Oracles": [
           {
-            "Source": { "Title": "Ironsworn: Delve", "Page": 21 },
+            "Source": {
+              "Title": "Ironsworn: Delve",
+              "Authors": [ "Shawn Tomkin" ],
+              "Page": 21
+            },
             "$id": "Ironsworn/Oracles/Moves/Delve_the_Depths/Edge",
             "Name": "Edge",
             "Member of": "Ironsworn/Oracles/Moves/Delve_the_Depths",
@@ -8540,7 +8766,11 @@
             ]
           },
           {
-            "Source": { "Title": "Ironsworn: Delve", "Page": 21 },
+            "Source": {
+              "Title": "Ironsworn: Delve",
+              "Authors": [ "Shawn Tomkin" ],
+              "Page": 21
+            },
             "$id": "Ironsworn/Oracles/Moves/Delve_the_Depths/Shadow",
             "Name": "Shadow",
             "Member of": "Ironsworn/Oracles/Moves/Delve_the_Depths",
@@ -8597,7 +8827,11 @@
             ]
           },
           {
-            "Source": { "Title": "Ironsworn: Delve", "Page": 21 },
+            "Source": {
+              "Title": "Ironsworn: Delve",
+              "Authors": [ "Shawn Tomkin" ],
+              "Page": 21
+            },
             "$id": "Ironsworn/Oracles/Moves/Delve_the_Depths/Wits",
             "Name": "Wits",
             "Member of": "Ironsworn/Oracles/Moves/Delve_the_Depths",
@@ -8657,7 +8891,11 @@
         "Usage": {}
       },
       {
-        "Source": { "Title": "Ironsworn: Delve", "Page": 30 },
+        "Source": {
+          "Title": "Ironsworn: Delve",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 30
+        },
         "$id": "Ironsworn/Oracles/Moves/Find_an_Opportunity",
         "Name": "Find an Opportunity",
         "Category": "Ironsworn/Oracles/Moves",
@@ -8743,7 +8981,11 @@
         ]
       },
       {
-        "Source": { "Title": "Ironsworn: Delve", "Page": 34 },
+        "Source": {
+          "Title": "Ironsworn: Delve",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 34
+        },
         "$id": "Ironsworn/Oracles/Moves/Reveal_a_Danger",
         "Name": "Reveal a Danger",
         "Category": "Ironsworn/Oracles/Moves",
@@ -8846,7 +9088,11 @@
         ]
       },
       {
-        "Source": { "Title": "Ironsworn: Delve", "Page": 68 },
+        "Source": {
+          "Title": "Ironsworn: Delve",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 68
+        },
         "$id": "Ironsworn/Oracles/Moves/Reveal_a_Danger_alt",
         "Name": "Reveal a Danger",
         "Category": "Ironsworn/Oracles/Moves",
@@ -8937,7 +9183,11 @@
         ]
       },
       {
-        "Source": { "Title": "Ironsworn: Delve", "Page": 155 },
+        "Source": {
+          "Title": "Ironsworn: Delve",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 155
+        },
         "$id": "Ironsworn/Oracles/Moves/Advance_a_Threat",
         "Name": "Advance a Threat",
         "Category": "Ironsworn/Oracles/Moves",
@@ -8983,14 +9233,22 @@
     ]
   },
   {
-    "Source": { "Title": "Ironsworn: Delve", "Page": 204 },
+    "Source": {
+      "Title": "Ironsworn: Delve",
+      "Authors": [ "Shawn Tomkin" ],
+      "Page": 204
+    },
     "$id": "Ironsworn/Oracles/Feature",
     "Name": "Feature",
     "Description": "Use the Aspect and Focus oracles to answer questions or provide inspiration for a location or event within a site.",
     "Display": { "Title": "Feature" },
     "Oracles": [
       {
-        "Source": { "Title": "Ironsworn: Delve", "Page": 204 },
+        "Source": {
+          "Title": "Ironsworn: Delve",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 204
+        },
         "$id": "Ironsworn/Oracles/Feature/Aspect",
         "Name": "Aspect",
         "Category": "Ironsworn/Oracles/Feature",
@@ -9014,7 +9272,7 @@
         },
         "Usage": {
           "Allow duplicates": false,
-          "Suggestions": { "Oracle rolls": ["Ironsworn/Oracles/Feature/Focus"] }
+          "Suggestions": { "Oracle rolls": [ "Ironsworn/Oracles/Feature/Focus" ] }
         },
         "Table": [
           {
@@ -9320,7 +9578,11 @@
         ]
       },
       {
-        "Source": { "Title": "Ironsworn: Delve", "Page": 205 },
+        "Source": {
+          "Title": "Ironsworn: Delve",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 205
+        },
         "$id": "Ironsworn/Oracles/Feature/Focus",
         "Name": "Focus",
         "Category": "Ironsworn/Oracles/Feature",
@@ -9345,7 +9607,7 @@
         "Usage": {
           "Allow duplicates": false,
           "Suggestions": {
-            "Oracle rolls": ["Ironsworn/Oracles/Feature/Aspect"]
+            "Oracle rolls": [ "Ironsworn/Oracles/Feature/Aspect" ]
           }
         },
         "Table": [
@@ -9654,14 +9916,22 @@
     ]
   },
   {
-    "Source": { "Title": "Ironsworn: Delve", "Page": 206 },
+    "Source": {
+      "Title": "Ironsworn: Delve",
+      "Authors": [ "Shawn Tomkin" ],
+      "Page": 206
+    },
     "$id": "Ironsworn/Oracles/Site_Name",
     "Name": "Site Name",
     "Description": "Give a site a name or learn more about its characteristics and history.",
     "Display": { "Title": "Site Name" },
     "Oracles": [
       {
-        "Source": { "Title": "Ironsworn: Delve", "Page": 206 },
+        "Source": {
+          "Title": "Ironsworn: Delve",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 206
+        },
         "$id": "Ironsworn/Oracles/Site_Name/Format",
         "Name": "Format",
         "Category": "Ironsworn/Oracles/Site_Name",
@@ -9751,7 +10021,11 @@
         ]
       },
       {
-        "Source": { "Title": "Ironsworn: Delve", "Page": 207 },
+        "Source": {
+          "Title": "Ironsworn: Delve",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 207
+        },
         "$id": "Ironsworn/Oracles/Site_Name/Description",
         "Name": "Description",
         "Category": "Ironsworn/Oracles/Site_Name",
@@ -10078,7 +10352,11 @@
         ]
       },
       {
-        "Source": { "Title": "Ironsworn: Delve", "Page": 208 },
+        "Source": {
+          "Title": "Ironsworn: Delve",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 208
+        },
         "$id": "Ironsworn/Oracles/Site_Name/Detail",
         "Name": "Detail",
         "Category": "Ironsworn/Oracles/Site_Name",
@@ -10404,7 +10682,11 @@
         ]
       },
       {
-        "Source": { "Title": "Ironsworn: Delve", "Page": 209 },
+        "Source": {
+          "Title": "Ironsworn: Delve",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 209
+        },
         "$id": "Ironsworn/Oracles/Site_Name/Namesake",
         "Name": "Namesake",
         "Category": "Ironsworn/Oracles/Site_Name",
@@ -10731,7 +11013,11 @@
         ]
       },
       {
-        "Source": { "Title": "Ironsworn: Delve", "Page": 210 },
+        "Source": {
+          "Title": "Ironsworn: Delve",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 210
+        },
         "$id": "Ironsworn/Oracles/Site_Name/Place",
         "Name": "Place",
         "Category": "Ironsworn/Oracles/Site_Name",
@@ -10759,89 +11045,93 @@
             "Ceiling": 6,
             "$id": "Ironsworn/Oracles/Site_Name/Place/1-6",
             "Result": "Barrow",
-            "Oracle rolls": ["Ironsworn/Oracles/Site_Name/Place/Barrow"]
+            "Oracle rolls": [ "Ironsworn/Oracles/Site_Name/Place/Barrow" ]
           },
           {
             "Floor": 7,
             "Ceiling": 18,
             "$id": "Ironsworn/Oracles/Site_Name/Place/7-18",
             "Result": "Cavern",
-            "Oracle rolls": ["Ironsworn/Oracles/Site_Name/Place/Cavern"]
+            "Oracle rolls": [ "Ironsworn/Oracles/Site_Name/Place/Cavern" ]
           },
           {
             "Floor": 19,
             "Ceiling": 28,
             "$id": "Ironsworn/Oracles/Site_Name/Place/19-28",
             "Result": "Frozen Cavern",
-            "Oracle rolls": ["Ironsworn/Oracles/Site_Name/Place/Frozen_Cavern"]
+            "Oracle rolls": [ "Ironsworn/Oracles/Site_Name/Place/Frozen_Cavern" ]
           },
           {
             "Floor": 29,
             "Ceiling": 32,
             "$id": "Ironsworn/Oracles/Site_Name/Place/29-32",
             "Result": "Icereach",
-            "Oracle rolls": ["Ironsworn/Oracles/Site_Name/Place/Icereach"]
+            "Oracle rolls": [ "Ironsworn/Oracles/Site_Name/Place/Icereach" ]
           },
           {
             "Floor": 33,
             "Ceiling": 38,
             "$id": "Ironsworn/Oracles/Site_Name/Place/33-38",
             "Result": "Mine",
-            "Oracle rolls": ["Ironsworn/Oracles/Site_Name/Place/Mine"]
+            "Oracle rolls": [ "Ironsworn/Oracles/Site_Name/Place/Mine" ]
           },
           {
             "Floor": 39,
             "Ceiling": 48,
             "$id": "Ironsworn/Oracles/Site_Name/Place/39-48",
             "Result": "Pass",
-            "Oracle rolls": ["Ironsworn/Oracles/Site_Name/Place/Pass"]
+            "Oracle rolls": [ "Ironsworn/Oracles/Site_Name/Place/Pass" ]
           },
           {
             "Floor": 49,
             "Ceiling": 58,
             "$id": "Ironsworn/Oracles/Site_Name/Place/49-58",
             "Result": "Ruin",
-            "Oracle rolls": ["Ironsworn/Oracles/Site_Name/Place/Ruin"]
+            "Oracle rolls": [ "Ironsworn/Oracles/Site_Name/Place/Ruin" ]
           },
           {
             "Floor": 59,
             "Ceiling": 68,
             "$id": "Ironsworn/Oracles/Site_Name/Place/59-68",
             "Result": "Sea Cave",
-            "Oracle rolls": ["Ironsworn/Oracles/Site_Name/Place/Sea_Cave"]
+            "Oracle rolls": [ "Ironsworn/Oracles/Site_Name/Place/Sea_Cave" ]
           },
           {
             "Floor": 69,
             "Ceiling": 78,
             "$id": "Ironsworn/Oracles/Site_Name/Place/69-78",
             "Result": "Shadowfen",
-            "Oracle rolls": ["Ironsworn/Oracles/Site_Name/Place/Shadowfen"]
+            "Oracle rolls": [ "Ironsworn/Oracles/Site_Name/Place/Shadowfen" ]
           },
           {
             "Floor": 79,
             "Ceiling": 83,
             "$id": "Ironsworn/Oracles/Site_Name/Place/79-83",
             "Result": "Stronghold",
-            "Oracle rolls": ["Ironsworn/Oracles/Site_Name/Place/Stronghold"]
+            "Oracle rolls": [ "Ironsworn/Oracles/Site_Name/Place/Stronghold" ]
           },
           {
             "Floor": 84,
             "Ceiling": 95,
             "$id": "Ironsworn/Oracles/Site_Name/Place/84-95",
             "Result": "Tanglewood",
-            "Oracle rolls": ["Ironsworn/Oracles/Site_Name/Place/Tanglewood"]
+            "Oracle rolls": [ "Ironsworn/Oracles/Site_Name/Place/Tanglewood" ]
           },
           {
             "Floor": 96,
             "Ceiling": 100,
             "$id": "Ironsworn/Oracles/Site_Name/Place/96-100",
             "Result": "Underkeep",
-            "Oracle rolls": ["Ironsworn/Oracles/Site_Name/Place/Underkeep"]
+            "Oracle rolls": [ "Ironsworn/Oracles/Site_Name/Place/Underkeep" ]
           }
         ],
         "Oracles": [
           {
-            "Source": { "Title": "Ironsworn: Delve", "Page": 210 },
+            "Source": {
+              "Title": "Ironsworn: Delve",
+              "Authors": [ "Shawn Tomkin" ],
+              "Page": 210
+            },
             "$id": "Ironsworn/Oracles/Site_Name/Place/Barrow",
             "Name": "Barrow",
             "Member of": "Ironsworn/Oracles/Site_Name/Place",
@@ -10904,7 +11194,11 @@
             ]
           },
           {
-            "Source": { "Title": "Ironsworn: Delve", "Page": 210 },
+            "Source": {
+              "Title": "Ironsworn: Delve",
+              "Authors": [ "Shawn Tomkin" ],
+              "Page": 210
+            },
             "$id": "Ironsworn/Oracles/Site_Name/Place/Cavern",
             "Name": "Cavern",
             "Member of": "Ironsworn/Oracles/Site_Name/Place",
@@ -10991,7 +11285,11 @@
             ]
           },
           {
-            "Source": { "Title": "Ironsworn: Delve", "Page": 210 },
+            "Source": {
+              "Title": "Ironsworn: Delve",
+              "Authors": [ "Shawn Tomkin" ],
+              "Page": 210
+            },
             "$id": "Ironsworn/Oracles/Site_Name/Place/Frozen_Cavern",
             "Name": "Frozen Cavern",
             "Member of": "Ironsworn/Oracles/Site_Name/Place",
@@ -11078,7 +11376,11 @@
             ]
           },
           {
-            "Source": { "Title": "Ironsworn: Delve", "Page": 210 },
+            "Source": {
+              "Title": "Ironsworn: Delve",
+              "Authors": [ "Shawn Tomkin" ],
+              "Page": 210
+            },
             "$id": "Ironsworn/Oracles/Site_Name/Place/Icereach",
             "Name": "Icereach",
             "Member of": "Ironsworn/Oracles/Site_Name/Place",
@@ -11141,7 +11443,11 @@
             ]
           },
           {
-            "Source": { "Title": "Ironsworn: Delve", "Page": 210 },
+            "Source": {
+              "Title": "Ironsworn: Delve",
+              "Authors": [ "Shawn Tomkin" ],
+              "Page": 210
+            },
             "$id": "Ironsworn/Oracles/Site_Name/Place/Mine",
             "Name": "Mine",
             "Member of": "Ironsworn/Oracles/Site_Name/Place",
@@ -11204,7 +11510,11 @@
             ]
           },
           {
-            "Source": { "Title": "Ironsworn: Delve", "Page": 210 },
+            "Source": {
+              "Title": "Ironsworn: Delve",
+              "Authors": [ "Shawn Tomkin" ],
+              "Page": 210
+            },
             "$id": "Ironsworn/Oracles/Site_Name/Place/Pass",
             "Name": "Pass",
             "Member of": "Ironsworn/Oracles/Site_Name/Place",
@@ -11291,7 +11601,11 @@
             ]
           },
           {
-            "Source": { "Title": "Ironsworn: Delve", "Page": 211 },
+            "Source": {
+              "Title": "Ironsworn: Delve",
+              "Authors": [ "Shawn Tomkin" ],
+              "Page": 211
+            },
             "$id": "Ironsworn/Oracles/Site_Name/Place/Ruin",
             "Name": "Ruin",
             "Member of": "Ironsworn/Oracles/Site_Name/Place",
@@ -11378,7 +11692,11 @@
             ]
           },
           {
-            "Source": { "Title": "Ironsworn: Delve", "Page": 211 },
+            "Source": {
+              "Title": "Ironsworn: Delve",
+              "Authors": [ "Shawn Tomkin" ],
+              "Page": 211
+            },
             "$id": "Ironsworn/Oracles/Site_Name/Place/Sea_Cave",
             "Name": "Sea Cave",
             "Member of": "Ironsworn/Oracles/Site_Name/Place",
@@ -11441,7 +11759,11 @@
             ]
           },
           {
-            "Source": { "Title": "Ironsworn: Delve", "Page": 211 },
+            "Source": {
+              "Title": "Ironsworn: Delve",
+              "Authors": [ "Shawn Tomkin" ],
+              "Page": 211
+            },
             "$id": "Ironsworn/Oracles/Site_Name/Place/Shadowfen",
             "Name": "Shadowfen",
             "Member of": "Ironsworn/Oracles/Site_Name/Place",
@@ -11528,7 +11850,11 @@
             ]
           },
           {
-            "Source": { "Title": "Ironsworn: Delve", "Page": 211 },
+            "Source": {
+              "Title": "Ironsworn: Delve",
+              "Authors": [ "Shawn Tomkin" ],
+              "Page": 211
+            },
             "$id": "Ironsworn/Oracles/Site_Name/Place/Stronghold",
             "Name": "Stronghold",
             "Member of": "Ironsworn/Oracles/Site_Name/Place",
@@ -11615,7 +11941,11 @@
             ]
           },
           {
-            "Source": { "Title": "Ironsworn: Delve", "Page": 211 },
+            "Source": {
+              "Title": "Ironsworn: Delve",
+              "Authors": [ "Shawn Tomkin" ],
+              "Page": 211
+            },
             "$id": "Ironsworn/Oracles/Site_Name/Place/Tanglewood",
             "Name": "Tanglewood",
             "Member of": "Ironsworn/Oracles/Site_Name/Place",
@@ -11690,7 +12020,11 @@
             ]
           },
           {
-            "Source": { "Title": "Ironsworn: Delve", "Page": 211 },
+            "Source": {
+              "Title": "Ironsworn: Delve",
+              "Authors": [ "Shawn Tomkin" ],
+              "Page": 211
+            },
             "$id": "Ironsworn/Oracles/Site_Name/Place/Underkeep",
             "Name": "Underkeep",
             "Member of": "Ironsworn/Oracles/Site_Name/Place",
@@ -11782,14 +12116,22 @@
     ]
   },
   {
-    "Source": { "Title": "Ironsworn: Delve", "Page": 212 },
+    "Source": {
+      "Title": "Ironsworn: Delve",
+      "Authors": [ "Shawn Tomkin" ],
+      "Page": 212
+    },
     "$id": "Ironsworn/Oracles/Site_Nature",
     "Name": "Site Nature",
     "Description": "Randomly select a theme and domain for a perilous location.",
     "Display": { "Title": "Site Nature" },
     "Oracles": [
       {
-        "Source": { "Title": "Ironsworn: Delve", "Page": 212 },
+        "Source": {
+          "Title": "Ironsworn: Delve",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 212
+        },
         "$id": "Ironsworn/Oracles/Site_Nature/Theme",
         "Name": "Theme",
         "Category": "Ironsworn/Oracles/Site_Nature",
@@ -11863,7 +12205,11 @@
         ]
       },
       {
-        "Source": { "Title": "Ironsworn: Delve", "Page": 212 },
+        "Source": {
+          "Title": "Ironsworn: Delve",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 212
+        },
         "$id": "Ironsworn/Oracles/Site_Nature/Domain",
         "Name": "Domain",
         "Category": "Ironsworn/Oracles/Site_Nature",
@@ -11963,14 +12309,22 @@
     ]
   },
   {
-    "Source": { "Title": "Ironsworn: Delve", "Page": 214 },
+    "Source": {
+      "Title": "Ironsworn: Delve",
+      "Authors": [ "Shawn Tomkin" ],
+      "Page": 214
+    },
     "$id": "Ironsworn/Oracles/Monstrosity",
     "Name": "Monstrosity",
     "Description": "Discover the nature of a nightspawn or other frightful creature within your world.",
     "Display": { "Title": "Monstrosity" },
     "Oracles": [
       {
-        "Source": { "Title": "Ironsworn: Delve", "Page": 214 },
+        "Source": {
+          "Title": "Ironsworn: Delve",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 214
+        },
         "$id": "Ironsworn/Oracles/Monstrosity/Size",
         "Name": "Size",
         "Category": "Ironsworn/Oracles/Monstrosity",
@@ -12032,7 +12386,11 @@
         ]
       },
       {
-        "Source": { "Title": "Ironsworn: Delve", "Page": 214 },
+        "Source": {
+          "Title": "Ironsworn: Delve",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 214
+        },
         "$id": "Ironsworn/Oracles/Monstrosity/Primary_Form",
         "Name": "Primary Form",
         "Category": "Ironsworn/Oracles/Monstrosity",
@@ -12171,7 +12529,11 @@
         ]
       },
       {
-        "Source": { "Title": "Ironsworn: Delve", "Page": 215 },
+        "Source": {
+          "Title": "Ironsworn: Delve",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 215
+        },
         "$id": "Ironsworn/Oracles/Monstrosity/Characteristics",
         "Name": "Characteristics",
         "Category": "Ironsworn/Oracles/Monstrosity",
@@ -12365,7 +12727,11 @@
         ]
       },
       {
-        "Source": { "Title": "Ironsworn: Delve", "Page": 216 },
+        "Source": {
+          "Title": "Ironsworn: Delve",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 216
+        },
         "$id": "Ironsworn/Oracles/Monstrosity/Abilities",
         "Name": "Abilities",
         "Category": "Ironsworn/Oracles/Monstrosity",
@@ -12633,14 +12999,22 @@
     ]
   },
   {
-    "Source": { "Title": "Ironsworn: Delve", "Page": 217 },
+    "Source": {
+      "Title": "Ironsworn: Delve",
+      "Authors": [ "Shawn Tomkin" ],
+      "Page": 217
+    },
     "$id": "Ironsworn/Oracles/Trap",
     "Name": "Trap",
     "Description": "Identify the characteristics and effects of a trap within a site.",
     "Display": { "Title": "Trap" },
     "Oracles": [
       {
-        "Source": { "Title": "Ironsworn: Delve", "Page": 217 },
+        "Source": {
+          "Title": "Ironsworn: Delve",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 217
+        },
         "$id": "Ironsworn/Oracles/Trap/Event",
         "Name": "Event",
         "Category": "Ironsworn/Oracles/Trap",
@@ -12665,7 +13039,7 @@
         "Usage": {
           "Allow duplicates": false,
           "Suggestions": {
-            "Oracle rolls": ["Ironsworn/Oracles/Trap/Component"]
+            "Oracle rolls": [ "Ironsworn/Oracles/Trap/Component" ]
           }
         },
         "Table": [
@@ -12822,7 +13196,11 @@
         ]
       },
       {
-        "Source": { "Title": "Ironsworn: Delve", "Page": 217 },
+        "Source": {
+          "Title": "Ironsworn: Delve",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 217
+        },
         "$id": "Ironsworn/Oracles/Trap/Component",
         "Name": "Component",
         "Category": "Ironsworn/Oracles/Trap",
@@ -12846,7 +13224,7 @@
         },
         "Usage": {
           "Allow duplicates": false,
-          "Suggestions": { "Oracle rolls": ["Ironsworn/Oracles/Trap/Event"] }
+          "Suggestions": { "Oracle rolls": [ "Ironsworn/Oracles/Trap/Event" ] }
         },
         "Table": [
           {
@@ -13004,14 +13382,22 @@
     ]
   },
   {
-    "Source": { "Title": "Ironsworn: Delve", "Page": 218 },
+    "Source": {
+      "Title": "Ironsworn: Delve",
+      "Authors": [ "Shawn Tomkin" ],
+      "Page": 218
+    },
     "$id": "Ironsworn/Oracles/Combat_Event",
     "Name": "Combat Event",
     "Description": "Determine the actions of a character, creature, or force during a fight.",
     "Display": { "Title": "Combat Event" },
     "Oracles": [
       {
-        "Source": { "Title": "Ironsworn: Delve", "Page": 218 },
+        "Source": {
+          "Title": "Ironsworn: Delve",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 218
+        },
         "$id": "Ironsworn/Oracles/Combat_Event/Method",
         "Name": "Method",
         "Category": "Ironsworn/Oracles/Combat_Event",
@@ -13036,7 +13422,7 @@
         "Usage": {
           "Allow duplicates": false,
           "Suggestions": {
-            "Oracle rolls": ["Ironsworn/Oracles/Combat_Event/Target"]
+            "Oracle rolls": [ "Ironsworn/Oracles/Combat_Event/Target" ]
           }
         },
         "Table": [
@@ -13343,7 +13729,11 @@
         ]
       },
       {
-        "Source": { "Title": "Ironsworn: Delve", "Page": 219 },
+        "Source": {
+          "Title": "Ironsworn: Delve",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 219
+        },
         "$id": "Ironsworn/Oracles/Combat_Event/Target",
         "Name": "Target",
         "Category": "Ironsworn/Oracles/Combat_Event",
@@ -13368,7 +13758,7 @@
         "Usage": {
           "Allow duplicates": false,
           "Suggestions": {
-            "Oracle rolls": ["Ironsworn/Oracles/Combat_Event/Method"]
+            "Oracle rolls": [ "Ironsworn/Oracles/Combat_Event/Method" ]
           }
         },
         "Table": [
@@ -13677,14 +14067,22 @@
     ]
   },
   {
-    "Source": { "Title": "Ironsworn: Delve", "Page": 220 },
+    "Source": {
+      "Title": "Ironsworn: Delve",
+      "Authors": [ "Shawn Tomkin" ],
+      "Page": 220
+    },
     "$id": "Ironsworn/Oracles/Threat",
     "Name": "Threat",
     "Description": "In support of the optional threat mechanics, use these oracles to introduce a threat and determine its actions within your world.",
     "Display": { "Title": "Threat" },
     "Oracles": [
       {
-        "Source": { "Title": "Ironsworn: Delve", "Page": 220 },
+        "Source": {
+          "Title": "Ironsworn: Delve",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 220
+        },
         "$id": "Ironsworn/Oracles/Threat/Category",
         "Name": "Category",
         "Category": "Ironsworn/Oracles/Threat",
@@ -13712,63 +14110,63 @@
             "Ceiling": 10,
             "$id": "Ironsworn/Oracles/Threat/Category/1-10",
             "Result": "Burgeoning Conflict",
-            "Oracle rolls": ["Ironsworn/Oracle/Threat/Burgeoning_Conflict"]
+            "Oracle rolls": [ "Ironsworn/Oracle/Threat/Burgeoning_Conflict" ]
           },
           {
             "Floor": 11,
             "Ceiling": 20,
             "$id": "Ironsworn/Oracles/Threat/Category/11-20",
             "Result": "Cursed Site",
-            "Oracle rolls": ["Ironsworn/Oracle/Threat/Cursed_Site"]
+            "Oracle rolls": [ "Ironsworn/Oracle/Threat/Cursed_Site" ]
           },
           {
             "Floor": 21,
             "Ceiling": 30,
             "$id": "Ironsworn/Oracles/Threat/Category/21-30",
             "Result": "Environmental Calamity",
-            "Oracle rolls": ["Ironsworn/Oracle/Threat_Environmental_Calamity"]
+            "Oracle rolls": [ "Ironsworn/Oracle/Threat_Environmental_Calamity" ]
           },
           {
             "Floor": 31,
             "Ceiling": 40,
             "$id": "Ironsworn/Oracles/Threat/Category/31-40",
             "Result": "Malignant Plague",
-            "Oracle rolls": ["Ironsworn/Oracle/Threat/Malignant_Plague"]
+            "Oracle rolls": [ "Ironsworn/Oracle/Threat/Malignant_Plague" ]
           },
           {
             "Floor": 41,
             "Ceiling": 50,
             "$id": "Ironsworn/Oracles/Threat/Category/41-50",
             "Result": "Rampaging Creature",
-            "Oracle rolls": ["Ironsworn/Oracle/Threat/Rampaging_Creature"]
+            "Oracle rolls": [ "Ironsworn/Oracle/Threat/Rampaging_Creature" ]
           },
           {
             "Floor": 51,
             "Ceiling": 60,
             "$id": "Ironsworn/Oracles/Threat/Category/51-60",
             "Result": "Ravaging Horde",
-            "Oracle rolls": ["Ironsworn/Oracle/Threat/Ravaging_Horde"]
+            "Oracle rolls": [ "Ironsworn/Oracle/Threat/Ravaging_Horde" ]
           },
           {
             "Floor": 61,
             "Ceiling": 70,
             "$id": "Ironsworn/Oracles/Threat/Category/61-70",
             "Result": "Scheming Leader",
-            "Oracle rolls": ["Ironsworn/Oracle/Threat/Scheming_Leader"]
+            "Oracle rolls": [ "Ironsworn/Oracle/Threat/Scheming_Leader" ]
           },
           {
             "Floor": 71,
             "Ceiling": 80,
             "$id": "Ironsworn/Oracles/Threat/Category/71-80",
             "Result": "Power-Hungry Mystic",
-            "Oracle rolls": ["Ironsworn/Oracle/Threat/Power-Hungry_Mystic"]
+            "Oracle rolls": [ "Ironsworn/Oracle/Threat/Power-Hungry_Mystic" ]
           },
           {
             "Floor": 81,
             "Ceiling": 90,
             "$id": "Ironsworn/Oracles/Threat/Category/81-90",
             "Result": "Zealous Cult",
-            "Oracle rolls": ["Ironsworn/Oracle/Threat/Zealous_Cult"]
+            "Oracle rolls": [ "Ironsworn/Oracle/Threat/Zealous_Cult" ]
           },
           {
             "Floor": 91,
@@ -13784,7 +14182,11 @@
         ]
       },
       {
-        "Source": { "Title": "Ironsworn: Delve", "Page": 221 },
+        "Source": {
+          "Title": "Ironsworn: Delve",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 221
+        },
         "$id": "Ironsworn/Oracles/Threat/Burgeoning_Conflict",
         "Name": "Burgeoning Conflict",
         "Category": "Ironsworn/Oracles/Threat",
@@ -13870,7 +14272,11 @@
         ]
       },
       {
-        "Source": { "Title": "Ironsworn: Delve", "Page": 221 },
+        "Source": {
+          "Title": "Ironsworn: Delve",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 221
+        },
         "$id": "Ironsworn/Oracles/Threat/Cursed_Site",
         "Name": "Cursed Site",
         "Category": "Ironsworn/Oracles/Threat",
@@ -13956,7 +14362,11 @@
         ]
       },
       {
-        "Source": { "Title": "Ironsworn: Delve", "Page": 221 },
+        "Source": {
+          "Title": "Ironsworn: Delve",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 221
+        },
         "$id": "Ironsworn/Oracles/Threat/Environmental_Calamity",
         "Name": "Environmental Calamity",
         "Category": "Ironsworn/Oracles/Threat",
@@ -14042,7 +14452,11 @@
         ]
       },
       {
-        "Source": { "Title": "Ironsworn: Delve", "Page": 222 },
+        "Source": {
+          "Title": "Ironsworn: Delve",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 222
+        },
         "$id": "Ironsworn/Oracles/Threat/Malignant_Plague",
         "Name": "Malignant Plague",
         "Category": "Ironsworn/Oracles/Threat",
@@ -14128,7 +14542,11 @@
         ]
       },
       {
-        "Source": { "Title": "Ironsworn: Delve", "Page": 222 },
+        "Source": {
+          "Title": "Ironsworn: Delve",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 222
+        },
         "$id": "Ironsworn/Oracles/Threat/Rampaging_Creature",
         "Name": "Rampaging Creature",
         "Category": "Ironsworn/Oracles/Threat",
@@ -14214,7 +14632,11 @@
         ]
       },
       {
-        "Source": { "Title": "Ironsworn: Delve", "Page": 222 },
+        "Source": {
+          "Title": "Ironsworn: Delve",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 222
+        },
         "$id": "Ironsworn/Oracles/Threat/Ravaging_Horde",
         "Name": "Ravaging Horde",
         "Category": "Ironsworn/Oracles/Threat",
@@ -14300,7 +14722,11 @@
         ]
       },
       {
-        "Source": { "Title": "Ironsworn: Delve", "Page": 223 },
+        "Source": {
+          "Title": "Ironsworn: Delve",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 223
+        },
         "$id": "Ironsworn/Oracles/Threat/Scheming_Leader",
         "Name": "Scheming Leader",
         "Category": "Ironsworn/Oracles/Threat",
@@ -14386,7 +14812,11 @@
         ]
       },
       {
-        "Source": { "Title": "Ironsworn: Delve", "Page": 223 },
+        "Source": {
+          "Title": "Ironsworn: Delve",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 223
+        },
         "$id": "Ironsworn/Oracles/Threat/Power-Hungry_Mystic",
         "Name": "Power-Hungry Mystic",
         "Category": "Ironsworn/Oracles/Threat",
@@ -14472,7 +14902,11 @@
         ]
       },
       {
-        "Source": { "Title": "Ironsworn: Delve", "Page": 223 },
+        "Source": {
+          "Title": "Ironsworn: Delve",
+          "Authors": [ "Shawn Tomkin" ],
+          "Page": 223
+        },
         "$id": "Ironsworn/Oracles/Threat/Zealous_Cult",
         "Name": "Zealous Cult",
         "Category": "Ironsworn/Oracles/Threat",

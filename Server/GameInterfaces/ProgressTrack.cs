@@ -27,9 +27,18 @@ namespace Server.GameInterfaces
             };
         }
 
+        public ProgressTrack(TrackData trackData, Random random, IEmoteRepository emotes, IMoveRepository moves)
+        {
+            TrackData = trackData;
+            Random = random;
+            Emotes = emotes;
+            this.moves = moves;
+        }
+
         public TrackData TrackData { get; set; }
         public int BoxSize { get; set; } = 4;
         public bool IsEphemeral { get; set; } = false;
+        public string? DiscordMessage { get; set; } = null;
         public string TrackDisplayName { get; set; } = "Track";
         public int TrackSize { get; set; } = 10;
         public int Ticks { get => TrackData.Ticks; set => TrackData.Ticks = value; }
@@ -59,7 +68,7 @@ namespace Server.GameInterfaces
 
         public IActionRoll Roll()
         {
-            return new ProgressRollRandom(Random, GetScore(), $"Progress Roll for {TrackData.Description}");
+            return new ProgressRollRandom(Random, GetScore(), $"Progress Roll for {TrackData.Title}");
         }
 
         internal List<ActionRowBuilder> GetActionRows()
@@ -69,16 +78,16 @@ namespace Server.GameInterfaces
             ActionRowBuilder? actionRow2 = null;
 
             actionRow1.WithSelectMenu(new SelectMenuBuilder()
-                .WithCustomId("progress-main")
+                .WithCustomId($"progress-main-{TrackData.Id}")
                 .WithPlaceholder("Manage tracker...")
-                .AddOption("Mark Progress", $"track-increase-{TrackData.Id}", emote: Emotes.MarkProgress)
-                .AddOption("Resolve Progress", $"track-roll-{TrackData.Id}", emote: Emotes.Roll));
+                .AddOption("Mark Progress", $"track-increase", emote: Emotes.MarkProgress)
+                .AddOption("Resolve Progress", $"track-roll", emote: Emotes.Roll));
 
             myList.Add(actionRow1);
 
             var movesToFind = new string[] { "Swear an Iron Vow", "Reach a Milestone", "Fulfill Your Vow", "Forsake Your Vow" };
             var vowMoves = moves.GetMoves().Where(m => movesToFind.Any(s => s.Contains(m.Name, StringComparison.OrdinalIgnoreCase)));
-            var referenceSelectBuilder = new SelectMenuBuilder().WithCustomId("progress-references").WithPlaceholder("Reference Moves...");
+            var referenceSelectBuilder = new SelectMenuBuilder().WithCustomId("move-references").WithPlaceholder("Reference Moves...");
             foreach (var move in vowMoves)
             {
                 if (actionRow2 == null) actionRow2 = new ActionRowBuilder();

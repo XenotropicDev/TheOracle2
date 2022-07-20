@@ -125,9 +125,8 @@ public static class TrackExtensions
 
     public static EmbedFieldBuilder AsDiscordField(this ITrack track, IEmoteRepository emotes, int ticks = 0)
     {
-        int score = ticks / track.BoxSize;
         return new EmbedFieldBuilder()
-          .WithName($"{track.TrackDisplayName} [{score}/{track.TrackSize}]")
+          .WithName($"{track.TrackDisplayName} [{track.GetScore()}/{track.TrackSize}]")
           .WithValue(TicksToEmojiTrack(track, ticks, emotes));
     }
 }

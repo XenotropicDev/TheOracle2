@@ -7,6 +7,7 @@ using Discord.Interactions;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Serilog;
 using System.Reflection;
 using OracleCommands;
 using Server.Data;
@@ -18,6 +19,8 @@ using TheOracle2;
 
 class OracleServer
 {
+    internal static Serilog.ILogger logger = new LoggerConfiguration().WriteTo.Console().CreateLogger(); //This gets overwritten by the ConfiguredServices
+
     public static async Task Main()
     {
         using var services = ConfigureServices();
@@ -27,6 +30,9 @@ class OracleServer
         var config = services.GetRequiredService<IConfiguration>();
         var handler = services.GetRequiredService<CommandHandler>();
         var db = services.GetRequiredService<ApplicationContext>();
+
+        //db.Database.EnsureDeleted();
+        db.Database.EnsureCreated();
 
         await handler.Initialize().ConfigureAwait(false);
 
@@ -45,7 +51,35 @@ class OracleServer
 
     private static Task LogAsync(LogMessage msg)
     {
-        Console.WriteLine(msg.ToString());
+        if (msg.Exception?.GetType() == typeof(System.TimeoutException))
+        {
+            logger.Warning(msg.Exception.Message);
+            return Task.CompletedTask;
+        }
+
+        switch (msg.Severity)
+        {
+            case LogSeverity.Critical:
+                logger.Fatal(msg.Exception, msg.Message);
+                break;
+            case LogSeverity.Error:
+                logger.Error(msg.Exception, msg.Message);
+                break;
+            case LogSeverity.Warning:
+                logger.Warning(msg.Exception, msg.Message);
+                break;
+            case LogSeverity.Info:
+                logger.Information(msg.Exception, msg.Message);
+                break;
+            case LogSeverity.Verbose:
+                logger.Verbose(msg.Exception, msg.Message);
+                break;
+            case LogSeverity.Debug:
+                logger.Debug(msg.Exception, msg.Message);
+                break;
+            default:
+                break;
+        }
         return Task.CompletedTask;
     }
 
@@ -62,6 +96,12 @@ class OracleServer
         var dbConnBuilder = new NpgsqlConnectionStringBuilder(dbConn) {Password = dbPass };
 
         var interactionServiceConfig = new InteractionServiceConfig()  { UseCompiledLambda = true };
+        var logger = new LoggerConfiguration()
+                    .WriteTo.Console()
+                    .WriteTo.File("log.txt", rollingInterval: RollingInterval.Day)
+                    .MinimumLevel.Information()
+                    .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning)
+                    .CreateLogger();
 
         return new ServiceCollection()
             .AddSingleton<IConfiguration>(config)
@@ -74,6 +114,10 @@ class OracleServer
             .AddSingleton<IOracleRepository, JsonOracleRepository>()
             .AddSingleton<IMoveRepository, JsonMoveRepository>()
             .AddSingleton<IEmoteRepository, HardCodedEmoteRepo>()
+            .AddLogging(builder => builder.AddSerilog(logger)
+                .AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Warning)
+                .AddFilter("Microsoft.EntityFrameworkCore.Infrastructure", LogLevel.Warning)
+                )
             .AddDbContext<ApplicationContext>(options => options.UseNpgsql(dbConnBuilder.ConnectionString))
             .BuildServiceProvider();
     }

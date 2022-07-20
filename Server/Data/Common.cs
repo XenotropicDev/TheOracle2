@@ -9,22 +9,22 @@ namespace TheOracle2.Data
     public class Display
     {
         [JsonProperty("Title")]
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
         [JsonProperty("Table")]
-        public Table Table { get; set; }
+        public Table? Table { get; set; }
 
         [JsonProperty("Icon")]
-        public string Icon { get; set; }
+        public string? Icon { get; set; }
 
         [JsonProperty("Images")]
-        public List<string> Images { get; set; }
+        public List<string>? Images { get; set; }
 
         [JsonProperty("Column of")]
-        public string ColumnOf { get; set; }
+        public string? ColumnOf { get; set; }
 
         [JsonProperty("Color")]
-        public string Color { get; set; }
+        public string? Color { get; set; }
     }
 
     public class Set
@@ -55,6 +55,9 @@ namespace TheOracle2.Data
 
         [JsonProperty("Page")]
         public int? Page { get; set; }
+
+        [JsonProperty("Authors")]
+        public List<string>? Authors { get; set; }
     }
 
     public class Miss

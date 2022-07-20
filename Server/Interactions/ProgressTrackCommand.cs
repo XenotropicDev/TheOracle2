@@ -1,11 +1,22 @@
 ﻿using Discord.Interactions;
+using Discord.WebSocket;
 using Server.Data;
+using Server.DiceRoller;
 using Server.DiscordServer;
 using Server.GameInterfaces;
 using Server.Interactions.Helpers;
 using TheOracle2.GameObjects;
 
 namespace TheOracle2;
+
+public enum ProgressTrackType
+{
+    Vow,
+    Expedition,
+    Combat,
+    Generic
+}
+
 
 [Group("progress-track", "Create a progress track. For simple progress rolls, use /roll. For scene challenges, use /clock.")]
 public class ProgressTrackCommand : InteractionModuleBase
@@ -86,15 +97,73 @@ public class ProgressTrackCommand : InteractionModuleBase
     [Summary(description: "A score to pre-set the track, if desired.")][MinValue(0)][MaxValue(10)]
     int score = 0)
     {
+        //await DeferAsync();
         ProgressTrack track = new(Random, rank, emotes, moves, title, description, score);        
+        DbContext.ProgressTrackers.Add(track.TrackData);
+        await DbContext.SaveChangesAsync();
+
         await RespondAsync(embeds: track.AsEmbedArray(), components: track.GetComponents()?.Build());
     }
 }
 
-public enum ProgressTrackType
+public class TrackInteractions : InteractionModuleBase<SocketInteractionContext<SocketMessageComponent>> //InteractionModuleBase<SocketInteractionContext<SocketMessageComponent>>
 {
-    Vow,
-    Expedition,
-    Combat,
-    Generic
+    private readonly Random random;
+    private readonly IEmoteRepository emotes;
+    private readonly IMoveRepository moves;
+
+    public TrackInteractions(ApplicationContext db, Random random, IEmoteRepository emotes, IMoveRepository moves)
+    {
+        Db = db;
+        this.random = random;
+        this.emotes = emotes;
+        this.moves = moves;
+    }
+
+    public ApplicationContext Db { get; }
+
+    [ComponentInteraction("track-increase-*")]
+    public async Task TrackIncrease(int trackId)
+    {
+        var trackData = Db.ProgressTrackers.Find(trackId);
+        if (trackData == null) throw new ArgumentException("Progress track not found");
+
+        trackData.Ticks += trackData.Rank.GetStandardTickAmount();
+
+        ITrack track = new ProgressTrack(trackData, random, emotes, moves);
+
+        await Context.Interaction.UpdateAsync(msg =>
+        {
+            msg.Embeds = track.AsEmbedArray();
+
+        }).ConfigureAwait(false);
+
+        await Db.SaveChangesAsync();
+    }
+
+    [ComponentInteraction("progress-main-*")]
+    public async Task TrackIncreaseTest(string arg1, string[] selectedRoles)
+    {
+        if (!int.TryParse(arg1, out int id)) throw new ArgumentException("Progress track not found");
+        foreach (var role in selectedRoles)
+        {
+            if (role == "track-increase") await TrackIncrease(id);
+            if (role == "track-roll") await TrackRoll(id);
+        }
+    }
+
+    [ComponentInteraction("track-roll-*")]
+    public async Task TrackRoll(int trackId)
+    {
+        var trackData = Db.ProgressTrackers.Find(trackId);
+        if (trackData == null) throw new ArgumentException("Progress track not found");
+
+        ITrack track = new ProgressTrack(trackData, random, emotes, moves);
+
+        var roll = track.Roll();
+
+        await roll.EntityAsResponse(RespondAsync).ConfigureAwait(false);
+
+        await Db.SaveChangesAsync();
+    }
 }

@@ -11,8 +11,19 @@ public enum IronswornRollOutcome
 
 public static class IronswornRollOutcomeExtensions
 {
-    public static string ToOutcomeString(this IronswornRollOutcome outcome)
+    public static string ToOutcomeString(this IronswornRollOutcome outcome, bool isMatch = false)
     {
+        if (isMatch)
+        {
+            return outcome switch
+            {
+                IronswornRollOutcome.Miss => IronswornRollResources.MissWithAMatch,
+                IronswornRollOutcome.WeakHit => IronswornRollResources.WeakHitWithAMatch,
+                IronswornRollOutcome.StrongHit => IronswornRollResources.StrongHitWithAMatch,
+                _ => "ERROR",
+            };
+        }
+
         return outcome switch
         {
             IronswornRollOutcome.Miss => IronswornRollResources.Miss,

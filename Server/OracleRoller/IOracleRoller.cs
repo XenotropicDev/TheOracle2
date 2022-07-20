@@ -13,30 +13,35 @@ namespace Server.OracleRoller
     {
         private readonly Random random;
         private readonly IOracleRepository oracleRepo;
+        private readonly IEmoteRepository emotes;
 
-        public RandomOracleRoller(Random random, IOracleRepository oracleRepo)
+        public RandomOracleRoller(Random random, IOracleRepository oracleRepo, IEmoteRepository emotes)
         {
             this.random = random;
             this.oracleRepo = oracleRepo;
+            this.emotes = emotes;
         }
 
         public OracleRollResult GetRollResult(Oracle oracle)
         {
-            var results = new OracleRollResult();
-            results.Oracle = oracle;
+            var results = new OracleRollResult
+            {
+                Oracle = oracle
+            };
+
             foreach (var followUpId in oracle.Usage?.Suggestions?.OracleRolls ?? new List<string>())
             {
-                var followUpOracle = oracleRepo.GetOracle(followUpId);
+                var followUpOracle = oracleRepo.GetOracleById(followUpId);
                 if (followUpOracle?.Oracles?.Count > 0)
                 {
                     foreach (var subTable in followUpOracle.Oracles)
                     {
-                        results.FollowUpTables.Add(new FollowUpItem(subTable.Id, subTable.Name));
+                        results.FollowUpTables.Add(new FollowUpItem(subTable.Id, subTable.Name, emotes));
                     }
                 }
-                else
+                else if (followUpOracle != null)
                 {
-                    results.FollowUpTables.Add(new FollowUpItem(followUpId, followUpOracle.Name));
+                    results.FollowUpTables.Add(new FollowUpItem(followUpId, followUpOracle.Name, emotes));
                 }
             }
 

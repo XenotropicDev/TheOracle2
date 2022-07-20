@@ -10,5 +10,7 @@
         ComponentBuilder? GetComponents();
 
         bool IsEphemeral { get; set; }
+
+        string? DiscordMessage { get; set; }
     }
 }

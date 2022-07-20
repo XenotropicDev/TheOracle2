@@ -7,7 +7,7 @@ namespace Server.Data
         IEnumerable<Oracle> GetOracles();
         IEnumerable<OracleRoot> GetOracleRoots();
 
-        Oracle? GetOracle(string id);
+        Oracle? GetOracleById(string id);
 
         //void CreateOracle(int id);
         //void UpdateOracle(int id);
@@ -18,9 +18,18 @@ namespace Server.Data
     {
         private List<OracleRoot>? _oracles;
 
-        public Oracle? GetOracle(string id)
+        public Oracle? GetOracleById(string id)
         {
-            return GetOracles().FirstOrDefault(o => o.Id == id);
+            var topLevelOracle = GetOracles().FirstOrDefault(o => o.Id == id);
+            if (topLevelOracle != null) return topLevelOracle;
+
+            var subOracle = GetOracles().SelectMany(o => o.Oracles?.Where(sub => sub.Id == id) ?? Array.Empty<Oracle>()).FirstOrDefault();
+            if (subOracle != null) return subOracle;
+
+            var partial = GetOracles().SingleOrDefault(o => o.Id.Contains(id))
+                ?? GetOracles().SelectMany(o => o.Oracles?.Where(sub => sub.Id.Contains(id)) ?? Array.Empty<Oracle>()).SingleOrDefault();
+
+            return partial;
         }
 
         public IEnumerable<OracleRoot> GetOracleRoots()

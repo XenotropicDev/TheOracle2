@@ -15,11 +15,11 @@ namespace Server.Interactions.Helpers
         {
             var builder = new SelectMenuOptionBuilder();
 
-            
-            var closingBolds = move.Text.IndexOf("**", move.Text.IndexOf("**") + 2) + 2;
-            var desc = (closingBolds > 0 && closingBolds < 70) ? move.Text[..closingBolds] : move.Text[..67] + "...";
+            //Find the second ** (if any) before we remove them for display
+            var closingBolds = move.Text.IndexOf("**", move.Text.IndexOf("**") + 2);
+            var desc = (closingBolds > 0 && closingBolds < 70) ? move.Text.Replace("**", "")[..closingBolds] : move.Text.Replace("**", "")[..67] + "...";
 
-            builder.WithValue($"reference-post-{move.Id}").WithDescription(desc).WithEmote(emotes.Reference).WithLabel(move.Name);
+            builder.WithValue(move.Id).WithDescription(desc).WithEmote(emotes.Reference).WithLabel(move.Name);
 
             return builder;
         }

@@ -44,6 +44,18 @@ namespace Server.Interactions.Helpers
             return builder;
         }
 
+        public static ComponentBuilder ReplaceComponentById(this ComponentBuilder builder, string id, IMessageComponent replacement)
+        {
+            var rows = builder.ActionRows.Where(r => r.Components.Any(c => c.CustomId == id));
+            foreach (var row in rows)
+            {
+                int index = row.Components.FindIndex(c => c.CustomId == id);
+                if (index != -1) row.Components[index] = replacement;
+            }
+
+            return builder;
+        }
+
         public static ActionRowBuilder? GetRowContainingId(this ComponentBuilder builder, string id)
         {
             return builder.ActionRows.Find(r => r.Components.Any(c => c.CustomId == id));

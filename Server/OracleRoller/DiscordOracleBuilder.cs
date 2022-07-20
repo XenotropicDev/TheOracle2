@@ -4,16 +4,20 @@ namespace TheOracle2;
 
 public class DiscordOracleBuilder : IDiscordEntity
 {
-    public DiscordOracleBuilder(params OracleRollResult?[] results)
+    public DiscordOracleBuilder(IEmoteRepository emotes, params OracleRollResult?[] results)
     {
         Results = results.Where(r => r != null).Select(r => r!);
+        this.emotes = emotes;
     }
 
     //Todo: this is the only real non-static member, do we want to make it a method parameter instead?
     private SelectMenuBuilder AddOracleSelect = new SelectMenuBuilder().WithPlaceholder("Add Oracle Roll").WithCustomId("add-oracle-select");
 
+    private readonly IEmoteRepository emotes;
+
     private IEnumerable<OracleRollResult> Results { get; }
     public bool IsEphemeral { get; set; } = false;
+    public string? DiscordMessage { get; set; } = null;
 
     private static EmbedBuilder GetEmbedBuilder(IEnumerable<OracleRollResult> result)
     {

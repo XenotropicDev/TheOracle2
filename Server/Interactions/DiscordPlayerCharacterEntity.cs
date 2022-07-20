@@ -12,7 +12,7 @@ namespace TheOracle2.UserContent
         }
 
         public bool IsEphemeral { get; set; } = false;
-
+        public string? DiscordMessage { get; set; } = null;
         public PlayerCharacter Pc { get; }
 
         public ComponentBuilder? GetComponents() => new ComponentBuilder()
@@ -55,9 +55,10 @@ namespace TheOracle2.UserContent
         /// <summary>
         /// Make an action roll using one of this PC's stats.
         /// </summary>
-        public IActionRoll RollAction(Random random, RollableStats stat, int adds, string description = "", int? actionDie = null, int? challengeDie1 = null, int? challengeDie2 = null, string moveName = "")
+        public IActionRoll RollAction(Random random, IEmoteRepository emotes, RollableStat stat, int adds, string description = "", int? actionDie = null, int? challengeDie1 = null, int? challengeDie2 = null, string moveName = "")
         {
-            ActionRollRandom roll = new ActionRollRandom(random: random,
+            ActionRollRandom roll = new ActionRollRandom(random: random, 
+                emotes: emotes,
                 stat: GetStatValue(stat),
                 adds: adds,
                 momentum: Pc.Momentum,
@@ -72,25 +73,25 @@ namespace TheOracle2.UserContent
             return roll;
         }
 
-        private int GetStatValue(RollableStats stat)
+        private int GetStatValue(RollableStat stat)
         {
             return stat switch
             {
-                RollableStats.Edge => Pc.Edge,
-                RollableStats.Heart => Pc.Heart,
-                RollableStats.Iron => Pc.Iron,
-                RollableStats.Shadow => Pc.Shadow,
-                RollableStats.Wits => Pc.Wits,
-                RollableStats.Health => Pc.Health,
-                RollableStats.Spirit => Pc.Spirit,
-                RollableStats.Supply => Pc.Supply,
+                RollableStat.Edge => Pc.Edge,
+                RollableStat.Heart => Pc.Heart,
+                RollableStat.Iron => Pc.Iron,
+                RollableStat.Shadow => Pc.Shadow,
+                RollableStat.Wits => Pc.Wits,
+                RollableStat.Health => Pc.Health,
+                RollableStat.Spirit => Pc.Spirit,
+                RollableStat.Supply => Pc.Supply,
                 _ => throw new NotImplementedException(),
             };
         }
     }
 }
 
-public enum RollableStats
+public enum RollableStat
 {
     Edge,
     Heart,

@@ -30,14 +30,14 @@ public class OracleRollResult
 
 public class FollowUpItem : SelectMenuOptionBuilder
 {
-    public FollowUpItem(string id, string name)
+    public FollowUpItem(string id, string name, IEmoteRepository emotes)
     {
         Id = id;
         Name = name;
 
         Description = name;
         Value = id;
-        Emote = new Emoji("🖇️");
+        Emote = emotes.Roll;
     }
 
     public string Id { get; set; }

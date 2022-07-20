@@ -11,11 +11,13 @@ namespace TheOracle2;
 public class OracleCommand : InteractionModuleBase
 {
     private readonly IOracleRoller roller;
+    private readonly IEmoteRepository emotes;
 
-    public OracleCommand(IOracleRepository oracles, IOracleRoller roller)
+    public OracleCommand(IServiceProvider services)
     {
-        Oracles = oracles;
-        this.roller = roller;
+        Oracles = services.GetRequiredService<IOracleRepository>();
+        this.roller = services.GetRequiredService<IOracleRoller>();
+        this.emotes = services.GetRequiredService<IEmoteRepository>();
     }
 
     public IOracleRepository Oracles { get; }
@@ -25,31 +27,33 @@ public class OracleCommand : InteractionModuleBase
         [Summary(description: "Optional second oracle to roll")]
         [Autocomplete(typeof(OracleAutocomplete))] string secondOracle = null)
     {
-        var firstOracle = Oracles.GetOracles().FirstOrDefault(o => o.Id == oracle);
+        var firstOracle = Oracles.GetOracleById(oracle);
         if (firstOracle == null) throw new ArgumentException($"Unknown oracle: {oracle}");
         var rollResult = roller.GetRollResult(firstOracle);
 
         OracleRollResult? secondResult = null;
         if (secondOracle != null)
         {
-            var secondOracleData = Oracles.GetOracles().FirstOrDefault(o => o.Id == secondOracle);
+            var secondOracleData = Oracles.GetOracleById(secondOracle);
             if (secondOracleData == null) throw new ArgumentException($"Unknown oracle: {secondOracle}");
             secondResult = roller.GetRollResult(secondOracleData);
         }
 
-        var entityItem = new DiscordOracleBuilder(rollResult, secondResult);
+        var entityItem = new DiscordOracleBuilder(emotes, rollResult, secondResult);
         await RespondAsync(embeds: entityItem.AsEmbedArray(), ephemeral: entityItem.IsEphemeral, components: entityItem.AsMessageComponent());
     }
 }
 
-public class OracleComponents : InteractionModuleBase<SocketInteractionContext<SocketMessageComponent>>
+public class OracleComponents : InteractionModuleBase<SocketInteractionContext<SocketMessageComponent>> 
 {
     private readonly IOracleRoller roller;
+    private readonly IEmoteRepository emotes;
 
-    public OracleComponents(IOracleRepository Oracles, IOracleRoller roller)
+    public OracleComponents(IServiceProvider services)
     {
-        OracleRepo = Oracles;
-        this.roller = roller;
+        OracleRepo = services.GetRequiredService<IOracleRepository>();
+        this.roller = services.GetRequiredService<IOracleRoller>();
+        this.emotes = services.GetRequiredService<IEmoteRepository>();
     }
 
     public IOracleRepository OracleRepo { get; }
@@ -58,10 +62,10 @@ public class OracleComponents : InteractionModuleBase<SocketInteractionContext<S
     public async Task FollowUp(string[] values)
     {
         var builder = Context.Interaction.Message.Embeds.FirstOrDefault().ToEmbedBuilder();
-        foreach (var value in values)
+        foreach (var oracleId in values)
         {
-            var oracle = OracleRepo.GetOracles().FirstOrDefault(o => o.Id == value);
-            if (oracle == null) throw new ArgumentException($"Unknown oracle: {oracle}");
+            var oracle = OracleRepo.GetOracleById(oracleId);
+            if (oracle == null) throw new ArgumentException($"Unknown oracle: {oracleId}");
             var rollResult = roller.GetRollResult(oracle);
 
             builder = DiscordOracleBuilder.AddFieldsToBuilder(rollResult, builder);
@@ -75,5 +79,16 @@ public class OracleComponents : InteractionModuleBase<SocketInteractionContext<S
             msg.Components = comp.Build();
 
         }).ConfigureAwait(false);
+    }
+
+    [ComponentInteraction("roll-oracle:*")]
+    public async Task RollOracle(string oracleName)
+    {
+        var firstOracle = OracleRepo.GetOracleById(oracleName);
+        if (firstOracle == null) throw new ArgumentException($"Unknown oracle: {oracleName}");
+        var rollResult = roller.GetRollResult(firstOracle);
+
+        var entityItem = new DiscordOracleBuilder(emotes, rollResult);
+        await RespondAsync(embeds: entityItem.AsEmbedArray(), ephemeral: entityItem.IsEphemeral, components: entityItem.AsMessageComponent());
     }
 }
