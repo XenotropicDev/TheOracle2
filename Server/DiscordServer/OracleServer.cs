@@ -16,6 +16,8 @@ using Server.DiscordServer;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using TheOracle2;
+using Microsoft.Extensions.Caching.Memory;
+using Discord.Net.Queue;
 
 class OracleServer
 {
@@ -31,20 +33,28 @@ class OracleServer
         var handler = services.GetRequiredService<CommandHandler>();
         var db = services.GetRequiredService<ApplicationContext>();
 
-        //db.Database.EnsureDeleted();
-        db.Database.EnsureCreated();
+        try
+        {
+            Log.Logger = logger;
+            
+            //db.Database.EnsureDeleted();
+            await db.Database.EnsureCreatedAsync();
 
-        await handler.Initialize().ConfigureAwait(false);
+            await handler.Initialize().ConfigureAwait(false);
 
-        await client.LoginAsync(Discord.TokenType.Bot, GetToken(services)).ConfigureAwait(false);
+            await client.LoginAsync(TokenType.Bot, GetToken(services)).ConfigureAwait(false);
 
-        //client.Ready += ClientReady;
-        client.Log += LogAsync;
-        commands.Log += LogAsync;
+            client.Log += LogAsync;
+            commands.Log += LogAsync;
 
-        await client.StartAsync();
+            await client.StartAsync();
 
-        await client.SetGameAsync("TheOracle v2.1 - Alpha", "", ActivityType.Playing).ConfigureAwait(false);
+            await client.SetGameAsync("TheOracle v2.1 - Alpha", "", ActivityType.Playing).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            logger.Error(ex.ToString());
+        }
 
         await Task.Delay(Timeout.Infinite);
     }
@@ -57,25 +67,32 @@ class OracleServer
             return Task.CompletedTask;
         }
 
+        if (msg.Exception is Discord.Net.HttpException httpEx)
+        {
+            string json = (httpEx.Request is JsonRestRequest jsonRequest) ? $"\n" + jsonRequest.Json : "";
+            logger.Warning(httpEx, httpEx.Reason + json);
+            return Task.CompletedTask;
+        }
+
         switch (msg.Severity)
         {
             case LogSeverity.Critical:
-                logger.Fatal(msg.Exception, msg.Message);
+                logger.Fatal(msg.ToString());
                 break;
             case LogSeverity.Error:
-                logger.Error(msg.Exception, msg.Message);
+                logger.Error(msg.ToString());
                 break;
             case LogSeverity.Warning:
-                logger.Warning(msg.Exception, msg.Message);
+                logger.Warning(msg.ToString());
                 break;
             case LogSeverity.Info:
-                logger.Information(msg.Exception, msg.Message);
+                logger.Information(msg.ToString());
                 break;
             case LogSeverity.Verbose:
-                logger.Verbose(msg.Exception, msg.Message);
+                logger.Verbose(msg.ToString());
                 break;
             case LogSeverity.Debug:
-                logger.Debug(msg.Exception, msg.Message);
+                logger.Debug(msg.ToString());
                 break;
             default:
                 break;
@@ -91,21 +108,24 @@ class OracleServer
             .SetBasePath(Directory.GetCurrentDirectory())
             .Build();
 
+        var clientConfig = new DiscordSocketConfig { MessageCacheSize = 100, LogLevel = LogSeverity.Debug, GatewayIntents = GatewayIntents.DirectMessages | GatewayIntents.GuildMessages | GatewayIntents.Guilds };
+
         var dbConn = config.GetSection("dbConnectionString").Value;
         var dbPass = config.GetSection("dbPassword").Value;
         var dbConnBuilder = new NpgsqlConnectionStringBuilder(dbConn) {Password = dbPass };
 
-        var interactionServiceConfig = new InteractionServiceConfig()  { UseCompiledLambda = true };
-        var logger = new LoggerConfiguration()
+        var interactionServiceConfig = new InteractionServiceConfig()  { UseCompiledLambda = true, LogLevel = LogSeverity.Debug };
+        logger = new LoggerConfiguration()
                     .WriteTo.Console()
                     .WriteTo.File("log.txt", rollingInterval: RollingInterval.Day)
-                    .MinimumLevel.Information()
+                    .Enrich.FromLogContext()
+                    .MinimumLevel.Debug()
                     .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning)
                     .CreateLogger();
 
         return new ServiceCollection()
             .AddSingleton<IConfiguration>(config)
-            .AddSingleton<DiscordSocketClient>()
+            .AddSingleton(new DiscordSocketClient(clientConfig))
             .AddSingleton(interactionServiceConfig)
             .AddSingleton<InteractionService>()
             .AddSingleton<CommandHandler>()
@@ -113,7 +133,9 @@ class OracleServer
             .AddSingleton<IOracleRoller, RandomOracleRoller>()
             .AddSingleton<IOracleRepository, JsonOracleRepository>()
             .AddSingleton<IMoveRepository, JsonMoveRepository>()
+            .AddSingleton<IAssetRepository, JsonAssetRepository>()
             .AddSingleton<IEmoteRepository, HardCodedEmoteRepo>()
+            .AddSingleton<IMemoryCache, MemoryCache>()
             .AddLogging(builder => builder.AddSerilog(logger)
                 .AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Warning)
                 .AddFilter("Microsoft.EntityFrameworkCore.Infrastructure", LogLevel.Warning)
@@ -125,10 +147,7 @@ class OracleServer
     private static string GetToken(IServiceProvider services)
     {
         var token = Environment.GetEnvironmentVariable("DiscordToken");
-        if (token == null)
-        {
-            token = services.GetRequiredService<IConfiguration>().GetSection("DiscordToken").Value;
-        }
+        token ??= services.GetRequiredService<IConfiguration>().GetSection("DiscordToken").Value;
 
         if (token == null)
         {

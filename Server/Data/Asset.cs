@@ -1,4 +1,5 @@
 ﻿namespace TheOracle2.Data;
+
 public class Ability
 {
     [JsonProperty("$id")]
@@ -111,6 +112,9 @@ public class Asset
 
     [JsonProperty("Aliases")]
     public List<string> Aliases { get; set; }
+
+    [JsonIgnore]
+    public AssetRoot? Parent { get; set; }
 }
 
 public class Attachments
@@ -176,7 +180,7 @@ public class Effect
 public class Input
 {
     [JsonProperty("Input Type")]
-    public string InputType { get; set; }
+    public AssetInput InputType { get; set; }
 
     [JsonProperty("$id")]
     public string Id { get; set; }
@@ -215,7 +219,13 @@ public class Input
     public int? Filled { get; set; }
 }
 
-
+public enum AssetInput
+{
+    Clock,
+    Select,
+    Number,
+    Text
+}
 
 public class AssetMove
 {
@@ -318,4 +328,3 @@ public class AssetUsage
     [JsonProperty("Shared")]
     public bool Shared { get; set; }
 }
-

@@ -10,6 +10,7 @@ public class ApplicationContext : DbContext
 {
     public DbSet<PlayerCharacter> PlayerCharacters { get; set; }
     public DbSet<TrackData> ProgressTrackers { get; set; }
+    public DbSet<AssetData> CharacterAssets { get; set; }
 
     public ApplicationContext(DbContextOptions options) : base(options)
     {
@@ -20,7 +21,7 @@ public class ApplicationContext : DbContext
     {
         var stringArrayToCSVConverter = new ValueConverter<IList<string>, string>(
             v => JsonConvert.SerializeObject(v),
-            v => JsonConvert.DeserializeObject<IList<string>>(v)
+            v => JsonConvert.DeserializeObject<IList<string>>(v) ?? new List<string>()
             );
 
         var valueComparer = new ValueComparer<IList<string>>(
@@ -30,6 +31,8 @@ public class ApplicationContext : DbContext
             );
 
         modelBuilder.Entity<PlayerCharacter>().Property(pc => pc.Impacts).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
+        modelBuilder.Entity<AssetData>().Property(a => a.SelectedAbilities).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
+        modelBuilder.Entity<AssetData>().Property(a => a.Inputs).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
 
     }
 }

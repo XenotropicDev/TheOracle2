@@ -12,9 +12,12 @@ namespace TheOracle2;
 [Group("player-character", "Create and manage player characters.")]
 public class PlayerCharacterCommandGroup : InteractionModuleBase
 {
-    public PlayerCharacterCommandGroup(ApplicationContext dbContext)
+    private readonly IEmoteRepository emotes;
+
+    public PlayerCharacterCommandGroup(ApplicationContext dbContext, IEmoteRepository emotes)
     {
         DbContext = dbContext;
+        this.emotes = emotes;
     }
 
     public ApplicationContext DbContext { get; }
@@ -30,11 +33,11 @@ public class PlayerCharacterCommandGroup : InteractionModuleBase
         await DeferAsync();
         var message = await Context.Interaction.GetOriginalResponseAsync();
 
-        var pcData = new PlayerCharacter(name, edge, heart, iron, shadow, wits, avatarImageURL, Context.Interaction.User.Id, Context.Interaction.GuildId ?? Context.Interaction.ChannelId, message.Id);
+        var pcData = new PlayerCharacter(name, edge, heart, iron, shadow, wits, avatarImageURL, Context.Interaction.User.Id, Context.Interaction.GuildId ?? Context.Interaction.ChannelId, message.Id, message.Channel.Id);
         DbContext.PlayerCharacters.Add(pcData);
         await DbContext.SaveChangesAsync();
 
-        var pcEntity = new PlayerCharacterEntity(pcData);
+        var pcEntity = new PlayerCharacterEntity(pcData, emotes);
         var characterSheet = await pcEntity.EntityAsResponse(FollowupAsync).ConfigureAwait(false);
         pcData.MessageId = characterSheet.Id;
 
@@ -52,7 +55,13 @@ public class PlayerCharacterCommandGroup : InteractionModuleBase
 
         pc.Impacts.Add(impact);
 
-        await RespondAsync($"Impacts will update next time you trigger an interaction on that character card", ephemeral: true).ConfigureAwait(false);
+        var saveTask = DbContext.SaveChangesAsync().ConfigureAwait(false);
+
+        await RespondAsync($"Impact added", ephemeral: true).ConfigureAwait(false);
+
+        await pc.UpdateCardDisplay(Context.Client as DiscordSocketClient, emotes);
+        
+        await saveTask;
     }
 
     [SlashCommand("debilities", "Manage a player character's Debilities (IS p. 36). [equivalent to impacts]")]
@@ -63,7 +72,13 @@ public class PlayerCharacterCommandGroup : InteractionModuleBase
 
         pc.Impacts.Add(impact);
 
-        await RespondAsync($"Debilities will update next time you trigger an interaction on that character card", ephemeral: true).ConfigureAwait(false);
+        var saveTask = DbContext.SaveChangesAsync().ConfigureAwait(false);
+        
+        await RespondAsync($"Debility added", ephemeral: true).ConfigureAwait(false);
+        
+        await pc.UpdateCardDisplay(Context.Client as DiscordSocketClient, emotes);
+
+        await saveTask;
     }
 
     [SlashCommand("earned-xp", "Set a player character's earned xp.")]
@@ -75,8 +90,13 @@ public class PlayerCharacterCommandGroup : InteractionModuleBase
         if (pc == null) throw new ArgumentException($"Unknown character: {id}");
 
         pc.XpGained = earnedXp;
-        await RespondAsync($"{pc.Name}'s XP was set to **{earnedXp}**. Their card will be updated the next time you click a button on the card.", ephemeral: true).ConfigureAwait(false);
-        return;
+
+        var saveTask = DbContext.SaveChangesAsync().ConfigureAwait(false);
+
+        await RespondAsync($"{pc.Name}'s XP was set to **{earnedXp}**.", ephemeral: true).ConfigureAwait(false);
+        await pc.UpdateCardDisplay(Context.Client as DiscordSocketClient, emotes);
+
+        await saveTask;
     }
 
     [SlashCommand("delete", "Delete a player character, removing them from the database and search results.")]
@@ -106,11 +126,15 @@ public class PlayerCharacterCommandGroup : InteractionModuleBase
 public class PcCardComponents : InteractionModuleBase<SocketInteractionContext<SocketMessageComponent>>
 {
     private readonly ILogger<PcCardComponents> logger;
+    private readonly DiscordSocketClient client;
+    private readonly IEmoteRepository emotes;
 
-    public PcCardComponents(ApplicationContext dbContext, ILogger<PcCardComponents> logger)
+    public PcCardComponents(ApplicationContext dbContext, ILogger<PcCardComponents> logger, DiscordSocketClient client, IEmoteRepository emotes)
     {
         DbContext = dbContext;
         this.logger = logger;
+        this.client = client;
+        this.emotes = emotes;
     }
 
     //public GuildPlayer GuildPlayer => GuildPlayer.GetAndAddIfMissing(DbContext, Context);
@@ -272,8 +296,10 @@ public class PcCardComponents : InteractionModuleBase<SocketInteractionContext<S
         }
 
         DbContext.PlayerCharacters.Remove(pc);
+        var saveTask = DbContext.SaveChangesAsync().ConfigureAwait(false);
 
-        await DeleteOriginalResponseAsync();
+        await DeleteOriginalResponseAsync().ConfigureAwait(false);
+        await saveTask;
     }
 
     private async Task UpdatePCValue(string pcId, Action<PlayerCharacter> change)
@@ -282,22 +308,28 @@ public class PcCardComponents : InteractionModuleBase<SocketInteractionContext<S
         {
             throw new ArgumentException($"Unable to parse integer from {pcId}");
         }
+
         var pc = await DbContext.PlayerCharacters.FindAsync(id);
         if (pc == null) throw new ArgumentException($"Unknown character: {id}");
 
-        if (pc.MessageId != Context.Interaction.Message.Id)
+        change(pc);
+
+        // Check if we need to update the messageId or channelId
+        if (pc.MessageId != Context.Interaction.Message.Id || pc.ChannelId != Context.Interaction.Channel.Id)
         {
             pc.MessageId = Context.Interaction.Message.Id;
             pc.ChannelId = Context.Interaction.Channel.Id;
         }
 
-        change(pc);
-        //GuildPlayer.LastUsedPcId = Id;
+        var saveTask = DbContext.SaveChangesAsync().ConfigureAwait(false);
 
-        var entity = new PlayerCharacterEntity(pc);
-        await Context.Interaction.UpdateAsync(msg =>
+        var entity = new PlayerCharacterEntity(pc, emotes);
+
+        await Context!.Interaction.UpdateAsync(msg =>
         {
             msg.Embeds = entity.AsEmbedArray();
         }).ConfigureAwait(false);
+
+        await saveTask;
     }
 }

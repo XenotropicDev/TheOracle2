@@ -1,16 +1,15 @@
-﻿namespace TheOracle2
+﻿namespace TheOracle2;
+
+/// <summary>
+/// An interface for adapting objects into postable discord messages
+/// </summary>
+public interface IDiscordEntity
 {
-    /// <summary>
-    /// An interface for adapting objects into postable discord messages
-    /// </summary>
-    public interface IDiscordEntity
-    {
-        EmbedBuilder? GetEmbed();
+    EmbedBuilder? GetEmbed();
 
-        ComponentBuilder? GetComponents();
+    ComponentBuilder? GetComponents();
 
-        bool IsEphemeral { get; set; }
+    bool IsEphemeral { get; set; }
 
-        string? DiscordMessage { get; set; }
-    }
+    string? DiscordMessage { get; set; }
 }

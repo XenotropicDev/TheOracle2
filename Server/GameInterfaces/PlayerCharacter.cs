@@ -1,9 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Discord.Interactions;
+﻿using Discord.Net.Rest;
+using Discord.WebSocket;
 using Microsoft.EntityFrameworkCore;
+using Server.Interactions.Helpers;
+using TheOracle2.UserContent;
 
 namespace TheOracle2.GameObjects;
 
+[Index(nameof(MessageId))]
 public class PlayerCharacter
 {
     private int momentum;
@@ -16,7 +19,7 @@ public class PlayerCharacter
     private int heart;
     private int edge;
 
-    public PlayerCharacter(string name, int edge, int heart, int iron, int shadow, int wits, string? AvatarImageUrl, ulong ownerId, ulong? guildId, ulong messageId) : this()
+    public PlayerCharacter(string name, int edge, int heart, int iron, int shadow, int wits, string? AvatarImageUrl, ulong ownerId, ulong? guildId, ulong messageId, ulong channelId) : this()
     {
         Name = name;
         Edge = edge;
@@ -27,6 +30,7 @@ public class PlayerCharacter
         UserId = ownerId;
         DiscordGuildId = guildId;
         MessageId = messageId;
+        ChannelId = channelId;
         Image = AvatarImageUrl;
     }
 
@@ -48,6 +52,7 @@ public class PlayerCharacter
     public int Id { get; set; }
     public ulong UserId { get; set; }
     public ulong? DiscordGuildId { get; set; }
+
     public ulong MessageId { get; set; }
     public ulong ChannelId { get; set; }
     public string Name { get; set; }
@@ -68,5 +73,38 @@ public class PlayerCharacter
     internal void BurnMomentum()
     {
         Momentum = Math.Max(2 - Impacts.Count, 0);
+    }
+
+    internal int GetStat(RollableStat stat)
+    {
+        return stat switch
+        {
+            RollableStat.Edge => Edge,
+            RollableStat.Heart => Heart,
+            RollableStat.Iron => Iron,
+            RollableStat.Shadow => Shadow,
+            RollableStat.Wits => Wits,
+            RollableStat.Health => Health,
+            RollableStat.Spirit => Spirit,
+            RollableStat.Supply => Supply,
+            RollableStat.Momentum => Momentum,
+            _ => 0,
+        };
+    }
+
+    public async Task<IUserMessage?> GetPCMessage(DiscordSocketClient client)
+    {
+        if (await client.Rest.GetChannelAsync(ChannelId).ConfigureAwait(true) is not IMessageChannel channel) return null;
+
+        return await channel.GetMessageAsync(MessageId).ConfigureAwait(false) as IUserMessage;
+    }
+
+    public async Task UpdateCardDisplay(DiscordSocketClient client, IEmoteRepository emotes)
+    {
+        var msg = await GetPCMessage(client).ConfigureAwait(true);
+        if (msg == null) return;
+
+        var entity = new PlayerCharacterEntity(this, emotes);
+        await msg.ModifyAsync(msg => msg.Embeds = entity.AsEmbedArray()).ConfigureAwait(false);
     }
 }

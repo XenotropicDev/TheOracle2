@@ -47,14 +47,7 @@ public class CommandHandler
 
     public async Task RegisterCommands()
     {
-        try
-        {
-            await _commands.RegisterCommandsToGuildAsync(756890506830807071, true);
-        }
-        catch (Exception)
-        {
-            throw;
-        }
+        await _commands.RegisterCommandsToGuildAsync(756890506830807071, true);
     }
 
     private Task _commands_AutocompleteHandlerExecuted(IAutocompleteHandler arg1, Discord.IInteractionContext arg2, IResult arg3)
@@ -69,56 +62,143 @@ public class CommandHandler
 
     private async Task AutoCompleteExecuted(SocketAutocompleteInteraction arg)
     {
-        logger.LogDebug($"{arg.User.Username} is executing Autocomplete Interaction {arg.Data.CommandName} with id:{arg.Data.CommandId}");
         var ctx = new SocketInteractionContext(_discord, arg);
-        await _commands.ExecuteCommandAsync(ctx, _services);
+        try
+        {
+            logger.LogDebug($"{arg.User.Username} is executing Autocomplete Interaction {arg.Data.CommandName} with id:{arg.Data.CommandId}");
+            await _commands.ExecuteCommandAsync(ctx, _services);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex.ToString());
+
+            if (!ctx.Interaction.HasResponded)
+            {
+                await ctx.Interaction.RespondAsync($"An error occoured: {ex.Message}", ephemeral: true);
+            }
+        }
     }
 
     private async Task ButtonExecuted(SocketMessageComponent arg)
     {
-        logger.LogInformation($"{arg.User.Username} is executing Button Interaction {arg.Data.CustomId} with value: '{arg.Data.Value}'.");
         var ctx = new SocketInteractionContext<SocketMessageComponent>(_discord, arg);
-        await _commands.ExecuteCommandAsync(ctx, _services);
+        try
+        {
+            logger.LogInformation($"{arg.User.Username} is executing Button Interaction {arg.Data.CustomId} with value: '{arg.Data.Value}'.");
+            await _commands.ExecuteCommandAsync(ctx, _services);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex.ToString());
+
+            if (!ctx.Interaction.HasResponded)
+            {
+                await ctx.Interaction.RespondAsync($"An error occoured: {ex.Message}", ephemeral: true);
+            }
+        }
     }
 
     private async Task MessageCommandExecuted(SocketMessageCommand arg)
     {
-        logger.LogInformation($"{arg.User.Username} is executing Message Command {arg.Data.Name} with value(s): '{string.Join(", ", arg.Data.Options)}'.");
         var ctx = new SocketInteractionContext<SocketMessageCommand>(_discord, arg);
-        await _commands.ExecuteCommandAsync(ctx, _services);
+        try
+        {
+            logger.LogInformation($"{arg.User.Username} is executing Message Command {arg.CommandName}");
+            await _commands.ExecuteCommandAsync(ctx, _services);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex.ToString());
+
+
+            if (!ctx.Interaction.HasResponded)
+            {
+                await ctx.Interaction.RespondAsync($"An error occoured: {ex.Message}", ephemeral: true);
+            }
+        }
     }
 
     private async Task ModalSubmitted(SocketModal arg)
     {
-        logger.LogInformation($"{arg.User.Username} is submitting a Modal for {arg.Data.CustomId} with {arg.Data.Components.Count} Components.");
         var ctx = new SocketInteractionContext<SocketModal>(_discord, arg);
-        await _commands.ExecuteCommandAsync(ctx, _services);
+        try
+        {
+            logger.LogInformation($"{arg.User.Username} is submitting a Modal for {arg.Data.CustomId} with {arg.Data.Components.Count} Components.");
+            await _commands.ExecuteCommandAsync(ctx, _services);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex.ToString());
+        }
     }
 
     private async Task Ready()
     {
-        await RegisterCommands();
-        _discord.Ready -= Ready;
+        try
+        {
+            await RegisterCommands();
+            _discord.Ready -= Ready;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex.ToString());
+        }
     }
 
     private async Task SelectExecuted(SocketMessageComponent arg)
     {
-        logger.LogInformation($"{arg.User.Username} is executing Select Interaction {arg.Data.CustomId} with value(s): '{string.Join(", ", arg.Data.Values ?? Array.Empty<string>())}'.");
         var ctx = new SocketInteractionContext<SocketMessageComponent>(_discord, arg);
-        await _commands.ExecuteCommandAsync(ctx, _services);
+        try
+        {
+            logger.LogInformation($"{arg.User.Username} is executing Select Interaction {arg.Data.CustomId} with value(s): '{string.Join(", ", arg.Data.Values ?? Array.Empty<string>())}'.");
+            await _commands.ExecuteCommandAsync(ctx, _services);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex.ToString());
+
+            if (!ctx.Interaction.HasResponded)
+            {
+                await ctx.Interaction.RespondAsync($"An error occoured: {ex.Message}", ephemeral: true);
+            }
+        }
     }
 
     private async Task SlashCommandExecuted(SocketSlashCommand arg)
     {
-        logger.LogInformation($"{arg.User.Username} is executing Slash Command {arg.Data.Name} with value(s): '{string.Join(", ", arg.Data.Options)}'.");
         var ctx = new SocketInteractionContext<SocketSlashCommand>(_discord, arg);
-        await _commands.ExecuteCommandAsync(ctx, _services);
+        try
+        {
+            logger.LogInformation($"{arg.User.Username} is executing Slash Command {arg.Data.Name} with value(s): '{string.Join(", ", arg.Data.Options)}'.");
+            await _commands.ExecuteCommandAsync(ctx, _services);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex.ToString());
+
+            if (!ctx.Interaction.HasResponded)
+            {
+                await ctx.Interaction.RespondAsync($"An error occoured: {ex.Message}", ephemeral: true);
+            }
+        }
     }
 
     private async Task UserCommandExecuted(SocketUserCommand arg)
     {
-        logger.LogInformation($"{arg.User.Username} is executing User Command {arg.Data.Name}");
         var ctx = new SocketInteractionContext<SocketUserCommand>(_discord, arg);
-        await _commands.ExecuteCommandAsync(ctx, _services);
+        try
+        {
+            logger.LogInformation($"{arg.User.Username} is executing User Command {arg.Data.Name}");
+            await _commands.ExecuteCommandAsync(ctx, _services);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex.ToString());
+
+            if (!ctx.Interaction.HasResponded)
+            {
+                await ctx.Interaction.RespondAsync($"An error occoured: {ex.Message}", ephemeral: true);
+            }
+        }
     }
 }

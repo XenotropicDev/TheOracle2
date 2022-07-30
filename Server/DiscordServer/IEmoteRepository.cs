@@ -31,6 +31,7 @@ public interface IEmoteRepository
     IEmote Suffer { get; }
     IEmote Threshold { get; }
     IEmote WithstandDamage { get; }
+    IEmote BurnMomentum { get; }
 
     /// <summary>
     /// A dictionary of all the emoji's. The underlying dictionary should be implemented with StringComparer.OrdinalIgnoreCase comparer.
@@ -56,6 +57,7 @@ public class HardCodedEmoteRepo : IEmoteRepository
         Adventure = new Emoji("🌐");
         AidYourAlly = new Emoji("👥");
         AskTheOracle = new Emoji("🔮");
+        BurnMomentum = new Emoji("🔥");
         CheckYourGear = new Emoji("🎒");
         Combat = new Emoji("⚔️");
         CompanionTakesAHit = new Emoji("🩸");
@@ -97,6 +99,7 @@ public class HardCodedEmoteRepo : IEmoteRepository
             {"Adventure", Adventure},
             {"Aid Your Ally", AidYourAlly},
             {"Ask The Oracle", AskTheOracle},
+            {"Burn Momentum", BurnMomentum},
             {"Check Your Gear", CheckYourGear},
             {"Combat", Combat},
             {"Companion Takes A Hit", CompanionTakesAHit},
@@ -128,6 +131,7 @@ public class HardCodedEmoteRepo : IEmoteRepository
     public IEmote Adventure { get; }
     public IEmote AidYourAlly { get; }
     public IEmote AskTheOracle { get; }
+    public IEmote BurnMomentum { get; }
     public IEmote CheckYourGear { get; }
     public IEmote Combat { get; }
     public IEmote CompanionTakesAHit { get; }

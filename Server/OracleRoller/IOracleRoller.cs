@@ -2,81 +2,65 @@
 using TheOracle2;
 using TheOracle2.Data;
 
-namespace Server.OracleRoller
+namespace Server.OracleRoller;
+
+public interface IOracleRoller
 {
-    public interface IOracleRoller
+    OracleRollResult GetRollResult(Oracle oracle);
+}
+
+public class RandomOracleRoller : IOracleRoller
+{
+    private readonly Random random;
+    private readonly IOracleRepository oracleRepo;
+    private readonly IEmoteRepository emotes;
+
+    public RandomOracleRoller(Random random, IOracleRepository oracleRepo, IEmoteRepository emotes)
     {
-        OracleRollResult GetRollResult(Oracle oracle);
+        this.random = random;
+        this.oracleRepo = oracleRepo;
+        this.emotes = emotes;
     }
 
-    public class RandomOracleRoller : IOracleRoller
+    public OracleRollResult GetRollResult(Oracle oracle)
     {
-        private readonly Random random;
-        private readonly IOracleRepository oracleRepo;
-        private readonly IEmoteRepository emotes;
-
-        public RandomOracleRoller(Random random, IOracleRepository oracleRepo, IEmoteRepository emotes)
+        var results = new OracleRollResult
         {
-            this.random = random;
-            this.oracleRepo = oracleRepo;
-            this.emotes = emotes;
-        }
+            Oracle = oracle
+        };
 
-        public OracleRollResult GetRollResult(Oracle oracle)
+        foreach (var followUpId in oracle.Usage?.Suggestions?.OracleRolls ?? new List<string>())
         {
-            var results = new OracleRollResult
+            var followUpOracle = oracleRepo.GetOracleById(followUpId);
+            if (followUpOracle?.Oracles?.Count > 0)
             {
-                Oracle = oracle
-            };
-
-            foreach (var followUpId in oracle.Usage?.Suggestions?.OracleRolls ?? new List<string>())
-            {
-                var followUpOracle = oracleRepo.GetOracleById(followUpId);
-                if (followUpOracle?.Oracles?.Count > 0)
+                foreach (var subTable in followUpOracle.Oracles)
                 {
-                    foreach (var subTable in followUpOracle.Oracles)
-                    {
-                        results.FollowUpTables.Add(new FollowUpItem(subTable.Id, subTable.Name, emotes));
-                    }
-                }
-                else if (followUpOracle != null)
-                {
-                    results.FollowUpTables.Add(new FollowUpItem(followUpId, followUpOracle.Name, emotes));
+                    results.FollowUpTables.Add(new FollowUpItem(subTable.Id, subTable.Name, emotes));
                 }
             }
-
-            if (oracle.Table?.Count > 0)
+            else if (followUpOracle != null)
             {
-                var roll = random.Next(1, 101);
-                var tableItem = oracle.Table.FirstOrDefault(t => t.CompareTo(roll) == 0);
-
-                if (tableItem != null)
-                {
-                    results.WithTableResult(tableItem, roll);
-                }
+                results.FollowUpTables.Add(new FollowUpItem(followUpId, followUpOracle.Name, emotes));
             }
+        }
 
-            foreach (var subOracle in oracle.Oracles ?? new List<Oracle>())
+        if (oracle.Table?.Count > 0)
+        {
+            var roll = random.Next(1, 101);
+            var tableItem = oracle.Table.FirstOrDefault(t => t.CompareTo(roll) == 0);
+
+            if (tableItem != null)
             {
-                results.ChildResults.Add(GetRollResult(subOracle));
+                results.WithTableResult(tableItem, roll);
             }
-
-            return results;
         }
-    }
 
-    public class RandomTableRoller : IOracleRoller
-    {
-        private readonly Random random;
-
-        public RandomTableRoller(Random random)
+        foreach (var subOracle in oracle.Oracles ?? new List<Oracle>())
         {
-            this.random = random;
+            results.ChildResults.Add(GetRollResult(subOracle));
         }
 
-        public OracleRollResult GetRollResult(Oracle oracle)
-        {
-            throw new NotImplementedException();
-        }
+        return results;
     }
 }
