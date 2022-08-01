@@ -7,7 +7,7 @@ TheOracle2 is a complete rework of TheOracle using new discord bot features, and
 ## Joining the bot to your discord server
 To add TheOracle to a discord server click [this link](https://discord.com/api/oauth2/authorize?client_id=704480988561932389&permissions=431644532800&scope=bot%20applications.commands) and then select the server you wish to add the bot to.
 
-If you need a discord server for your game you can use [this link](https://discord.new/hevebmEhcjCa) to get started with a prexisting discord server template.
+If you need a discord server for your game you can use [this link](https://discord.new/hevebmEhcjCa) to get started with a preexisting discord server template.
 
 ## Other features
 #### Recreate message:
@@ -19,7 +19,7 @@ You can recreate a message, similar to the old ⏬ reaction method by right clic
 note: This is for people that want to change the source code and run their own instance of the bot. It's not something most users will want/need to do.
 * Install PostgreSQL Server
 * Create a new database and db user for the bot to use
-* Create a database settings file named `dbSettings.json` so the bot knows how to connect. It should have a strcutre similar to this:
+* Create a database settings file named `dbSettings.json` so the bot knows how to connect. It should have a structure similar to this:
 ```
 {
     "dbConnectionString":"Host=localhost;Port=5432;Database=NameOfDbYouCreated;Username=BotDbUser",
