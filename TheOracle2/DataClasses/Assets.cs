@@ -1,199 +1,150 @@
-﻿using TheOracle2.DataClasses;
-using TheOracle2.UserContent;
+﻿namespace TheOracle2.DataClasses;
 
-namespace OracleData;
-
-public record Ability
+public class Attachments
 {
-    [JsonIgnore]
+    [JsonProperty("Asset Types")]
+    public List<string> AssetTypes { get; set; }
+    public object Max { get; set; }
+}
+
+public class Set
+{
+    public string Key { get; set; }
+    public string Type { get; set; }
+    public string Value { get; set; }
+
+}
+
+public class Input
+{
     public string Id { get; set; }
-
-    [JsonProperty("Alter Moves")]
-    public virtual IList<AlterMove> AlterMoves { get; set; }
-
-    [JsonProperty("Alter Properties")]
-    public virtual AlterProperties AlterProperties { get; set; }
-
-    [JsonProperty("Counter")]
-    public virtual Counter Counter { get; set; }
-
-    [JsonProperty("Enabled")]
-    public bool Enabled { get; set; }
-
-    [JsonProperty("Input")]
-    public IList<string> Input { get; set; }
-
-    public virtual AssetMove Move { get; set; }
-
-    [JsonProperty("Text")]
-    public string Text { get; set; }
-}
-
-public record AlterProperties
-{
-    [JsonIgnore]
-    public int Id { get; set; }
-    [JsonProperty("Condition Meter")]
-    public virtual ConditionMeter ConditionMeter { get; set; }
-
-    [JsonProperty("Track")]
-    public virtual Track Track { get; set; }
-}
-
-public record AssetRoot
-{
-    [JsonIgnore]
-    public int Id { get; set; }
-    [JsonProperty("Assets")]
-    public virtual IList<Asset> Assets { get; set; }
-
-    [JsonProperty("Name")]
     public string Name { get; set; }
 
-    [JsonProperty("Source")]
-    public virtual Source Source { get; set; }
+    [JsonProperty("Input Type")]
+    public string InputType { get; set; }
+    public bool Adjustable { get; set; }
+    public List<Set> Sets { get; set; }
+    public List<Option> Options { get; set; }
+    public int Step { get; set; }
+    public int Min { get; set; }
+    public int Value { get; set; }
 
-    [JsonProperty("Tags")]
-    public IList<string> Tags { get; set; }
+    [JsonProperty("Clock Type")]
+    public string ClockType { get; set; }
+    public int? Segments { get; set; }
+    public int? Filled { get; set; }
 }
 
-public record Asset
+public class ConditionMeter
 {
-    [JsonIgnore]
+    public int Min { get; set; }
+    public int Value { get; set; }
     public string Id { get; set; }
-
-    [JsonIgnore]
-    public virtual IList<OracleGuild> OracleGuilds { get; set; }
-
-    [JsonProperty("Abilities")]
-    public virtual IList<Ability> Abilities { get; set; }
-
-    [JsonProperty("Aliases")]
-    public IList<string> Aliases { get; set; }
-
-    [JsonProperty("Asset Type")]
-    public string AssetType { get; set; }
-
-    [JsonProperty("Condition Meter")]
-    public virtual ConditionMeter ConditionMeter { get; set; }
-
-    [JsonProperty("Counter")]
-    public virtual Counter Counter { get; set; }
-
-    [JsonProperty("Description")]
-    public string Description { get; set; }
-
-    [JsonProperty("Input")]
-    public IList<string> Input { get; set; }
-
-    public bool Modules { get; set; }
-
-    [JsonProperty("Name")]
-    public string Name { get; set; }
-
-    [JsonProperty("Select")]
-    public virtual Select Select { get; set; }
-
-    [JsonProperty("Track")]
-    public virtual Track Track { get; set; }
-}
-
-public class AssetStatOptions
-{
-    [JsonIgnore]
-    public int Id { get; set; }
-
-    public string Select { get; set; }
-    public IList<string> Stats { get; set; }
-    public IList<string> Resources { get; set; }
-    public virtual IList<Special> Special { get; set; }
-    public IList<string> Legacies { get; set; }
-    public string Selection { get; set; }
-}
-
-public class AssetTrigger
-{
-    [JsonIgnore]
-    public int Id { get; set; }
-
-    public string Details { get; set; }
-    public string Text { get; set; }
-
-    [JsonProperty("Stat Options")]
-    public virtual AssetStatOptions StatOptions { get; set; }
-}
-
-public class AssetMove
-{
-    [JsonIgnore]
-    public int Id { get; set; }
-
-    public string Name { get; set; }
-    public string Category { get; set; }
-    public string Asset { get; set; }
-    public virtual IList<AssetTrigger> Triggers { get; set; }
-    public string Text { get; set; }
-
-    [JsonProperty("Progress Move")]
-    public bool ProgressMove { get; set; }
-}
-
-public record ConditionMeter
-{
-    [JsonIgnore]
-    public int Id { get; set; }
     public string Name { get; set; }
     public int Max { get; set; }
-
-    public IList<string> Conditions { get; set; }
-
-    [JsonProperty("Starts At")]
-    public int? StartsAt { get; set; }
+    public List<string> Conditions { get; set; }
+    public List<string> Aliases { get; set; }
 }
 
-public record Counter
+
+
+public class AlterMove
 {
-    [JsonIgnore]
-    public int Id { get; set; }
-    [JsonProperty("Name")]
-    public string Name { get; set; }
-
-    [JsonProperty("Starts At")]
-    public int StartsAt { get; set; }
-
-    [JsonProperty("Max")]
-    public int Max { get; set; }
+    public string Id { get; set; }
+    public List<string> Moves { get; set; }
+    public Trigger Trigger { get; set; }
+    public List<string> Alters { get; set; }
 }
 
-public record Track
+
+public class Effect
 {
-    [JsonIgnore]
-    public int Id { get; set; }
-    [JsonProperty("Name")]
-    public string Name { get; set; }
+    public string Text { get; set; }
+}
 
-    [JsonProperty("Starts At")]
-    public int StartsAt { get; set; }
+public class Burn
+{
+    public Trigger Trigger { get; set; }
+    public Effect Effect { get; set; }
+    public string Outcome { get; set; }
+}
 
-    [JsonProperty("Value")]
+public class Reset
+{
+    public Trigger Trigger { get; set; }
     public int Value { get; set; }
 }
 
-public record AlterMove
+public class AlterMomentum
 {
-    [JsonIgnore]
-    public int Id { get; set; }
-    [JsonProperty("Any Move")]
-    public bool AnyMove { get; set; }
-    public string Name { get; set; }
-    public virtual IList<AssetTrigger> Triggers { get; set; }
+    public List<Burn> Burn { get; set; }
+    public List<Reset> Reset { get; set; }
 }
 
-public record Select
+public class State
 {
-    [JsonIgnore]
-    public int Id { get; set; }
     public string Name { get; set; }
-    public string Type { get; set; }
-    public IList<string> Options { get; set; }
+    public bool Enabled { get; set; }
+
+    [JsonProperty("Disables asset")]
+    public bool DisablesAsset { get; set; }
 }
+
+public class AlterProperties
+{
+    public Attachments Attachments { get; set; }
+    public List<State> States { get; set; }
+
+    [JsonProperty("Condition Meter")]
+    public ConditionMeter ConditionMeter { get; set; }
+}
+
+public class Ability
+{
+    public string Id { get; set; }
+    public string Text { get; set; }
+    public bool Enabled { get; set; }
+
+    [JsonProperty("Alter Moves")]
+    public List<AlterMove> AlterMoves { get; set; }
+    public List<Move> Moves { get; set; }
+
+    [JsonProperty("Alter Momentum")]
+    public AlterMomentum AlterMomentum { get; set; }
+
+    [JsonProperty("Alter Properties")]
+    public AlterProperties AlterProperties { get; set; }
+    public List<Input> Inputs { get; set; }
+}
+
+public class Asset
+{
+    public Source Source { get; set; }
+
+    [JsonProperty("Asset Type")]
+    public string AssetType { get; set; }
+    public string Id { get; set; }
+    public string Name { get; set; }
+    public Display Display { get; set; }
+    public Usage Usage { get; set; }
+    public Attachments Attachments { get; set; }
+    public List<Input> Inputs { get; set; }
+
+    [JsonProperty("Condition Meter")]
+    public ConditionMeter ConditionMeter { get; set; }
+    public List<Ability> Abilities { get; set; }
+    public List<State> States { get; set; }
+    public string Requirement { get; set; }
+    public List<string> Aliases { get; set; }
+}
+
+public class AssetRoot
+{
+    public Source Source { get; set; }
+    public string Id { get; set; }
+    public string Name { get; set; }
+    public string Description { get; set; }
+    public Display Display { get; set; }
+    public List<Asset> Assets { get; set; }
+}
+

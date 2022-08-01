@@ -1,58 +1,38 @@
 ﻿namespace TheOracle2.DataClasses;
 
-public partial class Encounter
+public class Variant
 {
-    [JsonProperty("Description")]
-    public string Description { get; set; }
-
-    [JsonProperty("Drives")]
-    public IList<string> Drives { get; set; }
-
-    [JsonProperty("Features")]
-    public IList<string> Features { get; set; }
-
-    [JsonProperty("Name")]
+    [JsonProperty("$id")]
+    public string Id { get; set; }
+    public Source Source { get; set; }
     public string Name { get; set; }
-
+    public int Rank { get; set; }
+    public Display Display { get; set; }
+    public string Description { get; set; }
     public string Nature { get; set; }
+
+    [JsonProperty("Variant of")]
+    public string VariantOf { get; set; }
+    public List<string> Tags { get; set; }
+}
+
+public class EncounterRoot
+{
+    [JsonProperty("$id")]
+    public string Id { get; set; }
+    public string Name { get; set; }
+    public string Nature { get; set; }
+    public string Summary { get; set; }
+    public int Rank { get; set; }
+    public Display Display { get; set; }
+    public List<string> Features { get; set; }
+    public List<string> Drives { get; set; }
+    public List<string> Tactics { get; set; }
+    public string Description { get; set; }
 
     [JsonProperty("Quest Starter")]
     public string QuestStarter { get; set; }
-
-    [JsonProperty("Rank")]
-    public string Rank { get; set; }
-
     public Source Source { get; set; }
-
-    public string Summary { get; set; }
-
-    [JsonProperty("Tactics")]
-    public IList<string> Tactics { get; set; }
-
-    [JsonProperty("Variants", DefaultValueHandling = DefaultValueHandling.Ignore)]
-    public virtual IList<Variant> Variants { get; set; }
+    public List<Variant> Variants { get; set; }
 }
 
-public partial class EncountersRoot
-{
-    [JsonProperty("Encounters")]
-    public virtual IList<Encounter> Encounters { get; set; }
-
-    [JsonProperty("Name")]
-    public string Name { get; set; }
-
-    [JsonProperty("Source")]
-    public virtual Source Source { get; set; }
-}
-
-public partial class Variant
-{
-    [JsonProperty("Description")]
-    public string Description { get; set; }
-
-    [JsonProperty("Name")]
-    public string Name { get; set; }
-
-    [JsonProperty("Rank")]
-    public string Rank { get; set; }
-}

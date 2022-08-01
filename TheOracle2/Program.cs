@@ -20,8 +20,8 @@ internal class Program
     private ILogger<Program> logger;
     private InteractionService interactionService;
 
-    public static void Main(string[] args)
-    => new Program().MainAsync().GetAwaiter().GetResult();
+    public static async Task Main(string[] args)
+    => await new Program().MainAsync();
 
     public async Task MainAsync()
     {
@@ -94,6 +94,7 @@ internal class Program
     {
         return async (arg) =>
         {
+            Discord.Interactions.IResult result = null;
             switch (arg)
             {
                 case SocketSlashCommand slash:
@@ -106,7 +107,7 @@ internal class Program
                     else
                     {
                         var slashCtx = new SocketInteractionContext(client, slash);
-                        await interactionService.ExecuteCommandAsync(slashCtx, _services).ConfigureAwait(false);
+                        result = await interactionService.ExecuteCommandAsync(slashCtx, _services).ConfigureAwait(false);
                     }
                     break;
 
@@ -115,20 +116,25 @@ internal class Program
                     string valuesMsg = msgCtx.Interaction.Data.Values?.Count > 0 ? ", Values: " + string.Join(" & ", msgCtx.Interaction.Data.Values) : string.Empty;
                     logger.LogInformation($"{component.User.Username} triggered message component: {component.Data.CustomId}{valuesMsg}");
 
-                    await interactionService.ExecuteCommandAsync(msgCtx, _services).ConfigureAwait(false);
+                    result = await interactionService.ExecuteCommandAsync(msgCtx, _services).ConfigureAwait(false);
                     break;
 
                 case SocketAutocompleteInteraction auto:
                     logger.LogInformation($"{arg.User.Username} triggered an auto complete interaction for {auto.Data.CommandName}, value: {auto.Data.Current.Value}");
                     var autoCtx = new SocketInteractionContext(client, arg);
-                    await interactionService.ExecuteCommandAsync(autoCtx, _services).ConfigureAwait(false);
+                    result = await interactionService.ExecuteCommandAsync(autoCtx, _services).ConfigureAwait(false);
                     break;
 
                 default:
                     logger.LogInformation($"{arg.User.Username} triggered unknown interaction {arg.GetType()}: {arg.Data}");
                     var ctx = new SocketInteractionContext(client, arg);
-                    await interactionService.ExecuteCommandAsync(ctx, _services).ConfigureAwait(false);
+                    result = await interactionService.ExecuteCommandAsync(ctx, _services).ConfigureAwait(false);
                     break;
+            }
+
+            if (result?.IsSuccess == false)
+            {
+                logger.LogError(result.ToString());
             }
         };
     }
@@ -138,7 +144,7 @@ internal class Program
         if (options == null || !options.Any()) return String.Empty;
 
         var returnValue = String.Empty;
-        foreach(var option in options)
+        foreach (var option in options)
         {
             returnValue += $"{option.Name} {option.Value} {getOptionStringRecursive(option.Options)} ";
         }
@@ -206,7 +212,7 @@ internal class Program
 
     private ServiceProvider ConfigureServices(DiscordSocketClient client = null, CommandService command = null)
     {
-        var clientConfig = new DiscordSocketConfig { MessageCacheSize = 100, LogLevel = LogSeverity.Info }; //GatewayIntents = GatewayIntents.DirectMessages | GatewayIntents.GuildMessages | GatewayIntents.Guilds
+        var clientConfig = new DiscordSocketConfig { MessageCacheSize = 100, LogLevel = LogSeverity.Info, GatewayIntents = GatewayIntents.AllUnprivileged }; //GatewayIntents = GatewayIntents.DirectMessages | GatewayIntents.GuildMessages | GatewayIntents.Guilds
         client ??= new DiscordSocketClient(clientConfig);
 
         var config = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
@@ -242,25 +248,7 @@ internal class Program
     private async Task CheckDB()
     {
         var context = _services.GetRequiredService<EFContext>();
-#if DEBUG
-        Console.WriteLine($"You are debugging, do you want to recreate the database? (y/n)");
-        if (Console.ReadKey(true).Key == ConsoleKey.Y) { Console.WriteLine("Rebuilding Database..."); await context.RecreateDB().ConfigureAwait(true); }
-#endif
-
-        if (!context.HasTables())
-        {
-            Console.WriteLine($"\nDatabase not found, do you want to create it? (y/n)");
-
-            if (Console.ReadKey(true).Key == ConsoleKey.Y)
-            {
-                Console.WriteLine("Rebuilding Database...");
-                await context.RecreateDB().ConfigureAwait(true);
-            }
-            else
-            {
-                Console.WriteLine($"Cannot continue without database.");
-            }
-        }
+        await context.Database.EnsureCreatedAsync();
     }
 
     private string GetToken()

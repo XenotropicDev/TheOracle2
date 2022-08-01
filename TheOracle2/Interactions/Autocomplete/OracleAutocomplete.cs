@@ -83,15 +83,15 @@ public class OracleAutocomplete : AutocompleteHandler
         return list;
     }
 
-    private string GetOracleDisplayName(Oracle oracle, Tables t = null)
-    {
-        string name = oracle.Name;
-        if (oracle.Subcategory != null) name = $"{oracle.Subcategory.Name} - {oracle.Name}";
+    //private string GetOracleDisplayName(Oracle oracle, Tables t = null)
+    //{
+    //    string name = oracle.Name;
+    //    if (oracle.Subcategory != null) name = $"{oracle.Subcategory.Name} - {oracle.Name}";
 
-        if (t != null) name += $" - {t.Name}";
+    //    if (t != null) name += $" - {t.Name}";
 
-        return name;
-    }
+    //    return name;
+    //}
 
     protected override string GetLogString(IInteractionContext context) => $"Accessing DB from {context.Guild}-{context.Channel}";
 }
