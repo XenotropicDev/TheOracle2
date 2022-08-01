@@ -36,7 +36,9 @@ class OracleServer
         try
         {
             Log.Logger = logger;
-            
+
+            logger.Information($"Starting TheOracle v{Assembly.GetEntryAssembly().GetName().Version}");
+
             //db.Database.EnsureDeleted();
             await db.Database.EnsureCreatedAsync();
 
@@ -49,7 +51,7 @@ class OracleServer
 
             await client.StartAsync();
 
-            await client.SetGameAsync("TheOracle v2.1 - Beta", "", ActivityType.Playing).ConfigureAwait(false);
+            await client.SetGameAsync("TheOracle v2.0 - Beta", "", ActivityType.Playing).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
