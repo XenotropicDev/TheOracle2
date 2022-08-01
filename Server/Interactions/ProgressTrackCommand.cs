@@ -23,16 +23,18 @@ public class ProgressTrackCommand : InteractionModuleBase
 {
     private readonly IEmoteRepository emotes;
     private readonly IMoveRepository moves;
+    private readonly PlayerDataFactory playerDataFactory;
 
     public ApplicationContext DbContext { get; set; }
     public Random Random { get; }
 
-    public ProgressTrackCommand(ApplicationContext dbContext, Random random, IEmoteRepository emotes, IMoveRepository moves)
+    public ProgressTrackCommand(ApplicationContext dbContext, Random random, IEmoteRepository emotes, IMoveRepository moves, PlayerDataFactory playerDataFactory)
     {
         DbContext = dbContext;
         Random = random;
         this.emotes = emotes;
         this.moves = moves;
+        this.playerDataFactory = playerDataFactory;
     }
 
     //[SlashCommand("vow", "Create a vow progress track for the Swear an Iron Vow move.")]
@@ -98,7 +100,7 @@ public class ProgressTrackCommand : InteractionModuleBase
     int score = 0)
     {
         //await DeferAsync();
-        ProgressTrack track = new(Random, rank, emotes, moves, title, description, score);        
+        ProgressTrack track = new(Random, rank, emotes, moves, playerDataFactory, Context.User.Id, title, description, score);        
         DbContext.ProgressTrackers.Add(track.TrackData);
         await DbContext.SaveChangesAsync();
 
@@ -111,13 +113,15 @@ public class TrackInteractions : InteractionModuleBase<SocketInteractionContext<
     private readonly Random random;
     private readonly IEmoteRepository emotes;
     private readonly IMoveRepository moves;
+    private readonly PlayerDataFactory playerDataFactory;
 
-    public TrackInteractions(ApplicationContext db, Random random, IEmoteRepository emotes, IMoveRepository moves)
+    public TrackInteractions(ApplicationContext db, Random random, IEmoteRepository emotes, IMoveRepository moves, PlayerDataFactory playerDataFactory)
     {
         Db = db;
         this.random = random;
         this.emotes = emotes;
         this.moves = moves;
+        this.playerDataFactory = playerDataFactory;
     }
 
     public ApplicationContext Db { get; }
@@ -130,7 +134,7 @@ public class TrackInteractions : InteractionModuleBase<SocketInteractionContext<
 
         trackData.Ticks += trackData.Rank.GetStandardTickAmount();
 
-        ITrack track = new ProgressTrack(trackData, random, emotes, moves);
+        ITrack track = new ProgressTrack(trackData, random, emotes, moves, playerDataFactory);
 
         await Context.Interaction.UpdateAsync(msg =>
         {
@@ -158,7 +162,7 @@ public class TrackInteractions : InteractionModuleBase<SocketInteractionContext<
         var trackData = Db.ProgressTrackers.Find(trackId);
         if (trackData == null) throw new ArgumentException("Progress track not found");
 
-        ITrack track = new ProgressTrack(trackData, random, emotes, moves);
+        ITrack track = new ProgressTrack(trackData, random, emotes, moves, playerDataFactory);
 
         var roll = track.Roll();
 

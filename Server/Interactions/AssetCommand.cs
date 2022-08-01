@@ -1,11 +1,13 @@
 ﻿using Discord.Interactions;
 using Discord.WebSocket;
+using Microsoft.EntityFrameworkCore;
 using Server.Data;
 using Server.DiceRoller;
 using Server.DiscordServer;
 using Server.GameInterfaces;
 using Server.Interactions.Helpers;
 using Server.OracleRoller;
+using TheOracle2.GameObjects;
 using TheOracle2.UserContent;
 
 namespace TheOracle2;
@@ -81,7 +83,7 @@ public class AssetCommand : InteractionModuleBase
 
     private async Task ProcessAssetModalResponse(int assetDataId, params string[] data)
     {
-        var AssetData = await db.CharacterAssets.FindAsync(assetDataId).ConfigureAwait(false);
+        var AssetData = await db.CharacterAssets.FindAsync(assetDataId).ConfigureAwait(true);
         if (AssetData == null) throw new ArgumentException($"Unknown character asset id: {assetDataId}");
 
         var AssetInfo = assetRepo.GetAsset(AssetData.AssetId!);
@@ -91,25 +93,27 @@ public class AssetCommand : InteractionModuleBase
 
         var discordEntity = new DiscordAssetEntity(AssetInfo, AssetData);
 
-        await discordEntity.EntityAsResponse(RespondAsync).ConfigureAwait(false);
+        await discordEntity.EntityAsResponse(RespondAsync).ConfigureAwait(true);
         await db.SaveChangesAsync().ConfigureAwait(false);
     }
 }
 
 public class AssetInteractions : InteractionModuleBase<SocketInteractionContext<SocketMessageComponent>>
 {
-    public AssetInteractions(IAssetRepository assets, ApplicationContext db, Random random, IEmoteRepository emotes)
+    public AssetInteractions(IAssetRepository assets, ApplicationContext db, Random random, IEmoteRepository emotes, PlayerDataFactory dataFactory)
     {
         assetRepo = assets;
         this.db = db;
         this.random = random;
         this.emotes = emotes;
+        this.dataFactory = dataFactory;
     }
 
     private readonly IAssetRepository assetRepo;
     private readonly ApplicationContext db;
     private readonly Random random;
     private readonly IEmoteRepository emotes;
+    private readonly PlayerDataFactory dataFactory;
 
     [ComponentInteraction("asset-ability-select:*")]
     public async Task AbilitySelection(int characterAssetId, string[] selections)
@@ -122,6 +126,7 @@ public class AssetInteractions : InteractionModuleBase<SocketInteractionContext<
 
         data.SelectedAbilities = selections.ToList();
 
+        AddAnyThumbnails(Context.Interaction.Message, data);
         var discordEntity = new DiscordAssetEntity(asset, data);
 
         await Context.Interaction.UpdateAsync(msg =>
@@ -153,13 +158,15 @@ public class AssetInteractions : InteractionModuleBase<SocketInteractionContext<
                 break;
 
             case "asset-condition-roll":
-                var roll = new ActionRollRandom(random, emotes, data.ConditionValue, 0);
+                var roll = new ActionRollRandom(random, emotes, dataFactory, Context.User.Id, data.ConditionValue, 0);
                 await roll.EntityAsResponse(RespondAsync).ConfigureAwait(false);
                 return;
 
             default:
                 break;
         }
+
+        AddAnyThumbnails(Context.Interaction.Message, data);
 
         var discordEntity = new DiscordAssetEntity(asset, data);
         await Context.Interaction.UpdateAsync(msg =>
@@ -170,5 +177,13 @@ public class AssetInteractions : InteractionModuleBase<SocketInteractionContext<
 
         await db.SaveChangesAsync().ConfigureAwait(false);
 
+    }
+
+    private void AddAnyThumbnails(IUserMessage msg, AssetData data)
+    {
+        if (msg?.Embeds?.FirstOrDefault(e => e.Thumbnail.HasValue)?.Thumbnail is EmbedThumbnail thumb)
+        {
+            data.ThumbnailURL = thumb.Url;
+        }
     }
 }

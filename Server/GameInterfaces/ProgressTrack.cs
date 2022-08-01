@@ -1,7 +1,9 @@
 ﻿using Server.Data;
 using Server.DiceRoller;
+using Server.DiscordServer;
 using Server.Interactions.Helpers;
 using TheOracle2;
+using TheOracle2.Data;
 using TheOracle2.GameObjects;
 
 namespace Server.GameInterfaces
@@ -9,30 +11,35 @@ namespace Server.GameInterfaces
     public class ProgressTrack : ITrack
     {
         private readonly IMoveRepository moves;
+        private readonly PlayerDataFactory factory;
+        private readonly ApplicationContext db;
+
         private IEmoteRepository Emotes { get; }
         private readonly Random Random;
 
-        public ProgressTrack(Random random, ChallengeRank rank, IEmoteRepository emotes, IMoveRepository moves, string? title = null, string? desc = null, int score = 0)
+        public ProgressTrack(Random random, ChallengeRank rank, IEmoteRepository emotes, IMoveRepository moves, PlayerDataFactory factory, ulong playerId, string? title = null, string? desc = null, int score = 0)
         {
             Random = random;
             Emotes = emotes;
             this.moves = moves;
-
+            this.factory = factory;
             TrackData = new TrackData
             {
                 Rank = rank,
                 Ticks = score * BoxSize,
                 Title = title,
-                Description = desc
+                Description = desc,
+                PlayerId = playerId
             };
         }
 
-        public ProgressTrack(TrackData trackData, Random random, IEmoteRepository emotes, IMoveRepository moves)
+        public ProgressTrack(TrackData trackData, Random random, IEmoteRepository emotes, IMoveRepository moves, PlayerDataFactory factory)
         {
             TrackData = trackData;
             Random = random;
             Emotes = emotes;
             this.moves = moves;
+            this.factory = factory;
         }
 
         public TrackData TrackData { get; set; }
@@ -55,7 +62,7 @@ namespace Server.GameInterfaces
                 .WithTitle(TrackData.Title)
                 .WithDescription(TrackData.Description)
                 .AddField("Rank", TrackData.Rank)
-                .AddField(this.AsDiscordField(Emotes));
+                .AddField(this.AsDiscordField(Emotes, Ticks));
 
             return builder;
         }
@@ -71,7 +78,7 @@ namespace Server.GameInterfaces
             return new ProgressRollRandom(Random, GetScore(), $"Progress Roll for {TrackData.Title}");
         }
 
-        internal List<ActionRowBuilder> GetActionRows()
+        internal  List<ActionRowBuilder> GetActionRows()
         {
             var myList = new List<ActionRowBuilder>();
             var actionRow1 = new ActionRowBuilder();
@@ -86,7 +93,7 @@ namespace Server.GameInterfaces
             myList.Add(actionRow1);
 
             var movesToFind = new string[] { "Swear an Iron Vow", "Reach a Milestone", "Fulfill Your Vow", "Forsake Your Vow" };
-            var vowMoves = moves.GetMoves().Where(m => movesToFind.Any(s => s.Contains(m.Name, StringComparison.OrdinalIgnoreCase)));
+            var vowMoves = factory.GetPlayerMoves(TrackData.PlayerId).Where(m => movesToFind.Any(s => s.Contains(m.Name, StringComparison.OrdinalIgnoreCase)));
             var referenceSelectBuilder = new SelectMenuBuilder().WithCustomId("move-references").WithPlaceholder("Reference Moves...");
             foreach (var move in vowMoves)
             {

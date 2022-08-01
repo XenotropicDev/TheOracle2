@@ -1,6 +1,9 @@
 ﻿using Discord.Interactions;
+using Discord.Rest;
 using Discord.WebSocket;
 using Microsoft.Extensions.Caching.Memory;
+using Server.DiscordServer;
+using TheOracle2.GameObjects;
 
 namespace Server.Interactions;
 
@@ -30,7 +33,7 @@ public class EditEmbed : InteractionModuleBase<SocketInteractionContext<SocketMe
         var modal = new ModalBuilder().WithTitle($"Edit embed - {embed.Title}").WithCustomId($"edit-embed-main:{usrMsg.Id}");
         modal.AddTextInput("Embed Title", GenericInputModal.GetGenericIdWord(fieldCount), TextInputStyle.Short, value: embed.Title, required: false, maxLength: EmbedBuilder.MaxTitleLength);
         modal.AddTextInput("Description", GenericInputModal.GetGenericIdWord(++fieldCount), TextInputStyle.Paragraph, value: embed.Description, required: false, maxLength: 4000);
-        modal.AddTextInput("Url", GenericInputModal.GetGenericIdWord(++fieldCount), TextInputStyle.Short, value: embed.Thumbnail?.Url, required: false);
+        modal.AddTextInput("Image Url", GenericInputModal.GetGenericIdWord(++fieldCount), TextInputStyle.Short, value: embed.Thumbnail?.Url, required: false);
         modal.AddTextInput("Author Field", GenericInputModal.GetGenericIdWord(++fieldCount), TextInputStyle.Short, value: embed.Author?.Name, required: false);
         modal.AddTextInput("Footer", GenericInputModal.GetGenericIdWord(++fieldCount), TextInputStyle.Paragraph, value: embed.Footer?.Text, required: false, placeholder: "markdown isn't supported in the footer", maxLength: EmbedFooterBuilder.MaxFooterTextLength);
 
@@ -49,13 +52,10 @@ public class EditEmbed : InteractionModuleBase<SocketInteractionContext<SocketMe
             return;
         }
 
-        var guid = Guid.NewGuid().ToString("N");
-
         int fieldCount = 0;
 
-        var modal = new ModalBuilder().WithTitle($"Edit embed - {embed.Title}").WithCustomId($"edit-embed-fields:{usrMsg.Id}:{guid}");
+        var modal = new ModalBuilder().WithTitle($"Edit embed - {embed.Title}").WithCustomId($"edit-embed-fields:{usrMsg.Id}");
 
-        var fieldList = new List<ModalFieldData>();
         foreach (var field in embed.Fields)
         {
             if (fieldCount >= ModalComponentBuilder.MaxActionRowCount) continue;
@@ -63,7 +63,6 @@ public class EditEmbed : InteractionModuleBase<SocketInteractionContext<SocketMe
             var fieldData = new ModalFieldData(field.Name, fieldCount, field.Value, embed.Fields.IndexOf(field), "warning: emptying this field will cause the field to be deleted.");
             fieldCount++;
 
-            fieldList.Add(fieldData);
             modal.AddTextInput(fieldData.Build());
         }
 
@@ -80,57 +79,77 @@ public class EditEmbed : InteractionModuleBase<SocketInteractionContext<SocketMe
         //    fieldList.Add(data);
         //}
 
-        cache.Set(guid, fieldList, DateTimeOffset.Now.AddMinutes(30));
-
         await RespondWithModalAsync(modal.Build());
     }
 }
 
 public class EditEmbedComponents : InteractionModuleBase
 {
-    private readonly IMemoryCache cache;
+    private readonly ApplicationContext db;
 
-    public EditEmbedComponents(IMemoryCache cache)
+    public EditEmbedComponents(ApplicationContext db)
     {
-        this.cache = cache;
-    }
-
-    [ModalInteraction("edit-embed-fields:*:*")]
-    public async Task ModalResponse(ulong messageId, string guid, GenericInputModal<string, string, string> modal)
-    {
-        await EditModalHandler(messageId, guid, modal.First, modal.Second, modal.Third);
-    }
-
-    [ModalInteraction("edit-embed-fields:*:*")]
-    public async Task ModalResponse(ulong messageId, string guid, GenericInputModal<string, string, string, string> modal)
-    {
-        await EditModalHandler(messageId, guid, modal.First, modal.Second, modal.Third, modal.Fourth);
-    }
-
-    [ModalInteraction("edit-embed-fields:*:*")]
-    public async Task ModalResponse(ulong messageId, string guid, GenericInputModal<string, string, string, string, string> modal)
-    {
-        await EditModalHandler(messageId, guid, modal.First, modal.Second, modal.Third, modal.Fourth, modal.Fifth);
+        this.db = db;
     }
 
     [ModalInteraction("edit-embed-main:*")]
     public async Task ModalResponseMain(ulong messageId, GenericInputModal<string, string, string, string, string> modal)
     {
-        if (await Context.Channel.GetMessageAsync(messageId) is not IUserMessage message) return;
+        var downloadedMsg = await Context.Channel.GetMessageAsync(messageId).ConfigureAwait(true);
+        if (downloadedMsg is RestUserMessage restMsg)
+        {
+            
+        }
+        //Sometimes the message is a RestUserMessage?
+        if (downloadedMsg is not IUserMessage message)
+        {
+            Serilog.Log.Information($"Couldn't edit embed because the message was a {downloadedMsg.GetType().FullName}");
+            return;
+        }
 
         var embed = message.Embeds.FirstOrDefault().ToEmbedBuilder();
 
         embed.WithTitle(modal.First);
         embed.WithDescription(!String.IsNullOrWhiteSpace(modal.Second) ? modal.Second : null);
-        embed.WithUrl(!String.IsNullOrWhiteSpace(modal.Third) ? modal.Third : null);
+        embed.WithThumbnailUrl(!String.IsNullOrWhiteSpace(modal.Third) ? modal.Third : null);
         embed.WithAuthor(!String.IsNullOrWhiteSpace(modal.Fourth) ? modal.Fourth : null);
         embed.WithFooter(!String.IsNullOrWhiteSpace(modal.Fifth) ? modal.Fifth : null);
 
         await message.ModifyAsync(msg => msg.Embed = embed.Build());
-        await RespondAsync();
+        await RespondAsync("Embed updated. You can safely dimiss this message", ephemeral:true);
     }
 
-    public async Task EditModalHandler(ulong messageId, string guid, params string[] values)
+    [ModalInteraction("edit-embed-fields:*")]
+    public async Task ModalResponse(ulong messageId, GenericInputModal<string> modal)
+    {
+        await EditModalHandler(messageId, modal.First);
+    }
+
+    [ModalInteraction("edit-embed-fields:*")]
+    public async Task ModalResponse(ulong messageId, GenericInputModal<string, string> modal)
+    {
+        await EditModalHandler(messageId, modal.First, modal.Second);
+    }
+
+    [ModalInteraction("edit-embed-fields:*")]
+    public async Task ModalResponse(ulong messageId, GenericInputModal<string, string, string> modal)
+    {
+        await EditModalHandler(messageId, modal.First, modal.Second, modal.Third);
+    }
+
+    [ModalInteraction("edit-embed-fields:*")]
+    public async Task ModalResponse(ulong messageId, GenericInputModal<string, string, string, string> modal)
+    {
+        await EditModalHandler(messageId, modal.First, modal.Second, modal.Third, modal.Fourth);
+    }
+
+    [ModalInteraction("edit-embed-fields:*")]
+    public async Task ModalResponse(ulong messageId, GenericInputModal<string, string, string, string, string> modal)
+    {
+        await EditModalHandler(messageId, modal.First, modal.Second, modal.Third, modal.Fourth, modal.Fifth);
+    }
+
+    public async Task EditModalHandler(ulong messageId, params string[] values)
     {
         var downloadedMsg = await Context.Channel.GetMessageAsync(messageId);
         if (downloadedMsg is not IUserMessage message)
@@ -141,40 +160,32 @@ public class EditEmbedComponents : InteractionModuleBase
 
         var embed = message.Embeds.FirstOrDefault().ToEmbedBuilder();
 
-        if (cache.TryGetValue(guid, out List<ModalFieldData> cachedModalData))
+        for (var i = values.Length - 1; i >= 0; i--)
         {
-            for (var i = cachedModalData.Count - 1; i >= 0; i--)
+            if (string.IsNullOrWhiteSpace(values[i]))
             {
-                var fieldData = cachedModalData[i];
-                if (fieldData.embedIndex >= 0 && embed.Fields.Count - 1 >= fieldData.embedIndex)
-                {
-                    if (string.IsNullOrWhiteSpace(values[fieldData.ModalFieldNumber]))
-                    {
-                        embed.Fields.RemoveAt(fieldData.embedIndex);
-                    }
-                    else
-                    {
-                        embed.Fields[fieldData.embedIndex].Value = values[fieldData.ModalFieldNumber]; 
-                    }
-                }
-                //else //TODO: this is the other part of the Add field feature
-                //{
-                //    if (fieldData.embedIndex < 0
-                //        && values.Length >= fieldData.ModalFieldNumber
-                //        && !string.IsNullOrWhiteSpace(values[fieldData.ModalFieldNumber])
-                //        && !string.IsNullOrWhiteSpace(values[fieldData.ModalFieldNumber + 1]))
-                //    {
-                //        embed.AddField(values[fieldData.ModalFieldNumber], values[fieldData.ModalFieldNumber + 1]);
-                //        break;
-                //    }
-                //}
+                if (embed.Fields.Count > i) embed.Fields.RemoveAt(i);
             }
+            else
+            {
+                embed.Fields[i].Value = values[i];
+            }
+            //else //TODO: this is the other part of the Add field feature
+            //{
+            //    if (fieldData.embedIndex < 0
+            //        && values.Length >= fieldData.ModalFieldNumber
+            //        && !string.IsNullOrWhiteSpace(values[fieldData.ModalFieldNumber])
+            //        && !string.IsNullOrWhiteSpace(values[fieldData.ModalFieldNumber + 1]))
+            //    {
+            //        embed.AddField(values[fieldData.ModalFieldNumber], values[fieldData.ModalFieldNumber + 1]);
+            //        break;
+            //    }
+            //}
         }
 
         await message.ModifyAsync(msg => msg.Embed = embed.Build());
 
-        await RespondAsync();
-        cache.Remove(guid);
+        await RespondAsync("Modal updated", ephemeral:true);
     }
 }
 

@@ -1,7 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Microsoft.Extensions.Configuration;
+using Npgsql;
 using Server.GameInterfaces;
+using TheOracle2;
 using TheOracle2.GameObjects;
 
 namespace Server.DiscordServer;
@@ -11,6 +14,11 @@ public class ApplicationContext : DbContext
     public DbSet<PlayerCharacter> PlayerCharacters { get; set; }
     public DbSet<TrackData> ProgressTrackers { get; set; }
     public DbSet<AssetData> CharacterAssets { get; set; }
+    public DbSet<Player> Players { get; set; }
+
+    public ApplicationContext()
+    {
+    }
 
     public ApplicationContext(DbContextOptions options) : base(options)
     {
@@ -33,6 +41,22 @@ public class ApplicationContext : DbContext
         modelBuilder.Entity<PlayerCharacter>().Property(pc => pc.Impacts).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
         modelBuilder.Entity<AssetData>().Property(a => a.SelectedAbilities).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
         modelBuilder.Entity<AssetData>().Property(a => a.Inputs).HasConversion(stringArrayToCSVConverter).Metadata.SetValueComparer(valueComparer);
+    }
 
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        if (!optionsBuilder.IsConfigured)
+        {
+            var config = new ConfigurationBuilder()
+            .AddJsonFile("dbSettings.json", optional: false, reloadOnChange: true)
+            .SetBasePath(Path.Combine(Directory.GetCurrentDirectory()))
+            .Build();
+
+            var dbConn = config.GetSection("dbConnectionString").Value;
+            var dbPass = config.GetSection("dbPassword").Value;
+            var dbConnBuilder = new NpgsqlConnectionStringBuilder(dbConn) { Password = dbPass };
+
+            optionsBuilder.UseNpgsql(dbConnBuilder.ConnectionString);
+        }
     }
 }

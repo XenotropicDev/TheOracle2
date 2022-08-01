@@ -47,7 +47,8 @@ public class CommandHandler
 
     public async Task RegisterCommands()
     {
-        await _commands.RegisterCommandsToGuildAsync(756890506830807071, true);
+        //await _commands.RegisterCommandsToGuildAsync(756890506830807071, true);
+        await _commands.RegisterCommandsGloballyAsync(true);
     }
 
     private Task _commands_AutocompleteHandlerExecuted(IAutocompleteHandler arg1, Discord.IInteractionContext arg2, IResult arg3)
@@ -104,6 +105,7 @@ public class CommandHandler
         try
         {
             logger.LogInformation($"{arg.User.Username} is executing Message Command {arg.CommandName}");
+            
             await _commands.ExecuteCommandAsync(ctx, _services);
         }
         catch (Exception ex)

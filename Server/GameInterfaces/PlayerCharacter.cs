@@ -1,6 +1,7 @@
 ﻿using Discord.Net.Rest;
 using Discord.WebSocket;
 using Microsoft.EntityFrameworkCore;
+using Server.Data;
 using Server.Interactions.Helpers;
 using TheOracle2.UserContent;
 
@@ -99,12 +100,12 @@ public class PlayerCharacter
         return await channel.GetMessageAsync(MessageId).ConfigureAwait(false) as IUserMessage;
     }
 
-    public async Task UpdateCardDisplay(DiscordSocketClient client, IEmoteRepository emotes)
+    public async Task UpdateCardDisplay(DiscordSocketClient client, IEmoteRepository emotes, PlayerDataFactory dataFactory)
     {
         var msg = await GetPCMessage(client).ConfigureAwait(true);
         if (msg == null) return;
 
-        var entity = new PlayerCharacterEntity(this, emotes);
+        var entity = new PlayerCharacterEntity(this, emotes, dataFactory);
         await msg.ModifyAsync(msg => msg.Embeds = entity.AsEmbedArray()).ConfigureAwait(false);
     }
 }

@@ -1,4 +1,5 @@
-﻿using TheOracle2.Data;
+﻿using Server.DiscordServer;
+using TheOracle2.Data;
 
 namespace Server.GameInterfaces;
 
@@ -25,6 +26,7 @@ public record AssetData
     public IList<string> SelectedAbilities { get; set; } = new List<string>();
     public IList<string> Inputs { get; set; } = new List<string>();
     public int ConditionValue { get; set; }
+    public string? ThumbnailURL { get; set; }
 
     public void ChangeConditionValue(int change, Asset asset)
     {

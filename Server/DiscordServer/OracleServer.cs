@@ -49,7 +49,7 @@ class OracleServer
 
             await client.StartAsync();
 
-            await client.SetGameAsync("TheOracle v2.1 - Alpha", "", ActivityType.Playing).ConfigureAwait(false);
+            await client.SetGameAsync("TheOracle v2.1 - Beta", "", ActivityType.Playing).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -108,18 +108,17 @@ class OracleServer
             .SetBasePath(Directory.GetCurrentDirectory())
             .Build();
 
-        var clientConfig = new DiscordSocketConfig { MessageCacheSize = 100, LogLevel = LogSeverity.Debug, GatewayIntents = GatewayIntents.DirectMessages | GatewayIntents.GuildMessages | GatewayIntents.Guilds };
-
         var dbConn = config.GetSection("dbConnectionString").Value;
         var dbPass = config.GetSection("dbPassword").Value;
         var dbConnBuilder = new NpgsqlConnectionStringBuilder(dbConn) {Password = dbPass };
 
-        var interactionServiceConfig = new InteractionServiceConfig()  { UseCompiledLambda = true, LogLevel = LogSeverity.Debug };
+        var clientConfig = new DiscordSocketConfig { MessageCacheSize = 100, LogLevel = LogSeverity.Info, GatewayIntents = GatewayIntents.DirectMessages | GatewayIntents.GuildMessages | GatewayIntents.Guilds };
+        var interactionServiceConfig = new InteractionServiceConfig()  { UseCompiledLambda = true, LogLevel = LogSeverity.Info };
         logger = new LoggerConfiguration()
                     .WriteTo.Console()
                     .WriteTo.File("log.txt", rollingInterval: RollingInterval.Day)
                     .Enrich.FromLogContext()
-                    .MinimumLevel.Debug()
+                    .MinimumLevel.Information()
                     .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning)
                     .CreateLogger();
 
@@ -136,6 +135,7 @@ class OracleServer
             .AddSingleton<IAssetRepository, JsonAssetRepository>()
             .AddSingleton<IEmoteRepository, HardCodedEmoteRepo>()
             .AddSingleton<IMemoryCache, MemoryCache>()
+            .AddScoped<PlayerDataFactory>()
             .AddLogging(builder => builder.AddSerilog(logger)
                 .AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Warning)
                 .AddFilter("Microsoft.EntityFrameworkCore.Infrastructure", LogLevel.Warning)

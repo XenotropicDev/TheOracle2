@@ -1,6 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using Discord.Interactions;
 using Discord.WebSocket;
+using Server.Data;
 using Server.DiceRoller;
 using Server.DiscordServer;
 using Server.Interactions.Helpers;
@@ -12,12 +13,14 @@ public class RollCommandGroup : InteractionModuleBase
 {
     private readonly IEmoteRepository emotes;
     private readonly ApplicationContext db;
+    private readonly PlayerDataFactory dataFactory;
 
-    public RollCommandGroup(Random random, IEmoteRepository emotes, ApplicationContext db)
+    public RollCommandGroup(Random random, IEmoteRepository emotes, ApplicationContext db, PlayerDataFactory dataFactory)
     {
         Random = random;
         this.emotes = emotes;
         this.db = db;
+        this.dataFactory = dataFactory;
     }
 
     public Random Random { get; }
@@ -45,7 +48,7 @@ public class RollCommandGroup : InteractionModuleBase
             return;
         }
 
-        var roll = new ActionRollRandom(Random, emotes, pc.GetStat(stat), adds, pc.GetStat(RollableStat.Momentum), description, actionDie, challengeDie1, challengeDie2, id);
+        var roll = new ActionRollRandom(Random, emotes, dataFactory, Context.User.Id, pc.GetStat(stat), adds, pc.GetStat(RollableStat.Momentum), description, actionDie, challengeDie1, challengeDie2, id);
 
         await roll.EntityAsResponse(RespondAsync).ConfigureAwait(false);
     }
@@ -60,7 +63,7 @@ public class RollCommandGroup : InteractionModuleBase
         [Summary(description: "A preset value for the first Challenge Die (d10) to use instead of rolling.")][MinValue(1)][MaxValue(10)] int? challengeDie1 = null,
         [Summary(description: "A preset value for the second Challenge Die (d10) to use instead of rolling.")][MinValue(1)][MaxValue(10)] int? challengeDie2 = null)
     {
-        var roll = new ActionRollRandom(Random, emotes, stat, adds, momentum, description, actionDie, challengeDie1, challengeDie2);
+        var roll = new ActionRollRandom(Random, emotes, dataFactory, Context.User.Id, stat, adds, momentum, description, actionDie, challengeDie1, challengeDie2);
         await roll.EntityAsResponse(RespondAsync).ConfigureAwait(false);
     }
 
@@ -82,13 +85,15 @@ public class RollInteractions : InteractionModuleBase<SocketInteractionContext<S
     private readonly Random random;
     private readonly IEmoteRepository emotes;
     private readonly DiscordSocketClient client;
+    private readonly PlayerDataFactory dataFactory;
 
-    public RollInteractions(ApplicationContext db, Random random, IEmoteRepository emotes, DiscordSocketClient client)
+    public RollInteractions(ApplicationContext db, Random random, IEmoteRepository emotes, DiscordSocketClient client, PlayerDataFactory dataFactory)
     {
         this.db = db;
         this.random = random;
         this.emotes = emotes;
         this.client = client;
+        this.dataFactory = dataFactory;
     }
 
     private IActionRoll? GetActionRollFromEmbed(IEmbed embed, int? characterId = null)
@@ -113,7 +118,7 @@ public class RollInteractions : InteractionModuleBase<SocketInteractionContext<S
         int.TryParse(match.Groups[1].Value, out int challengeDie1);
         int.TryParse(match.Groups[2].Value, out int challengeDie2);
 
-        return new ActionRollRandom(random, emotes, stat, adds, null, builder.Description, d6, challengeDie1, challengeDie2, characterId);
+        return new ActionRollRandom(random, emotes, dataFactory, Context.User.Id, stat, adds, null, builder.Description, d6, challengeDie1, challengeDie2, characterId);
     }
 
     [ComponentInteraction("burn-roll:*,*")]
@@ -136,7 +141,7 @@ public class RollInteractions : InteractionModuleBase<SocketInteractionContext<S
         {
             pc.BurnMomentum();
             await db.SaveChangesAsync().ConfigureAwait(false);
-            await pc.UpdateCardDisplay(client, emotes).ConfigureAwait(false);
+            await pc.UpdateCardDisplay(client, emotes, dataFactory).ConfigureAwait(false);
         };
 
         await updateRollTask;

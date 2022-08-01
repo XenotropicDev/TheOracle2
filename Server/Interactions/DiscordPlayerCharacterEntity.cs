@@ -1,4 +1,5 @@
 ﻿using Discord.WebSocket;
+using Server.Data;
 using Server.DiceRoller;
 using TheOracle2.GameObjects;
 
@@ -7,11 +8,13 @@ namespace TheOracle2.UserContent;
 internal class PlayerCharacterEntity : IDiscordEntity
 {
     private readonly IEmoteRepository emotes;
+    private readonly PlayerDataFactory dataFactory;
 
-    public PlayerCharacterEntity(PlayerCharacter Pc, IEmoteRepository emotes)
+    public PlayerCharacterEntity(PlayerCharacter Pc, IEmoteRepository emotes, PlayerDataFactory dataFactory)
     {
         this.Pc = Pc;
         this.emotes = emotes;
+        this.dataFactory = dataFactory;
     }
 
     public bool IsEphemeral { get; set; } = false;
@@ -63,6 +66,8 @@ internal class PlayerCharacterEntity : IDiscordEntity
         ActionRollRandom roll = new ActionRollRandom(random: random, 
             emotes: emotes,
             stat: GetStatValue(stat),
+            pdf: dataFactory, 
+            PlayerId: Pc.UserId,
             adds: adds,
             momentum: Pc.Momentum,
             description: description,

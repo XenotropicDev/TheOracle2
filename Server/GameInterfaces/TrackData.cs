@@ -6,6 +6,8 @@ namespace Server.GameInterfaces
     {
         public int Id { get; set; }
 
+        public ulong PlayerId { get; set; }
+
         [MaxLength(EmbedBuilder.MaxDescriptionLength)]
         public string? Description { get; set; }
         public ChallengeRank Rank { get; set; }

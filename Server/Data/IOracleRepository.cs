@@ -1,4 +1,6 @@
-﻿using TheOracle2.Data;
+﻿using Server.DiscordServer;
+using TheOracle2;
+using TheOracle2.Data;
 
 namespace Server.Data;
 
@@ -37,8 +39,8 @@ public class JsonOracleRepository : IOracleRepository
         if (_oracles == null)
         {
             _oracles = new List<OracleRoot>();
-            var baseDir = new DirectoryInfo(Path.Combine("Data", "ironsworn"));
-            var files = baseDir.GetFiles("*oracle*.json");
+            var files = new DirectoryInfo(Path.Combine("Data", "ironsworn")).GetFiles("*oracle*.json").ToList();
+            files.AddRange(new DirectoryInfo(Path.Combine("Data", "starforged")).GetFiles("*oracle*.json").ToList());
 
             foreach (var file in files)
             {

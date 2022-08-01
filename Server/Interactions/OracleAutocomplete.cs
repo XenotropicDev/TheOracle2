@@ -1,5 +1,6 @@
 ﻿using Discord.Interactions;
 using Server.Data;
+using Server.DiscordServer;
 using TheOracle2.Data;
 
 namespace TheOracle2.Commands;
@@ -7,17 +8,17 @@ namespace TheOracle2.Commands;
 public class OracleAutocomplete : AutocompleteHandler
 {
     private IOracleRepository OracleRepo;
+    private readonly PlayerDataFactory dataFactory;
 
-    public OracleAutocomplete(IOracleRepository oracles)
+    public OracleAutocomplete(IOracleRepository oracles, PlayerDataFactory factory)
     {
         OracleRepo = oracles;
+        this.dataFactory = factory;
     }
 
-    private Task<AutocompletionResult> emptyOraclesResult
+    private Task<AutocompletionResult> GetEmptyOralceResult(IInteractionContext context)
     {
-        get
-        {
-            var oracles = OracleRepo.GetOracles().Where(o => o.Name == "Pay the Price" || o.Category.Contains("Action", StringComparison.OrdinalIgnoreCase)).AsEnumerable();
+            var oracles = dataFactory.GetPlayerOracles(context.User.Id).Where(o => o.Name == "Pay the Price" || o.Category.Contains("Action", StringComparison.OrdinalIgnoreCase)).AsEnumerable();
             var list = oracles
                 .SelectMany(x => GetOracleAutocompleteResults(x))
                 .OrderBy(x =>
@@ -26,7 +27,6 @@ public class OracleAutocomplete : AutocompleteHandler
                 .Take(SelectMenuBuilder.MaxOptionCount);
 
             return Task.FromResult(AutocompletionResult.FromSuccess(list));
-        }
     }
 
     public override Task<AutocompletionResult> GenerateSuggestionsAsync(IInteractionContext context, IAutocompleteInteraction autocompleteInteraction, IParameterInfo parameter, IServiceProvider services)
@@ -39,11 +39,11 @@ public class OracleAutocomplete : AutocompleteHandler
 
             if (String.IsNullOrWhiteSpace(value))
             {
-                return emptyOraclesResult;
+                return GetEmptyOralceResult(context);
             }
 
             //Match names and aliases first
-           successList.AddRange(OracleRepo.GetOracles()
+           successList.AddRange(dataFactory.GetPlayerOracles(context.User.Id)
                         .Where(x => x.Name.Contains(value, StringComparison.OrdinalIgnoreCase)
                             || x.Parent?.Name.Contains(value, StringComparison.OrdinalIgnoreCase) == true
                             || x.Parent?.Aliases?.Any(s => s.Contains(value, StringComparison.OrdinalIgnoreCase)) == true

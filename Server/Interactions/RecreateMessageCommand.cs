@@ -2,13 +2,14 @@
 using Discord.WebSocket;
 using Server.DiscordServer;
 using Server.Interactions;
+using TheOracle2.GameObjects;
 using TheOracle2.UserContent;
 
 namespace TheOracle2.Commands;
 
-public class RightClickCommands : InteractionModuleBase<SocketInteractionContext<SocketMessageCommand>>
+public class RecreateMessageCommand : InteractionModuleBase<SocketInteractionContext<SocketMessageCommand>>
 {
-    public RightClickCommands(ApplicationContext dbContext)
+    public RecreateMessageCommand(ApplicationContext dbContext)
     {
         DbContext = dbContext;
     }
@@ -20,14 +21,16 @@ public class RightClickCommands : InteractionModuleBase<SocketInteractionContext
     {
         if (msg.Author.Id != Context.Client.CurrentUser.Id) await RespondAsync($"I can't recreate that message", ephemeral: true);
 
+        await DeferAsync();
+
         var builder = ComponentBuilder.FromMessage(msg);
         var content = msg.Content?.Length > 0 ? msg.Content : null;
-        await RespondAsync(content, embeds: msg.Embeds.OfType<Embed>().ToArray(), components: builder.Build()).ConfigureAwait(false);
+        
+        var newMsg = await FollowupAsync(content, embeds: msg.Embeds.OfType<Embed>().ToArray(), components: builder.Build()).ConfigureAwait(false);
 
-        var pc = DbContext.PlayerCharacters.FirstOrDefault(pc => pc.MessageId == msg.Id);
-        if (pc != null)
+        if (DbContext.PlayerCharacters.FirstOrDefault(pc => pc.MessageId == msg.Id) is PlayerCharacter pc)
         {
-            pc.MessageId = msg.Id;
+            pc.MessageId = newMsg.Id;
             await DbContext.SaveChangesAsync();
         }
 

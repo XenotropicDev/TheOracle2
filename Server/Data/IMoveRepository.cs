@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Server.DiscordServer;
+using TheOracle2;
 using TheOracle2.Data;
 
 namespace Server.Data;
@@ -29,8 +31,8 @@ public class JsonMoveRepository : IMoveRepository
         if (_moves == null)
         {
             _moves = new List<MoveRoot>();
-            var baseDir = new DirectoryInfo(Path.Combine("Data", "ironsworn"));
-            var files = baseDir.GetFiles("*moves*.json");
+            var files = new DirectoryInfo(Path.Combine("Data", "ironsworn")).GetFiles("*moves*.json").ToList();
+            files.AddRange(new DirectoryInfo(Path.Combine("Data", "starforged")).GetFiles("*moves*.json").ToList());
 
             foreach (var file in files)
             {

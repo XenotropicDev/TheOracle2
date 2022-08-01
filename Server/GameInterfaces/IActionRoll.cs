@@ -1,4 +1,5 @@
-﻿using Server.GameInterfaces;
+﻿using Server.Data;
+using Server.GameInterfaces;
 using TheOracle2;
 using TheOracle2.GameObjects;
 
@@ -14,11 +15,15 @@ public class ActionRollRandom : IActionRoll, IBurnable
     private string description;
     private readonly int? characterId;
     private readonly IEmoteRepository emotes;
+    private readonly PlayerDataFactory dataFactory;
+    private readonly ulong playerId;
     private int? momentum;
 
-    public ActionRollRandom(Random random, IEmoteRepository emotes, int stat, int adds, int? momentum = null, string description = "", int? actionDie = null, int? challengeDie1 = null, int? challengeDie2 = null, int? characterId = null) : base()
+    public ActionRollRandom(Random random, IEmoteRepository emotes, PlayerDataFactory pdf, ulong PlayerId, int stat, int adds, int? momentum = null, string description = "", int? actionDie = null, int? challengeDie1 = null, int? challengeDie2 = null, int? characterId = null) : base()
     {
         this.emotes = emotes;
+        this.dataFactory = pdf;
+        playerId = PlayerId;
         this.momentum = momentum;
         this.description = description;
         this.characterId = characterId;
@@ -61,7 +66,9 @@ public class ActionRollRandom : IActionRoll, IBurnable
         var builder = new ComponentBuilder();
         if (GetOutcome() == IronswornRollOutcome.Miss)
         {
-            builder.WithButton("Pay the Price", "roll-oracle:Oracles/Moves/Pay_the_Price", emote: emotes.Roll);
+            var assets = dataFactory.GetPlayerAssets(playerId);
+            string ptpId = assets?.FirstOrDefault(a => a.Id.Contains("Oracles/Moves/Pay_the_Price"))?.Id ?? "Ironsworn/Oracles/Moves/Pay_the_Price";
+            builder.WithButton("Pay the Price", $"roll-oracle:{ptpId}", emote: emotes.Roll);
         }
 
         if (CanBurn() && characterId != null)

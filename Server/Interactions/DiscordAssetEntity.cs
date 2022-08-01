@@ -22,6 +22,11 @@ internal class DiscordAssetEntity : IDiscordEntity
             .WithAuthor($"Asset: {Asset.Parent?.Name ?? Asset.AssetType}")
             .WithTitle(Asset.Name);
 
+        if (Data.ThumbnailURL != null)
+        {
+            builder.WithThumbnailUrl(Data.ThumbnailURL);
+        }
+
         for (var i = 0; i < Asset.Inputs.Count; i++)
         {
             builder.AddField(Asset.Inputs[i].Name, Data.Inputs[i]);

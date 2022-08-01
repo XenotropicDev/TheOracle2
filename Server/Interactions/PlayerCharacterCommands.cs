@@ -1,7 +1,9 @@
 ﻿using Discord.Interactions;
 using Discord.Net;
 using Discord.WebSocket;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Server.Data;
 using Server.DiscordServer;
 using Server.Interactions.Helpers;
 using TheOracle2.GameObjects;
@@ -13,19 +15,16 @@ namespace TheOracle2;
 public class PlayerCharacterCommandGroup : InteractionModuleBase
 {
     private readonly IEmoteRepository emotes;
+    private readonly PlayerDataFactory dataFactory;
 
-    public PlayerCharacterCommandGroup(ApplicationContext dbContext, IEmoteRepository emotes)
+    public PlayerCharacterCommandGroup(ApplicationContext dbContext, IEmoteRepository emotes, PlayerDataFactory dataFactory)
     {
         DbContext = dbContext;
         this.emotes = emotes;
+        this.dataFactory = dataFactory;
     }
 
     public ApplicationContext DbContext { get; }
-
-    public override async Task AfterExecuteAsync(ICommandInfo command)
-    {
-        await DbContext.SaveChangesAsync().ConfigureAwait(false);
-    }
 
     [SlashCommand("create", "Create a player character.")]
     public async Task BuildPlayerCard(string name, [MaxValue(4)][MinValue(1)] int edge, [MaxValue(4)][MinValue(1)] int heart, [MaxValue(4)][MinValue(1)] int iron, [MaxValue(4)][MinValue(1)] int shadow, [MaxValue(4)][MinValue(1)] int wits, string? avatarImageURL = null)
@@ -37,7 +36,7 @@ public class PlayerCharacterCommandGroup : InteractionModuleBase
         DbContext.PlayerCharacters.Add(pcData);
         await DbContext.SaveChangesAsync();
 
-        var pcEntity = new PlayerCharacterEntity(pcData, emotes);
+        var pcEntity = new PlayerCharacterEntity(pcData, emotes, dataFactory);
         var characterSheet = await pcEntity.EntityAsResponse(FollowupAsync).ConfigureAwait(false);
         pcData.MessageId = characterSheet.Id;
 
@@ -59,7 +58,7 @@ public class PlayerCharacterCommandGroup : InteractionModuleBase
 
         await RespondAsync($"Impact added", ephemeral: true).ConfigureAwait(false);
 
-        await pc.UpdateCardDisplay(Context.Client as DiscordSocketClient, emotes);
+        await pc.UpdateCardDisplay((Context.Client as DiscordSocketClient)!, emotes, dataFactory);
         
         await saveTask;
     }
@@ -76,7 +75,7 @@ public class PlayerCharacterCommandGroup : InteractionModuleBase
         
         await RespondAsync($"Debility added", ephemeral: true).ConfigureAwait(false);
         
-        await pc.UpdateCardDisplay(Context.Client as DiscordSocketClient, emotes);
+        await pc.UpdateCardDisplay((Context.Client as DiscordSocketClient)!, emotes, dataFactory);
 
         await saveTask;
     }
@@ -94,7 +93,7 @@ public class PlayerCharacterCommandGroup : InteractionModuleBase
         var saveTask = DbContext.SaveChangesAsync().ConfigureAwait(false);
 
         await RespondAsync($"{pc.Name}'s XP was set to **{earnedXp}**.", ephemeral: true).ConfigureAwait(false);
-        await pc.UpdateCardDisplay(Context.Client as DiscordSocketClient, emotes);
+        await pc.UpdateCardDisplay((Context.Client as DiscordSocketClient)!, emotes, dataFactory);
 
         await saveTask;
     }
@@ -128,22 +127,30 @@ public class PcCardComponents : InteractionModuleBase<SocketInteractionContext<S
     private readonly ILogger<PcCardComponents> logger;
     private readonly DiscordSocketClient client;
     private readonly IEmoteRepository emotes;
+    private readonly PlayerDataFactory dataFactory;
 
-    public PcCardComponents(ApplicationContext dbContext, ILogger<PcCardComponents> logger, DiscordSocketClient client, IEmoteRepository emotes)
+    public PcCardComponents(ApplicationContext dbContext, ILogger<PcCardComponents> logger, DiscordSocketClient client, IEmoteRepository emotes, PlayerDataFactory dataFactory)
     {
         DbContext = dbContext;
         this.logger = logger;
         this.client = client;
         this.emotes = emotes;
+        this.dataFactory = dataFactory;
+    }
+
+    public override async Task BeforeExecuteAsync(ICommandInfo command)
+    {
+        if (Context.Interaction.Message.Embeds.FirstOrDefault(e => e.Thumbnail.HasValue) is Embed embed
+            && await DbContext.PlayerCharacters.FirstOrDefaultAsync(pc => pc.MessageId == Context.Interaction.Message.Id) is PlayerCharacter pc
+            && pc.Image != embed.Thumbnail!.Value.Url)
+        {
+            pc.Image = embed.Thumbnail!.Value.Url;
+            await DbContext.SaveChangesAsync();
+        }
     }
 
     //public GuildPlayer GuildPlayer => GuildPlayer.GetAndAddIfMissing(DbContext, Context);
     public ApplicationContext DbContext { get; }
-
-    public override async Task AfterExecuteAsync(ICommandInfo command)
-    {
-        await DbContext.SaveChangesAsync().ConfigureAwait(false);
-    }
 
     [ComponentInteraction("add-momentum-*")]
     public async Task AddMomentum(string pcId)
@@ -321,9 +328,14 @@ public class PcCardComponents : InteractionModuleBase<SocketInteractionContext<S
             pc.ChannelId = Context.Interaction.Channel.Id;
         }
 
+        if (Context?.Interaction?.Message?.Embeds?.FirstOrDefault()?.Thumbnail.HasValue == true)
+        {
+            pc.Image = Context!.Interaction!.Message!.Embeds!.FirstOrDefault()!.Thumbnail!.Value.Url;
+        }
+
         var saveTask = DbContext.SaveChangesAsync().ConfigureAwait(false);
 
-        var entity = new PlayerCharacterEntity(pc, emotes);
+        var entity = new PlayerCharacterEntity(pc, emotes, dataFactory);
 
         await Context!.Interaction.UpdateAsync(msg =>
         {
